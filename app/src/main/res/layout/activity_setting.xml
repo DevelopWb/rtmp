@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@color/colorTheme">
+
+            <TextView
+                android:id="@+id/main_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="设置"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                android:padding="20dp"
+                tools:context="org.easydarwin.easypusher.SettingActivity">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_only_bottom_gray_shape_1px"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/regist_code_key"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="注册码:"
+                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/regist_code_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="dfasdfsdf"
+                        app:layout_constraintLeft_toLeftOf="@+id/push_server_ip_et"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/server_ip_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="服务器IP:"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
+
+                    <EditText
+                        android:id="@+id/push_server_ip_et"
+                        android:layout_width="0dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/setting_url_shape"
+                        android:paddingLeft="10dp"
+                        android:textColor="#4c4c4c"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/server_ip_tv"
+                        app:layout_constraintLeft_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/server_ip_tv" />
+
+                    <TextView
+                        android:id="@+id/server_port_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:text="端口:"
+                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/server_ip_tv" />
+
+                    <EditText
+                        android:id="@+id/push_server_port_et"
+                        android:layout_width="0dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/setting_url_shape"
+                        android:inputType="number"
+                        android:paddingLeft="10dp"
+                        android:textColor="#4c4c4c"
+                        android:textSize="12sp"
+                        app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/server_port_tv" />
+
+                    <TextView
+                        android:id="@+id/bili_key"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:text="哔哩:"
+                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/server_port_tv" />
+
+                    <EditText
+                        android:id="@+id/bili_value_et"
+                        android:layout_width="0dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/setting_url_shape"
+                        android:inputType="number"
+                        android:paddingLeft="10dp"
+                        android:textColor="#4c4c4c"
+                        android:textSize="12sp"
+                        app:layout_constraintTop_toTopOf="@+id/bili_key"
+                        app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
+                        app:layout_constraintRight_toRightOf="parent"
+                        />
+                    <TextView
+                        android:id="@+id/huya_key"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:text="虎牙:"
+                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/bili_key" />
+
+                    <EditText
+                        android:id="@+id/huya_value_et"
+                        android:layout_width="0dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/setting_url_shape"
+                        android:inputType="number"
+                        android:paddingLeft="10dp"
+                        android:textColor="#4c4c4c"
+                        android:textSize="12sp"
+                        app:layout_constraintTop_toTopOf="@+id/huya_key"
+                        app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
+                        app:layout_constraintRight_toRightOf="parent"
+                        />
+
+
+                </android.support.constraint.ConstraintLayout>
+
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/setting_url_shape"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:padding="5dp">-->
+
+<!--                    <EditText-->
+<!--                        android:id="@+id/push_url"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:background="@null"-->
+<!--                        android:text=""-->
+<!--                        android:textColor="#4c4c4c"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                    <ImageView-->
+<!--                        android:layout_width="36dp"-->
+<!--                        android:layout_height="36dp"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:onClick="onScanQRCode"-->
+<!--                        android:padding="8dp"-->
+<!--                        android:src="@drawable/qr_scan_btn" />-->
+<!--                </LinearLayout>-->
+
+
+                <CheckBox
+                    android:id="@+id/auto_push_when_run_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="开机自动推流" />
+
+                <CheckBox
+                    android:id="@+id/enable_background_camera_pushing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="摄像头后台采集" />
+
+                <CheckBox
+                    android:id="@+id/use_x264_encode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="使用软编码" />
+
+
+                <!--                <View-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="1dp"-->
+                <!--                    android:layout_marginVertical="5dp"-->
+                <!--                    android:background="?android:attr/listDivider" />-->
+
+                <!--                <CheckBox-->
+                <!--                    android:id="@+id/enable_video_overlay"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:checked="false"-->
+                <!--                    android:text="叠加水印" />-->
+
+                <!--                <LinearLayout-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="8dp"-->
+                <!--                    android:paddingLeft="5dp"-->
+                <!--                    android:paddingRight="5dp">-->
+
+                <!--                    <TextView-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="码率:" />-->
+
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/bitrate_value"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="1023Kbps" />-->
+
+                <!--                </LinearLayout>-->
+
+                <!--                <android.support.v7.widget.AppCompatSeekBar-->
+                <!--                    android:id="@+id/bitrate_seekbar"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="8dp"-->
+                <!--                    android:max="100" />-->
+                <!--                <TextView-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:paddingLeft="5dp"-->
+                <!--                    android:paddingRight="5dp"-->
+                <!--                    android:text="硬编码码率可能设置值与实际值不完全准" />-->
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="推送内容：" />
+
+                <RadioGroup
+                    android:id="@+id/push_content_rg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin">
+
+                    <RadioButton
+                        android:id="@+id/push_av"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="音视频" />
+
+                    <RadioButton
+                        android:id="@+id/push_v"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="视频" />
+
+                    <RadioButton
+                        android:id="@+id/push_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="音频" />
+                </RadioGroup>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/colorTheme"
+                    android:onClick="onOpenLocalRecord"
+                    android:text="打开录像文件夹"
+                    android:textColor="#ffffff" />
+
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</layout>
