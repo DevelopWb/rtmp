@@ -103,41 +103,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     public static boolean mRecording;
 
     private long mExitTime;//声明一个long类型变量：用于存放上一点击“返回键”的时刻
-    private final static int  UVC_CONNECT = 111;
-    private final  static int  UVC_DISCONNECT = 112;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case UVC_CONNECT:
-                    if (mMediaStream != null) {
-                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
-                    }
-                    mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
-                    mScreenResTv.setVisibility(View.INVISIBLE);
-                    break;
-                case UVC_DISCONNECT:
-                    mScreenResTv.setVisibility(View.VISIBLE);
-                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
-                    switch (position) {
-                        case 0:
-                            mSelectCameraTv.setText("摄像头:后置");
-                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-                            break;
-                        case 1:
-                            mSelectCameraTv.setText("摄像头:前置");
-                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    private static int  UVC_CONNECT = 111;
+    private static int  UVC_DISCONNECT = 112;
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -185,7 +152,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-
+        if (!mNeedGrantedPermission) {
+            goonWithPermissionGranted();
+        }
         //        notifyAboutColorChange();
 
         // 动态获取camera和audio权限
@@ -248,12 +217,26 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onPause() {
 
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        BUSUtil.BUS.unregister(this);
         if (!mNeedGrantedPermission) {
             unbindService(conn);
             unbindService(uvcConn);
-            mUvcCameraService.setUvcConnectCallBack(null);
             handler.removeCallbacksAndMessages(null);
         }
+
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
 
         if (mMediaStream != null) {
@@ -265,29 +248,13 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 mMediaStream.stopStream();
                 mMediaStream.release();
                 mMediaStream = null;
+
                 stopService(new Intent(this, BackgroundCameraService.class));
                 stopService(new Intent(this, UVCCameraService.class));
             }
         }
-
-        super.onPause();
-    }
-    @Override
-    protected void onDestroy() {
-
-        BUSUtil.BUS.unregister(this);
         super.onDestroy();
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (!mNeedGrantedPermission) {
-            goonWithPermissionGranted();
-        }
-    }
-
 
     /*
      * android6.0权限，onRequestPermissionsResult回调
@@ -773,9 +740,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                             dialog.dismiss();
                             return;
                         }
-                        if (UVCCameraService.hasUvcCamera) {
-                            return;
-                        }
                         SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
                         switch (which) {
                             case 0:
@@ -785,6 +749,10 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                             case 1:
                                 mSelectCameraTv.setText("摄像头:前置");
                                 mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
+                                break;
+                            case 2:
+                                mSelectCameraTv.setText("摄像头:外置");
+                                mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
                                 break;
                             default:
                                 break;
@@ -826,7 +794,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         int position = SPUtil.getScreenPushingCameraIndex(this);
         if (UVCCameraService.hasUvcCamera) {
             SPUtil.setScreenPushingCameraIndex(this, 2);
-            return 2;
+            return 0;
         }
         return position;
 
@@ -1064,13 +1032,28 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onUvcCameraConnected() {
-        mHandler.sendEmptyMessage(UVC_CONNECT);
+//        mHandler.sendEmptyMessage()
 
+        if (mMediaStream != null) {
+            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+        }
+//        mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
     }
 
     @Override
     public void onUvcCameraDisConnected() {
-//        mHandler.sendEmptyMessage(UVC_DISCONNECT);
-
+        int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
+        switch (position) {
+            case 0:
+//                mSelectCameraTv.setText("摄像头:后置");
+                mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+                break;
+            case 1:
+//                mSelectCameraTv.setText("摄像头:前置");
+                mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
+                break;
+            default:
+                break;
+        }
     }
 }

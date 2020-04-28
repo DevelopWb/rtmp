@@ -116,9 +116,6 @@ public class UVCCameraService extends Service {
 
             @Override
             public void onConnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
-                if (uvcConnectStatusCallBack != null) {
-                    uvcConnectStatusCallBack.onUvcCameraConnected();
-                }
                 releaseCamera();
                 hasUvcCamera = true;
                 if (BuildConfig.DEBUG)
@@ -161,9 +158,6 @@ public class UVCCameraService extends Service {
             @Override
             public void onDisconnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock) {
                 Log.v(TAG, "onDisconnect:");
-                if (uvcConnectStatusCallBack != null) {
-                    uvcConnectStatusCallBack.onUvcCameraDisConnected();
-                }
                 hasUvcCamera = false;
 //                Toast.makeText(MainActivity.this, R.string.usb_camera_disconnected, Toast.LENGTH_SHORT).show();
 
