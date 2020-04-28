@@ -1,7 +1,6 @@
 package org.easydarwin.easypusher.push;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -14,17 +13,17 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.os.Process;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.orhanobut.hawk.Hawk;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 
 import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.BackgroundCameraService;
 import org.easydarwin.easypusher.EasyApplication;
-import org.easydarwin.easypusher.StreamActivity;
 import org.easydarwin.easypusher.UVCCameraService;
+import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.encode.AudioStream;
@@ -138,7 +137,7 @@ public class MediaStream {
             return;
         }
 
-        mSWCodec = SPUtil.getswCodec(context);
+        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC,false);
         mHevc = SPUtil.getHevcCodec(context);
         mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 
@@ -497,7 +496,9 @@ public class MediaStream {
 
     /// 停止推流
     public void stopStream() {
-        mEasyPusher.stop();
+        if (mEasyPusher != null) {
+            mEasyPusher.stop();
+        }
         isPushStream = false;
     }
 

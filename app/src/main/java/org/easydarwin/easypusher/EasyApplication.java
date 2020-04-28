@@ -7,8 +7,9 @@ import android.content.res.AssetManager;
 import android.os.Build;
 
 import com.orhanobut.hawk.Hawk;
-import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
+
+import org.easydarwin.easypusher.push.StreamActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;

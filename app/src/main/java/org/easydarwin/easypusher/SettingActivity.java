@@ -56,8 +56,9 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         binding.mainToolbar.setOnMenuItemClickListener(this);
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
-        binding.pushServerIpEt.setText(SPUtil.getScreenPushingIP(this));
-        binding.serverPortTv.setText(SPUtil.getScreenPushingPort(this));
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP));
+        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT));
+        binding.liveTagEt.setText(Hawk.get(HawkProperty.LIVE_TAG));
         // 使能摄像头后台采集
         onPushBackground();
         onEncodeType();
@@ -133,8 +134,9 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     private void onEncodeType() {
         // 是否使用软编码
         CheckBox x264enc = findViewById(R.id.use_x264_encode);
-        x264enc.setChecked(SPUtil.getswCodec(this));
-        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> SPUtil.setswCodec(this, isChecked));
+        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC,true));
+        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC,isChecked)
+                );
 
         //        // 使能H.265编码
         //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
@@ -235,11 +237,11 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     private void saveIpOrPort() {
         String text = binding.pushServerIpEt.getText().toString().trim();
         if (PublicUtil.isIP(text)) {
-            SPUtil.setScreenPushingIP(this, text);
+           Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP,text);
         }
 
         String textPort = binding.serverPortTv.getText().toString().trim();
-        SPUtil.setScreenPushingPort(this, textPort);
+        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT,textPort);
     }
 
     //    /*

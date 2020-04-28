@@ -30,9 +30,12 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.encode.AudioStream;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.Pusher;
@@ -155,7 +158,7 @@ public class RecordService extends Service {
         screenDensity = displayMetrics.densityDpi;
 
         // 1倍屏幕大小,0.75倍屏幕大小,0.5倍屏幕大小,0.3倍屏幕大小,0.25倍屏幕大小,0.2倍屏幕大小
-        int defaultIdx = SPUtil.getScreenPushingResIndex(this);
+        int defaultIdx = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX,3);
 
         switch (defaultIdx) {
             case 0:

@@ -16,11 +16,20 @@ import com.serenegiant.usb.IStatusCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 
+import org.easydarwin.easypusher.push.MediaStream;
+import org.easydarwin.easypusher.push.UvcConnectStatus;
+
 import java.nio.ByteBuffer;
 
 public class UVCCameraService extends Service {
 
     public static boolean  hasUvcCamera = false;
+    private UvcConnectStatus uvcConnectStatusCallBack;
+
+    public void  setUvcConnectCallBack(UvcConnectStatus uvcConnectStatusCallBack) {
+        this.uvcConnectStatusCallBack = uvcConnectStatusCallBack;
+    }
+
     public static class UVCCameraLivaData extends LiveData<UVCCamera> {
         @Override
         protected void postValue(UVCCamera value) {
@@ -107,6 +116,9 @@ public class UVCCameraService extends Service {
 
             @Override
             public void onConnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
+                if (uvcConnectStatusCallBack != null) {
+                    uvcConnectStatusCallBack.onUvcCameraConnected();
+                }
                 releaseCamera();
                 hasUvcCamera = true;
                 if (BuildConfig.DEBUG)
@@ -149,6 +161,9 @@ public class UVCCameraService extends Service {
             @Override
             public void onDisconnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock) {
                 Log.v(TAG, "onDisconnect:");
+                if (uvcConnectStatusCallBack != null) {
+                    uvcConnectStatusCallBack.onUvcCameraDisConnected();
+                }
                 hasUvcCamera = false;
 //                Toast.makeText(MainActivity.this, R.string.usb_camera_disconnected, Toast.LENGTH_SHORT).show();
 

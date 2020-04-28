@@ -8,11 +8,11 @@ package org.easydarwin.easypusher;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
-import android.widget.TextView;
+
+import org.easydarwin.easypusher.push.StreamActivity;
 
 /**
  * 启动页

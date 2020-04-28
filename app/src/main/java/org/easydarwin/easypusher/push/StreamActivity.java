@@ -5,7 +5,7 @@
 	Website: http://www.easydarwin.org
 */
 
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.push;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -30,15 +30,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.hawk.Hawk;
 import com.regmode.Utils.RegLatestContact;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
-import org.easydarwin.easypusher.push.MediaStream;
+import org.easydarwin.easypusher.BackgroundCameraService;
+import org.easydarwin.easypusher.PushCallback;
+import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.SettingActivity;
+import org.easydarwin.easypusher.UVCCameraService;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.DoubleClickListener;
+import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.update.UpdateMgr;
@@ -58,7 +64,7 @@ import static org.easydarwin.update.UpdateMgr.MY_PERMISSIONS_REQUEST_WRITE_EXTER
 /**
  * 预览+推流等主页
  */
-public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener, RegLatestContact.CancelCallBack {
+public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener, RegLatestContact.CancelCallBack, UvcConnectStatus {
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440", "3840x2160"};
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
@@ -77,10 +83,10 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     List<String> listResolution = new ArrayList<>();
 
-    MediaStream mMediaStream;
+    public MediaStream mMediaStream;
 
-    static Intent mResultIntent;
-    static int mResultCode;
+    public static Intent mResultIntent;
+    public static int mResultCode;
     private UpdateMgr update;
 
     private BackgroundCameraService mService;
@@ -97,7 +103,41 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     public static boolean mRecording;
 
     private long mExitTime;//声明一个long类型变量：用于存放上一点击“返回键”的时刻
-
+    private final static int  UVC_CONNECT = 111;
+    private final  static int  UVC_DISCONNECT = 112;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case UVC_CONNECT:
+                    if (mMediaStream != null) {
+                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+                    }
+                    mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
+                    mScreenResTv.setVisibility(View.INVISIBLE);
+                    break;
+                case UVC_DISCONNECT:
+                    mScreenResTv.setVisibility(View.VISIBLE);
+                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
+                    switch (position) {
+                        case 0:
+                            mSelectCameraTv.setText("摄像头:后置");
+                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+                            break;
+                        case 1:
+                            mSelectCameraTv.setText("摄像头:前置");
+                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -158,7 +198,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
-        String title = resDisplay[SPUtil.getScreenPushingResIndex(this)].toString();
+        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
 
@@ -207,12 +247,13 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onPause() {
+
         if (!mNeedGrantedPermission) {
             unbindService(conn);
             unbindService(uvcConn);
+            mUvcCameraService.setUvcConnectCallBack(null);
             handler.removeCallbacksAndMessages(null);
         }
-
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
 
         if (mMediaStream != null) {
@@ -224,13 +265,18 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 mMediaStream.stopStream();
                 mMediaStream.release();
                 mMediaStream = null;
-
                 stopService(new Intent(this, BackgroundCameraService.class));
                 stopService(new Intent(this, UVCCameraService.class));
             }
         }
 
         super.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+
+        BUSUtil.BUS.unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -242,11 +288,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        BUSUtil.BUS.unregister(this);
-        super.onDestroy();
-    }
 
     /*
      * android6.0权限，onRequestPermissionsResult回调
@@ -360,6 +401,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 mUvcCameraService = ((UVCCameraService.MyBinder) iBinder).getService();
+                mUvcCameraService.setUvcConnectCallBack(StreamActivity.this);
 
             }
 
@@ -726,6 +768,14 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 new AlertDialog.Builder(this).setTitle("选择摄像头").setSingleChoiceItems(getCameras(), getSelectedCameraIndex(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (mMediaStream != null && mMediaStream.isStreaming()) {
+                            Toast.makeText(StreamActivity.this, "正在推送中,无法切换摄像头", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        if (UVCCameraService.hasUvcCamera) {
+                            return;
+                        }
                         SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
                         switch (which) {
                             case 0:
@@ -735,10 +785,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                             case 1:
                                 mSelectCameraTv.setText("摄像头:前置");
                                 mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
-                                break;
-                            case 2:
-                                mSelectCameraTv.setText("摄像头:外置");
-                                mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
                                 break;
                             default:
                                 break;
@@ -765,7 +811,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      */
     private CharSequence[] getCameras() {
         if (UVCCameraService.hasUvcCamera) {
-            return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
+            return new CharSequence[]{"外置摄像头"};
         }
         return new CharSequence[]{"后置摄像头", "前置摄像头"};
 
@@ -778,13 +824,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      */
     private int getSelectedCameraIndex() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-        if (2 == position) {
-            //这个时候要看一下有没有uvc摄像头
-            if (UVCCameraService.hasUvcCamera) {
-                return position;
-            }
-            SPUtil.setScreenPushingCameraIndex(this, 0);
-            return 0;
+        if (UVCCameraService.hasUvcCamera) {
+            SPUtil.setScreenPushingCameraIndex(this, 2);
+            return 2;
         }
         return position;
 
@@ -797,13 +839,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      */
     private String getSelectedCamera() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-        if (2 == position) {
-            //这个时候要看一下有没有uvc摄像头
-            if (UVCCameraService.hasUvcCamera) {
-                return "外置";
-            }
-            SPUtil.setScreenPushingCameraIndex(this, 0);
-            return "后置";
+        if (UVCCameraService.hasUvcCamera) {
+            SPUtil.setScreenPushingCameraIndex(this, 2);
+            return "外置";
         }
 
         return 0 == position ? "后置" : "前置";
@@ -887,7 +925,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      * 切换分辨率
      * */
     public void onClickResolution(View view) {
-        new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(resDisplay, SPUtil.getScreenPushingResIndex(this), new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int position) {
                 String title = resDisplay[position].toString();
@@ -901,7 +939,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     dialog.dismiss();
                     return;
                 }
-                SPUtil.setScreenPushingResIndex(StreamActivity.this, position);
+                Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
                 mScreenResTv.setText("分辨率:" + title);
                 String[] splitR = title.split("x");
 
@@ -1021,6 +1059,18 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void toDoNext() {
+
+    }
+
+    @Override
+    public void onUvcCameraConnected() {
+        mHandler.sendEmptyMessage(UVC_CONNECT);
+
+    }
+
+    @Override
+    public void onUvcCameraDisConnected() {
+//        mHandler.sendEmptyMessage(UVC_DISCONNECT);
 
     }
 }
