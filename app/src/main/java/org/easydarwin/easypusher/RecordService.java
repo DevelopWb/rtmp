@@ -224,7 +224,7 @@ public class RecordService extends Service {
         mPushThread = new Thread("RecordService") {
             @Override
             public void run() {
-                String url = Config.getServerURL(RecordService.this);
+                String url = Config.getServerURL();
                 boolean mHevc = SPUtil.getHevcCodec(RecordService.this);
                 mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 

@@ -5,7 +5,7 @@
 	Website: http://www.easydarwin.org
 */
 
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.mine;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,20 +17,22 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegOperateUtil;
 
+import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.MediaFilesActivity;
+import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.HawkProperty;
@@ -56,9 +58,12 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         binding.mainToolbar.setOnMenuItemClickListener(this);
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP));
-        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT));
-        binding.liveTagEt.setText(Hawk.get(HawkProperty.LIVE_TAG));
+        binding.registCodeValue.setText(RegOperateUtil.strreg);
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
+        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
+        binding.liveTagEt.setText(Hawk.get(HawkProperty.LIVE_TAG, "hls"));
+        binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL));
+        binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL));
         // 使能摄像头后台采集
         onPushBackground();
         onEncodeType();
@@ -134,9 +139,9 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     private void onEncodeType() {
         // 是否使用软编码
         CheckBox x264enc = findViewById(R.id.use_x264_encode);
-        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC,true));
-        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC,isChecked)
-                );
+        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, true));
+        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked)
+        );
 
         //        // 使能H.265编码
         //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
@@ -228,21 +233,28 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     protected void onPause() {
         super.onPause();
 
-        saveIpOrPort();
     }
 
-    /**
-     * 保存IP或端口号
-     */
-    private void saveIpOrPort() {
+    @Override
+    public void onBackPressed() {
         String text = binding.pushServerIpEt.getText().toString().trim();
-        if (PublicUtil.isIP(text)) {
-           Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP,text);
+        if (text.contains("//")) {
+            text = text.substring(text.indexOf("//")+2,text.length());
         }
-
-        String textPort = binding.serverPortTv.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT,textPort);
+        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
+        String textPort = binding.pushServerPortEt.getText().toString().trim();
+        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT, textPort);
+        String tag = binding.liveTagEt.getText().toString().trim();
+        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
+        String registCode = binding.registCodeValue.getText().toString().trim();
+        Hawk.put(HawkProperty.KEY_REGIST_CODE, registCode);
+        String bilibili = binding.biliValueEt.getText().toString().trim();
+        Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
+        String huya = binding.huyaValueEt.getText().toString().trim();
+        Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
+        super.onBackPressed();
     }
+
 
     //    /*
     //    * 二维码扫码
@@ -282,7 +294,6 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
                 String url = data.getStringExtra("text");
                 this.binding.pushServerIpEt.setText(url);
 
-                Config.setServerURL(SettingActivity.this, url);
             }
         }
     }
@@ -301,7 +312,7 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            onBackPressed();
             return true;
         }
 

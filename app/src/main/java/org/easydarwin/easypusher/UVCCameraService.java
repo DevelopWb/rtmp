@@ -146,6 +146,9 @@ public class UVCCameraService extends Service {
 //					camera.setPreviewTexture(camera.getSurfaceTexture());
                     mUVCCamera = camera;
                     liveData.postValue(camera);
+                    if (uvcConnectStatusCallBack != null) {
+                        uvcConnectStatusCallBack.onUvcCameraConnected();
+                    }
                     Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
 
                     if (device != null)
@@ -178,7 +181,9 @@ public class UVCCameraService extends Service {
                     mUVCCamera = null;
                     liveData.postValue(null);
                 }
-
+                if (uvcConnectStatusCallBack != null) {
+                    uvcConnectStatusCallBack.onUvcCameraDisConnected();
+                }
 //                if (mUSBMonitor != null) {
 //                    mUSBMonitor.destroy();
 //                }

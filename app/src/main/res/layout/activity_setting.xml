@@ -39,7 +39,7 @@
                 android:focusableInTouchMode="true"
                 android:orientation="vertical"
                 android:padding="20dp"
-                tools:context="org.easydarwin.easypusher.SettingActivity">
+                tools:context="org.easydarwin.easypusher.mine.SettingActivity">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -61,7 +61,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="dfasdfsdf"
                         app:layout_constraintLeft_toLeftOf="@+id/push_server_ip_et"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,6 +82,7 @@
                         android:layout_marginLeft="15dp"
                         android:background="@drawable/setting_url_shape"
                         android:paddingLeft="10dp"
+                        android:inputType="textUri"
                         android:textColor="#4c4c4c"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@+id/server_ip_tv"

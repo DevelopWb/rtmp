@@ -12,6 +12,9 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.orhanobut.hawk.Hawk;
+import com.regmode.RegOperateUtil;
+
 /**
  * 推流地址的常量类
  */
@@ -19,25 +22,19 @@ public class Config {
 
     private static final String SERVER_URL = "serverUrl";
 //    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
-    private static final String DEFAULT_SERVER_URL = "rtmp://ttcolour.com:10085/hls/temp";
 
-    public static String getServerURL(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SERVER_URL, DEFAULT_SERVER_URL);
-    }
-
-    public static void setServerURL(Context context, String value) {
-        if (value == null || TextUtils.isEmpty(value)) {
-            value = DEFAULT_SERVER_URL;
-        }
-
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(SERVER_URL, value)
-                .apply();
+    public static String getServerURL() {
+        String url_head = "rtmp://";
+        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "ttcolour.com");
+        String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
+        String tag = Hawk.get(HawkProperty.LIVE_TAG, "hls");
+        //todo 这个地方需要改为正常的注册码
+//        String regCode = RegOperateUtil.strreg;
+        String regCode = "temp";
+        return String.format("%s%s%s%s%s%s%s%s", url_head, ip, ":", port, "/", tag, "/", regCode);
     }
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory() +"/EasyRTMP";
+        return Environment.getExternalStorageDirectory() + "/EasyRTMP";
     }
 }
