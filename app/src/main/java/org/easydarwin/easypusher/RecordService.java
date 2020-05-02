@@ -30,12 +30,9 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import org.easydarwin.easypusher.push.StreamActivity;
-import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.encode.AudioStream;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.Pusher;
@@ -158,7 +155,7 @@ public class RecordService extends Service {
         screenDensity = displayMetrics.densityDpi;
 
         // 1倍屏幕大小,0.75倍屏幕大小,0.5倍屏幕大小,0.3倍屏幕大小,0.25倍屏幕大小,0.2倍屏幕大小
-        int defaultIdx = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX,3);
+        int defaultIdx = SPUtil.getScreenPushingResIndex(this);
 
         switch (defaultIdx) {
             case 0:
@@ -224,7 +221,7 @@ public class RecordService extends Service {
         mPushThread = new Thread("RecordService") {
             @Override
             public void run() {
-                String url = Config.getServerURL();
+                String url = Config.getServerURL(RecordService.this);
                 boolean mHevc = SPUtil.getHevcCodec(RecordService.this);
                 mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 

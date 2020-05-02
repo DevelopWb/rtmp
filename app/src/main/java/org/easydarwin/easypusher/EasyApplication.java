@@ -6,10 +6,8 @@ import android.app.NotificationManager;
 import android.content.res.AssetManager;
 import android.os.Build;
 
-import com.orhanobut.hawk.Hawk;
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
-
-import org.easydarwin.easypusher.push.StreamActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,10 +32,10 @@ public class EasyApplication extends Application {
         super.onCreate();
 
         mApplication = this;
-//
-//        Bugly.init(getApplicationContext(), "9a829a728a", false);
-//        setBuglyInit();
-        Hawk.init(this).build();
+
+        Bugly.init(getApplicationContext(), "9a829a728a", false);
+        setBuglyInit();
+
         File youyuan = getFileStreamPath("SIMYOU.ttf");
         if (!youyuan.exists()) {
             AssetManager am = getAssets();

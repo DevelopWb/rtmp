@@ -17,7 +17,6 @@ import android.view.TextureView;
 import android.view.WindowManager;
 
 import org.easydarwin.easypusher.push.MediaStream;
-import org.easydarwin.easypusher.push.StreamActivity;
 
 public class BackgroundCameraService extends Service implements TextureView.SurfaceTextureListener {
     private static final int NOTIFICATION_ID = 1;

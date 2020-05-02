@@ -14,6 +14,25 @@ android {
         versionName '1.4.20.0308'
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         flavorDimensions "versionCode"
+        signingConfigs {
+            release {
+                keyAlias 'yanggong'
+                keyPassword 'dwh2016'
+                storeFile file('yanggong.jks')
+                storePassword 'dwh2016'
+            }
+        }
+        buildTypes {
+            debug {
+                signingConfig signingConfigs.release
+            }
+            release {
+                signingConfig signingConfigs.release
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            }
+        }
 
         if (project.hasProperty('RTMP_KEY')) {
             println("RTMPKEY IS :" + RTMP_KEY)
@@ -24,7 +43,7 @@ android {
             /*
             *本Key为3个月临时授权License，如需商业使用，请邮件至support@easydss.com了解此产品的授权信息。
             */
-            buildConfigField 'String', 'RTMP_KEY', "\"79736C36655A36526D343041574668656F61656E772B6876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F772B4A4659584E355247467964326C755647566862556C7A5647686C516D567A64434D794D4445354F57566863336B3D\""
+            buildConfigField 'String', 'RTMP_KEY', "\"79736C36655A36526D34324132594E656F58776D4A656876636D63755A57467A65575268636E64706269356C59584E35636E52746346634D5671442F70654A4659584E355247467964326C755647566862556C7A5647686C516D567A64434D794D4445354F57566863336B3D\""
         }
 
         ndk {
@@ -88,10 +107,11 @@ dependencies {
     implementation 'com.budiyev.android:code-scanner:1.9.4'
 
     implementation project(':library')
-    implementation project(path: ':RegMode')
-    implementation project(path: ':base_net_lib')
-    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
-    implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
+//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
 
     implementation 'android.arch.lifecycle:extensions:1.0.0'
     implementation 'android.arch.lifecycle:reactivestreams:1.0.0'
@@ -104,6 +124,4 @@ dependencies {
         exclude module: 'support-v4'
         exclude module: 'appcompat-v7'
     }
-    /*hawk*/
-    implementation 'com.orhanobut:hawk:2.0.1'
 }

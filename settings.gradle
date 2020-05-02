@@ -1,1 +1,1 @@
-include ':uvcApp', ':app', ':library', ':RegMode', ':base_net_lib'
+include ':uvcApp', ':app', ':library'

@@ -8,15 +8,15 @@ package org.easydarwin.easypusher;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
-
-import org.easydarwin.easypusher.push.StreamActivity;
+import android.widget.TextView;
 
 /**
  * 启动页
- */
+ * */
 public class SplashActivity extends Activity {
 
     @Override
@@ -30,9 +30,17 @@ public class SplashActivity extends Activity {
             @Override
             public void run() {
                 startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                finish();
+                SplashActivity.this.finish();
             }
         }, 2000);
+
+        String versionName;
+
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = getResources().getString(R.string.version);
+        }
 
     }
 }

@@ -16,19 +16,9 @@ import com.serenegiant.usb.IStatusCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 
-import org.easydarwin.easypusher.push.MediaStream;
-import org.easydarwin.easypusher.push.UvcConnectStatus;
-
 import java.nio.ByteBuffer;
 
 public class UVCCameraService extends Service {
-
-    public static boolean  hasUvcCamera = false;
-    private UvcConnectStatus uvcConnectStatusCallBack;
-
-    public void  setUvcConnectCallBack(UvcConnectStatus uvcConnectStatusCallBack) {
-        this.uvcConnectStatusCallBack = uvcConnectStatusCallBack;
-    }
 
     public static class UVCCameraLivaData extends LiveData<UVCCamera> {
         @Override
@@ -117,7 +107,7 @@ public class UVCCameraService extends Service {
             @Override
             public void onConnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
                 releaseCamera();
-                hasUvcCamera = true;
+
                 if (BuildConfig.DEBUG)
                     Log.v(TAG, "onConnect:");
 
@@ -146,9 +136,7 @@ public class UVCCameraService extends Service {
 //					camera.setPreviewTexture(camera.getSurfaceTexture());
                     mUVCCamera = camera;
                     liveData.postValue(camera);
-                    if (uvcConnectStatusCallBack != null) {
-                        uvcConnectStatusCallBack.onUvcCameraConnected();
-                    }
+
                     Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
 
                     if (device != null)
@@ -161,7 +149,6 @@ public class UVCCameraService extends Service {
             @Override
             public void onDisconnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock) {
                 Log.v(TAG, "onDisconnect:");
-                hasUvcCamera = false;
 //                Toast.makeText(MainActivity.this, R.string.usb_camera_disconnected, Toast.LENGTH_SHORT).show();
 
 //                releaseCamera();
@@ -181,9 +168,7 @@ public class UVCCameraService extends Service {
                     mUVCCamera = null;
                     liveData.postValue(null);
                 }
-                if (uvcConnectStatusCallBack != null) {
-                    uvcConnectStatusCallBack.onUvcCameraDisConnected();
-                }
+
 //                if (mUSBMonitor != null) {
 //                    mUSBMonitor.destroy();
 //                }

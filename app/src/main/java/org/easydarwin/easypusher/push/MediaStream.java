@@ -15,7 +15,6 @@ import android.os.Message;
 import android.os.Process;
 import android.util.Log;
 
-import com.orhanobut.hawk.Hawk;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 
@@ -23,7 +22,6 @@ import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.BackgroundCameraService;
 import org.easydarwin.easypusher.EasyApplication;
 import org.easydarwin.easypusher.UVCCameraService;
-import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.encode.AudioStream;
@@ -126,18 +124,17 @@ public class MediaStream {
     }
 
     /// 初始化摄像头
-    public void createCamera(int mCameraId) {
-        this.mCameraId = mCameraId;
+    public void createCamera() {
         if (Thread.currentThread() != mCameraThread) {
             mCameraHandler.post(() -> {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
-                createCamera(mCameraId);
+                createCamera();
             });
 
             return;
         }
 
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC,false);
+        mSWCodec = SPUtil.getswCodec(context);
         mHevc = SPUtil.getHevcCodec(context);
         mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 
@@ -496,9 +493,7 @@ public class MediaStream {
 
     /// 停止推流
     public void stopStream() {
-        if (mEasyPusher != null) {
-            mEasyPusher.stop();
-        }
+        mEasyPusher.stop();
         isPushStream = false;
     }
 
@@ -564,7 +559,7 @@ public class MediaStream {
             defaultHeight = h;
         });
 
-        createCamera(mCameraId);
+        createCamera();
         startPreview();
     }
 
@@ -577,8 +572,6 @@ public class MediaStream {
      *   CAMERA_FACING_BACK_UVC
      * */
     int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-    public static final int CAMERA_FACING_BACK = 0;//后置
-    public static final int CAMERA_FACING_FRONT = 1;
     public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
 
@@ -636,7 +629,7 @@ public class MediaStream {
 
                 stopPreview();
                 destroyCamera();
-                createCamera(mCameraId);
+                createCamera();
                 startPreview();
             } catch (Exception e) {
                 e.printStackTrace();
