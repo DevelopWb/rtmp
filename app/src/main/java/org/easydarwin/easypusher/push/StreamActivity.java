@@ -84,8 +84,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     List<String> listResolution = new ArrayList<>();
 
     public MediaStream mMediaStream;
-    public MediaStream mBiliBiliLiveStream;//bili流
-    public MediaStream mHuyaLiveStream;//虎牙流
 
     public static Intent mResultIntent;
     public static int mResultCode;
@@ -119,12 +117,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     if (mMediaStream != null) {
                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
                     }
-                    if (mBiliBiliLiveStream != null) {
-                        mBiliBiliLiveStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
-                    }
-                    if (mHuyaLiveStream != null) {
-                        mHuyaLiveStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
-                    }
                     mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
                     mScreenResTv.setVisibility(View.INVISIBLE);
                     break;
@@ -132,8 +124,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     mScreenResTv.setVisibility(View.VISIBLE);
                     mSelectCameraTv.setText("摄像头:后置");
                     mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-                    mBiliBiliLiveStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-                    mHuyaLiveStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
 //                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
 //                    switch (position) {
 //                        case 0:
@@ -275,13 +265,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             handler.removeCallbacksAndMessages(null);
         }
 
-        releaseStream(mMediaStream);
-        releaseStream(mBiliBiliLiveStream);
-        releaseStream(mHuyaLiveStream);
-        super.onDestroy();
-    }
-
-    private void releaseStream(MediaStream mMediaStream) {
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
 
         if (mMediaStream != null) {
@@ -298,6 +281,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 stopService(new Intent(this, UVCCameraService.class));
             }
         }
+        super.onDestroy();
     }
 
     /*
@@ -452,31 +436,12 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 if (!mMediaStream.isStreaming()) {
                     mPushStreamIv.performClick();
                 }
-                //推流
-                if (!mBiliBiliLiveStream.isStreaming()) {
-                    mBiliIv.performClick();
-                }
-                //推流
-                if (!mHuyaLiveStream.isStreaming()) {
-                    mHuyaIv.performClick();
-                }
-
             }
 
             @Override
             public void onOneClick(View v) {
                 try {
                     mMediaStream.getCamera().autoFocus(null);
-                } catch (Exception e) {
-
-                }
-                try {
-                    mHuyaLiveStream.getCamera().autoFocus(null);
-                } catch (Exception e) {
-
-                }
-                try {
-                    mBiliBiliLiveStream.getCamera().autoFocus(null);
                 } catch (Exception e) {
 
                 }
@@ -517,8 +482,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             ms.startPreview();
 
             mMediaStream = ms;
-            mBiliBiliLiveStream = ms;
-            mHuyaLiveStream = ms;
 
             if (ms.isStreaming()) {
                 String url = Config.getServerURL();
@@ -545,13 +508,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             ms = new MediaStream(getApplicationContext(), surface, enableVideo);
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
-            mBiliBiliLiveStream = ms;
-            mHuyaLiveStream = ms;
             try {
                 Thread.sleep(2000);
-                startCamera(mMediaStream);
-                startCamera(mBiliBiliLiveStream);
-                startCamera(mHuyaLiveStream);
+                startCamera();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -561,7 +520,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void startCamera(MediaStream mMediaStream) {
+    private void startCamera() {
         mMediaStream.updateResolution(width, height);
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
         mMediaStream.createCamera(getSelectedCameraIndex());
@@ -840,25 +799,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 onStartOrStopPush();
                 break;
             case R.id.bili_iv:
-                if (mBiliBiliLiveStream != null && !mBiliBiliLiveStream.isStreaming()) {
-                    String url = "rtmp://txy.live-send.acg.tv/live-txy/?streamname=live_522215927_72196887&key=fd79a5428de75134229897e4aa7a6bd3";
-
-                    try {
-                        mBiliBiliLiveStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-
-                        mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                        mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
-                        txtStreamAddress.setText(url);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        sendMessage("激活失败，无效Key");
-                    }
-                } else {
-                    mBiliBiliLiveStream.stopStream();
-                    mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-                    mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
-                    sendMessage("断开连接");
-                }
                 break;
             case R.id.huya_iv:
                 break;
