@@ -17,7 +17,6 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegOperateUtil;
@@ -34,15 +32,13 @@ import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
-import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.HawkProperty;
-import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
 /**
  * 设置页
  */
-public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
 
     public static final int REQUEST_OVERLAY_PERMISSION = 1004;  // 悬浮框
     private static final int REQUEST_SCAN_TEXT_URL = 1003;      // 扫描二维码
@@ -64,6 +60,9 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         binding.liveTagEt.setText(Hawk.get(HawkProperty.LIVE_TAG, "hls"));
         binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL));
         binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL));
+        binding.biliScanIv.setOnClickListener(this);
+        binding.huyaScanIv.setOnClickListener(this);
+        binding.openRecordLocalBt.setOnClickListener(this);
         // 使能摄像头后台采集
         onPushBackground();
         onEncodeType();
@@ -265,14 +264,7 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     //        overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
     //    }
 
-    /*
-     * 本地录像
-     * */
-    public void onOpenLocalRecord(View view) {
-        Intent intent = new Intent(this, MediaFilesActivity.class);
-        startActivityForResult(intent, 0);
-        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-    }
+
 
 
     @Override
@@ -317,5 +309,24 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.open_record_local_bt:
+                Intent intent = new Intent(this, MediaFilesActivity.class);
+                startActivityForResult(intent, 0);
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                break;
+            case R.id.bili_scan_iv:
+                startActivityForResult(new Intent(this, ScanQRActivity.class), 111);
+                break;
+            case R.id.huya_scan_iv:
+                startActivityForResult(new Intent(this, ScanQRActivity.class), 112);
+                break;
+            default:
+                break;
+        }
     }
 }

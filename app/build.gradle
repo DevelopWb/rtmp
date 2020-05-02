@@ -1,17 +1,17 @@
 apply plugin: 'com.android.application'
-
+def configs = rootProject.ext.android
 android {
-    compileSdkVersion 26
-    buildToolsVersion '28.0.3'
+    compileSdkVersion configs.compileSdkVersion
+//    buildToolsVersion '28.0.3'
 
     defaultConfig {
-        applicationId "org.easydarwin.easyrtmp"
-        minSdkVersion 19
-        targetSdkVersion 26
+        applicationId "org.easydarwin.easypusher"
+        minSdkVersion configs.minSdkVersion
+        targetSdkVersion configs.targetSdkVersion
 //        versionCode generateVersionCode()
 //        versionName generateVersionName()
-        versionCode 14200308
-        versionName '1.4.20.0308'
+        versionCode configs.versionCode
+        versionName configs.versionName
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         flavorDimensions "versionCode"
 

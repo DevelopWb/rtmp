@@ -59,8 +59,6 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".ScanQRActivity" />
-
         <activity
             android:name=".MediaFilesActivity"
             android:label="文件夹" />

@@ -1,14 +1,13 @@
 apply plugin: 'com.android.library'
 
+def configs = rootProject.ext.android
 android {
-    compileSdkVersion 26
-    buildToolsVersion '28.0.3'
+    compileSdkVersion configs.compileSdkVersion
+//    buildToolsVersion '28.0.3'
 
     defaultConfig {
-        minSdkVersion 18
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion configs.minSdkVersion
+        targetSdkVersion configs.targetSdkVersion
         consumerProguardFiles 'proguard-rules.pro'
 
         buildConfigField 'boolean', 'MEDIA_DEBUG', 'false'

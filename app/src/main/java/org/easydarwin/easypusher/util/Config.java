@@ -24,6 +24,7 @@ public class Config {
 //    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
 
     public static String getServerURL() {
+
         String url_head = "rtmp://";
         String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "ttcolour.com");
         String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");

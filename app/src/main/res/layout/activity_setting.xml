@@ -151,6 +151,15 @@
                         android:text="哔哩:"
                         app:layout_constraintRight_toRightOf="@+id/live_tag_tv"
                         app:layout_constraintTop_toBottomOf="@+id/live_tag_tv" />
+                    <ImageView
+                        android:id="@+id/bili_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/bili_key"
+                        app:layout_constraintTop_toBottomOf="@+id/bili_key"
+                        android:layout_width="30dp"
+                        android:padding="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/scan_icon"
+                        android:layout_height="35dp"></ImageView>
 
                     <EditText
                         android:id="@+id/bili_value_et"
@@ -158,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="15dp"
-                        android:minHeight="35dp"
+                        android:minHeight="70dp"
                         android:background="@drawable/setting_url_shape"
                         android:inputType="textUri"
                         android:paddingLeft="10dp"
@@ -172,27 +181,36 @@
                         android:id="@+id/huya_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:layout_marginTop="10dp"
                         android:gravity="center"
+                        android:layout_marginRight="15dp"
                         android:inputType="number"
                         android:text="虎牙:"
-                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
-                        app:layout_constraintTop_toBottomOf="@+id/bili_key" />
-
+                        app:layout_constraintRight_toLeftOf="@+id/huya_value_et"
+                        app:layout_constraintTop_toTopOf="@+id/huya_value_et"
+                     />
+                    <ImageView
+                        android:id="@+id/huya_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/huya_key"
+                        app:layout_constraintTop_toBottomOf="@+id/huya_key"
+                        android:layout_width="30dp"
+                        android:padding="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/scan_icon"
+                        android:layout_height="35dp"></ImageView>
                     <EditText
                         android:id="@+id/huya_value_et"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="15dp"
                         android:background="@drawable/setting_url_shape"
                         android:inputType="textUri"
-                        android:minHeight="35dp"
+                        android:layout_marginTop="10dp"
+                        android:minHeight="70dp"
                         android:paddingLeft="10dp"
                         android:textColor="#4c4c4c"
                         android:textSize="12sp"
-                        app:layout_constraintTop_toTopOf="@+id/huya_key"
-                        app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
+                        app:layout_constraintLeft_toLeftOf="@+id/bili_value_et"
+                        app:layout_constraintTop_toBottomOf="@+id/bili_value_et"
                         app:layout_constraintRight_toRightOf="parent"
                         />
 
@@ -335,6 +353,7 @@
                 </RadioGroup>
 
                 <Button
+                    android:id="@+id/open_record_local_bt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"

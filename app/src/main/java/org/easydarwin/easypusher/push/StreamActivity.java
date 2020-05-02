@@ -84,6 +84,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     List<String> listResolution = new ArrayList<>();
 
     public MediaStream mMediaStream;
+    public MediaStream mBiliLiveStream;
 
     public static Intent mResultIntent;
     public static int mResultCode;
@@ -482,6 +483,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             ms.startPreview();
 
             mMediaStream = ms;
+            mBiliLiveStream = ms;
 
             if (ms.isStreaming()) {
                 String url = Config.getServerURL();
@@ -508,6 +510,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             ms = new MediaStream(getApplicationContext(), surface, enableVideo);
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
+            mBiliLiveStream = ms;
             try {
                 Thread.sleep(2000);
                 startCamera();
@@ -799,6 +802,15 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 onStartOrStopPush();
                 break;
             case R.id.bili_iv:
+
+                    try {
+                        String url = "rtmp://txy.live-send.acg.tv/live-txy/?streamname=live_522215927_72196887&key=fd79a5428de75134229897e4aa7a6bd3";
+                        mBiliLiveStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        sendMessage("激活失败，无效Key");
+                    }
                 break;
             case R.id.huya_iv:
                 break;
