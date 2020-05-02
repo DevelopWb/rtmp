@@ -32,6 +32,7 @@ import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
+import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 
@@ -320,10 +321,10 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
             case R.id.bili_scan_iv:
-                startActivityForResult(new Intent(this, ScanQRActivity.class), 111);
+                startActivityForResult(new Intent(this, QRScanActivity.class), 111);
                 break;
             case R.id.huya_scan_iv:
-                startActivityForResult(new Intent(this, ScanQRActivity.class), 112);
+                startActivityForResult(new Intent(this, QRScanActivity.class), 112);
                 break;
             default:
                 break;

@@ -26,12 +26,8 @@ import org.easydarwin.easypusher.mine.SettingActivity;
 import java.util.function.Consumer;
 
 
-/**
- * 扫码
- * @aouther ZhangZhenlong
- * @date 2020-3-18
- */
-public class QRScanActivity extends AppCompatActivity implements View.OnClickListener, OnCaptureCallback {
+
+public class QRScanActivity extends Activity implements View.OnClickListener, OnCaptureCallback {
     private SurfaceView mSurfaceView;
     private ViewfinderView mViewfinderView;
     private ImageView mZxingPic;
@@ -42,14 +38,6 @@ public class QRScanActivity extends AppCompatActivity implements View.OnClickLis
     private int SELECT_PIC_RESULT = 1001;
 
 //    private int pageType;//0扫码，1扫描巡检内容
-
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        setContentView(R.layout.activity_qrscan);
-        initView();
-    }
 
 
     private void initView() {
@@ -72,6 +60,8 @@ public class QRScanActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_qrscan);
+        initView();
     }
 
 

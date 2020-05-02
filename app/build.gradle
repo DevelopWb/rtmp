@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 def configs = rootProject.ext.android
 android {
     compileSdkVersion configs.compileSdkVersion
-//    buildToolsVersion '28.0.3'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
-        applicationId "org.easydarwin.easypusher"
+        applicationId "org.easydarwin.easyrtmp"
         minSdkVersion configs.minSdkVersion
         targetSdkVersion configs.targetSdkVersion
 //        versionCode generateVersionCode()
@@ -67,14 +67,13 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation(name: 'update-release', ext: 'aar')
+    implementation(name: 'update-release', ext: 'aar'){
+        exclude group:'com.google.zxing'
+    }
 
     testImplementation 'junit:junit:4.12'
 
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:preference-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
@@ -85,21 +84,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-
-    implementation 'com.budiyev.android:code-scanner:1.9.4'
-
     implementation project(':library')
     implementation project(path: ':RegMode')
     implementation project(path: ':base_net_lib')
     implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
     implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
 
-    implementation 'android.arch.lifecycle:extensions:1.0.0'
-    implementation 'android.arch.lifecycle:reactivestreams:1.0.0'
-    implementation 'android.arch.lifecycle:extensions:1.0.0'
-    implementation 'android.arch.lifecycle:reactivestreams:1.0.0'
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
 
     implementation(name: 'libuvccamera-release', ext: 'aar') {
         exclude module: 'support-v4'
@@ -107,4 +97,5 @@ dependencies {
     }
     /*hawk*/
     implementation 'com.orhanobut:hawk:2.0.1'
+    implementation 'com.king.zxing:zxing-lite:1.1.6'
 }

@@ -53,6 +53,7 @@
             android:screenOrientation="portrait"></activity>
 
         <activity android:name=".AboutActivity" />
+        <activity android:name=".mine.scan.QRScanActivity" />
 
         <activity
             android:name=".mine.SettingActivity"
