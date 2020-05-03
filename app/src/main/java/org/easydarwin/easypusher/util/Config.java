@@ -28,10 +28,8 @@ public class Config {
         String url_head = "rtmp://";
         String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "ttcolour.com");
         String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
-        String tag = Hawk.get(HawkProperty.LIVE_TAG, "hls");
-        //todo 这个地方需要改为正常的注册码
-//        String regCode = RegOperateUtil.strreg;
-        String regCode = "temp";
+        String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls");
+        String regCode = RegOperateUtil.strreg;
         return String.format("%s%s%s%s%s%s%s%s", url_head, ip, ":", port, "/", tag, "/", regCode);
     }
 

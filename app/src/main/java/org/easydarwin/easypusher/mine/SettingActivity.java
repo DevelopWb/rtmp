@@ -42,7 +42,9 @@ import org.easydarwin.easypusher.util.SPUtil;
 public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
 
     public static final int REQUEST_OVERLAY_PERMISSION = 1004;  // 悬浮框
-    private static final int REQUEST_SCAN_TEXT_URL = 1003;      // 扫描二维码
+    private static final int REQUEST_SCAN_TEXT_URL_BILI = 1003;      // 扫描二维码bili
+    private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
+
     private ActivitySettingBinding binding;
 
     //    EditText url;
@@ -58,9 +60,9 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         binding.registCodeValue.setText(RegOperateUtil.strreg);
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        binding.liveTagEt.setText(Hawk.get(HawkProperty.LIVE_TAG, "hls"));
         binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL));
         binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL));
+        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG,"hls"));
         binding.biliScanIv.setOnClickListener(this);
         binding.huyaScanIv.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
@@ -239,7 +241,7 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     public void onBackPressed() {
         String text = binding.pushServerIpEt.getText().toString().trim();
         if (text.contains("//")) {
-            text = text.substring(text.indexOf("//")+2,text.length());
+            text = text.substring(text.indexOf("//") + 2, text.length());
         }
         Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
         String textPort = binding.pushServerPortEt.getText().toString().trim();
@@ -252,7 +254,8 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
         String huya = binding.huyaValueEt.getText().toString().trim();
         Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
-        super.onBackPressed();
+
+       super.onBackPressed();
     }
 
 
@@ -264,8 +267,6 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
     //        startActivityForResult(intent, REQUEST_SCAN_TEXT_URL);
     //        overridePendingTransition(R.anim.slide_bottom_in, R.anim.slide_top_out);
     //    }
-
-
 
 
     @Override
@@ -282,11 +283,16 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
                     backgroundPushing.setChecked(false);
                 }
             }
-        } else if (requestCode == REQUEST_SCAN_TEXT_URL) {
+        } else if (requestCode == REQUEST_SCAN_TEXT_URL_BILI) {
             if (resultCode == RESULT_OK) {
-                String url = data.getStringExtra("text");
-                this.binding.pushServerIpEt.setText(url);
+                String url = data.getStringExtra("result");
+                this.binding.biliValueEt.setText(url);
+            }
 
+        } else if (requestCode == REQUEST_SCAN_TEXT_URL_HUYA) {
+            if (resultCode == RESULT_OK) {
+                String url = data.getStringExtra("result");
+                this.binding.huyaValueEt.setText(url);
             }
         }
     }
@@ -321,10 +327,10 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
             case R.id.bili_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), 111);
+                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_BILI);
                 break;
             case R.id.huya_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), 112);
+                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_HUYA);
                 break;
             default:
                 break;

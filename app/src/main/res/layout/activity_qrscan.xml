@@ -8,17 +8,18 @@
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
     <com.king.zxing.ViewfinderView
-        android:fitsSystemWindows="true"
         android:id="@+id/viewfinderView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:frameColor="#60000000"
+        android:fitsSystemWindows="true"
         app:cornerColor="@android:color/white"
+        app:frameColor="#60000000"
         app:labelText="将二维码/条形码放入框中"
         app:labelTextLocation="bottom"
         app:laserStyle="line"
-        app:scannerLineHeight="3dp"/>
+        app:scannerLineHeight="3dp" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -42,10 +43,10 @@
 
         <ImageView
             android:id="@+id/ivTorch"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@drawable/zxfl_torch_selector"
-            android:padding="10dp"
+            android:padding="15dp"
             android:background="?android:attr/selectableItemBackground"
             app:layout_constraintLeft_toRightOf="@+id/zxing_pic"
             app:layout_constraintTop_toTopOf="parent"
@@ -54,10 +55,10 @@
 
         <ImageView
             android:id="@+id/zxing_back_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@mipmap/scan_close"
-            android:padding="10dp"
+            android:padding="15dp"
             android:background="?android:attr/selectableItemBackground"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"

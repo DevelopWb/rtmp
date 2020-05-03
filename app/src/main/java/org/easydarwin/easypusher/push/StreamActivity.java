@@ -21,6 +21,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegOperateUtil;
 import com.regmode.Utils.RegLatestContact;
 import com.squareup.otto.Subscribe;
 
@@ -64,7 +66,7 @@ import static org.easydarwin.update.UpdateMgr.MY_PERMISSIONS_REQUEST_WRITE_EXTER
 /**
  * 预览+推流等主页
  */
-public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener, RegLatestContact.CancelCallBack, UvcConnectStatus {
+public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener, UvcConnectStatus {
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440", "3840x2160"};
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
@@ -73,7 +75,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     // 默认分辨率
     int width = 1280, height = 720;
-
+    private int push_type = 0;//0 推流 1 哔哩直播 2 虎牙直播
     TextView txtStreamAddress;
     TextView mSelectCameraTv;
     //    Spinner spnResolution;
@@ -181,14 +183,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-        if (!mNeedGrantedPermission) {
-            goonWithPermissionGranted();
-        }
-        //        notifyAboutColorChange();
-
         // 动态获取camera和audio权限
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, REQUEST_CAMERA_PERMISSION);
+        if (ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.CAMERA) != PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.RECORD_AUDIO) != PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.READ_PHONE_STATE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(StreamActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_PHONE_STATE}, REQUEST_CAMERA_PERMISSION);
             mNeedGrantedPermission = true;
             return;
         } else {
@@ -196,12 +195,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
-        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3)].toString();
-        mScreenResTv.setText(String.format("分辨率:%s", title));
-        initSurfaceViewClick();
+        //        notifyAboutColorChange();
 
-        //        RegOperateUtil regOprateUtil = RegOperateUtil.getInstance(this);
-        //        regOprateUtil.setCancelCallBack(this);
+
     }
 
     /**
@@ -241,28 +237,17 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         });
+        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3)].toString();
+        mScreenResTv.setText(String.format("分辨率:%s", title));
+        initSurfaceViewClick();
     }
 
     @Override
     protected void onPause() {
 
-
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        BUSUtil.BUS.unregister(this);
         if (!mNeedGrantedPermission) {
-            unbindService(conn);
-            unbindService(uvcConn);
+//            unbindService(conn);
+//            unbindService(uvcConn);
             handler.removeCallbacksAndMessages(null);
         }
 
@@ -282,6 +267,22 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 stopService(new Intent(this, UVCCameraService.class));
             }
         }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mNeedGrantedPermission) {
+            goonWithPermissionGranted();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        BUSUtil.BUS.unregister(this);
+
         super.onDestroy();
     }
 
@@ -299,7 +300,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
                 break;
             case REQUEST_CAMERA_PERMISSION: {
-                if (grantResults.length > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
+                if (grantResults.length > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED && grantResults[2] == PERMISSION_GRANTED) {
                     mNeedGrantedPermission = false;
                     goonWithPermissionGranted();
                 } else {
@@ -351,7 +352,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     private void goonWithPermissionGranted() {
 
-
+        RegOperateUtil regOprateUtil = RegOperateUtil.getInstance(this);
         streamStat.setText(null);
         mSelectCameraTv.setOnClickListener(this);
 
@@ -679,7 +680,20 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 sendMessage("连接异常中断");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_PUSHING:
-                sendMessage("推流中");
+                switch (push_type) {
+                    case 0:
+                        sendMessage("推流中");
+                        break;
+                    case 1:
+                        sendMessage("哔哩哔哩直播中");
+                        break;
+                    case 2:
+                        sendMessage("虎牙直播中");
+                        break;
+                    default:
+                        break;
+                }
+
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_DISCONNECTED:
                 sendMessage("断开连接");
@@ -799,20 +813,27 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
                 break;
             case R.id.push_stream_iv:
-                onStartOrStopPush();
+                push_type = 0;
+                String url = Config.getServerURL();
+                onStartOrStopPush(url);
                 break;
             case R.id.bili_iv:
-
-                    try {
-                        String url = "rtmp://txy.live-send.acg.tv/live-txy/?streamname=live_522215927_72196887&key=fd79a5428de75134229897e4aa7a6bd3";
-                        mBiliLiveStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        sendMessage("激活失败，无效Key");
-                    }
+                String url_bili = Hawk.get(HawkProperty.KEY_BILIBILI_URL);
+                if (TextUtils.isEmpty(url_bili)) {
+                    Toast.makeText(getApplicationContext(), "还没有配置哔哩哔哩直播地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                push_type = 1;
+                onStartOrStopPush(url_bili);
                 break;
             case R.id.huya_iv:
+                String url_huya = Hawk.get(HawkProperty.KEY_HU_YA_URL);
+                if (TextUtils.isEmpty(url_huya)) {
+                    Toast.makeText(getApplicationContext(), "还没有配置虎牙直播地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                push_type = 2;
+                onStartOrStopPush(url_huya);
                 break;
         }
     }
@@ -999,17 +1020,34 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     /*
      * 推流or停止
+     * type  0 推流 1 bili直播  2 虎牙直播
      * */
-    public void onStartOrStopPush() {
+    public void onStartOrStopPush(String url) {
 
         if (mMediaStream != null && !mMediaStream.isStreaming()) {
-            String url = Config.getServerURL();
-
             try {
                 mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                switch (push_type) {
+                    case 0:
+                        mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
+                        mBiliIv.setImageResource(R.mipmap.bilibili_off);
+                        mHuyaIv.setImageResource(R.mipmap.huya_off);
+                        break;
+                    case 1:
+                        mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+                        mBiliIv.setImageResource(R.mipmap.bilibili_on);
+                        mHuyaIv.setImageResource(R.mipmap.huya_off);
+                        break;
+                    case 2:
+                        mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+                        mBiliIv.setImageResource(R.mipmap.bilibili_off);
+                        mHuyaIv.setImageResource(R.mipmap.huya_on);
+                        break;
+                    default:
+                        break;
+                }
 
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -1019,6 +1057,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             mMediaStream.stopStream();
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+            mBiliIv.setImageResource(R.mipmap.bilibili_off);
+            mHuyaIv.setImageResource(R.mipmap.huya_off);
             sendMessage("断开连接");
         }
     }
@@ -1062,16 +1102,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-    }
-
-    @Override
-    public void toFinishActivity() {
-        finish();
-    }
-
-    @Override
-    public void toDoNext() {
 
     }
 

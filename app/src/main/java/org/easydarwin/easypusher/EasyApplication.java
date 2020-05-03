@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.res.AssetManager;
 import android.os.Build;
 
+import com.basenetlib.util.NetWorkUtil;
 import com.orhanobut.hawk.Hawk;
 import com.tencent.bugly.beta.Beta;
 
@@ -38,6 +39,7 @@ public class EasyApplication extends Application {
 //        Bugly.init(getApplicationContext(), "9a829a728a", false);
 //        setBuglyInit();
         Hawk.init(this).build();
+        NetWorkUtil.initContext(this);
         File youyuan = getFileStreamPath("SIMYOU.ttf");
         if (!youyuan.exists()) {
             AssetManager am = getAssets();

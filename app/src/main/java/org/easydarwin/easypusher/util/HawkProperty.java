@@ -8,7 +8,6 @@ package org.easydarwin.easypusher.util;
 public class HawkProperty {
 
     public  static String   AUTO_RUN="auto_run";//开机自启动
-    public  static String   LIVE_TAG="live_tag";//直播标识
     /**
      * 保存IP
      */
