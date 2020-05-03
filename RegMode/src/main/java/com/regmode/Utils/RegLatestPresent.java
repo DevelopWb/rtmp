@@ -10,8 +10,8 @@ import com.basenetlib.okgo.NetResponseCallBack;
  * Description:This is RegLatestPresent
  */
 public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
-    public static String URL_Reg_Center = "http://221.122.114.64:8087";//注册码中心系统
-    public static String APP_MARK = "QZYH";//软件标识
+    public static String URL_Reg_Center = "https://zc.xun365.net";//注册码中心系统
+    public static String APP_MARK = "YJZB";//软件标识
 
     @Override
     public void setRegisCodeNumber(String regisCode, int size, final RequestStatus requestStatus) {
@@ -113,9 +113,8 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("softwareId", APP_MARK)
                 .params("imei",imei)
-                .postToNetwork(URL_Reg_Center + "//WebService/SoftWare.asmx/SoftWareRegister", new NetResponseCallBack() {
+                .postToNetwork(URL_Reg_Center + "/WebService/SoftWare.asmx/SoftWareRegister", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.REGIST_IMEI);

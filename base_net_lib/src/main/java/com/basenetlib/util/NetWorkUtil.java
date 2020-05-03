@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import com.basenetlib.https.MyTrustManager;
 import com.basenetlib.networkProxy.HttpProxy;
 import com.basenetlib.okgo.OkGoInterceptor;
 import com.basenetlib.okgo.OkgoTool;
@@ -18,7 +19,12 @@ import com.lzy.okgo.cache.CacheMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 
 import okhttp3.OkHttpClient;
 
@@ -35,6 +41,18 @@ public class NetWorkUtil {
         NetWorkUtil.context = context.getApplicationContext();
         setOkGoConfig(context);
     }
+    private static SSLSocketFactory createSSLSocketFactory() {
+        SSLSocketFactory ssfFactory = null;
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[]{new MyTrustManager()}, new SecureRandom());
+            ssfFactory = sc.getSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ssfFactory;
+    }
     /**
      * 配置okgo
      */
@@ -46,6 +64,7 @@ public class NetWorkUtil {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(3000, TimeUnit.SECONDS)
+//                .sslSocketFactory(createSSLSocketFactory())
                 .writeTimeout(3000, TimeUnit.SECONDS)
                 .addInterceptor(new OkGoInterceptor("TokenInterceptor"))//添加获取token的拦截器
                 .build();

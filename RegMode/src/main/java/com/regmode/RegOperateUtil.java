@@ -789,6 +789,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 
     @Override
     public void onError(String tag) {
+        Toast.makeText(context,tag,Toast.LENGTH_SHORT).show();
         if (progressDialog != null) {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();

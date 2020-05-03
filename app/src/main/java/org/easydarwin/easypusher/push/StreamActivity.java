@@ -126,7 +126,10 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 case UVC_DISCONNECT:
                     mScreenResTv.setVisibility(View.VISIBLE);
                     mSelectCameraTv.setText("摄像头:后置");
-                    mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+                    if (mMediaStream != null) {
+                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+                    }
+
 //                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
 //                    switch (position) {
 //                        case 0:
@@ -246,8 +249,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     protected void onPause() {
 
         if (!mNeedGrantedPermission) {
-//            unbindService(conn);
-//            unbindService(uvcConn);
+            unbindService(conn);
+            unbindService(uvcConn);
             handler.removeCallbacksAndMessages(null);
         }
 
@@ -282,7 +285,28 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         BUSUtil.BUS.unregister(this);
-
+//        if (!mNeedGrantedPermission) {
+//            unbindService(conn);
+//            unbindService(uvcConn);
+//            handler.removeCallbacksAndMessages(null);
+//        }
+//
+//        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
+//
+//        if (mMediaStream != null) {
+//            mMediaStream.stopPreview();
+//
+//            if (isStreaming && SPUtil.getEnableBackgroundCamera(this)) {
+//                mService.activePreview();
+//            } else {
+//                mMediaStream.stopStream();
+//                mMediaStream.release();
+//                mMediaStream = null;
+//
+//                stopService(new Intent(this, BackgroundCameraService.class));
+//                stopService(new Intent(this, UVCCameraService.class));
+//            }
+//        }
         super.onDestroy();
     }
 
@@ -352,7 +376,18 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     private void goonWithPermissionGranted() {
 
-        RegOperateUtil regOprateUtil = RegOperateUtil.getInstance(this);
+//        RegOperateUtil regOprateUtil = RegOperateUtil.getInstance(this);
+//        regOprateUtil.setCancelCallBack(new RegLatestContact.CancelCallBack() {
+//            @Override
+//            public void toFinishActivity() {
+//
+//            }
+//
+//            @Override
+//            public void toDoNext() {
+//
+//            }
+//        });
         streamStat.setText(null);
         mSelectCameraTv.setOnClickListener(this);
 
