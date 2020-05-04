@@ -94,8 +94,8 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     private BackgroundCameraService mService;
     private UVCCameraService mUvcCameraService;
-    private ServiceConnection conn;
-    private ServiceConnection uvcConn;
+    private ServiceConnection conn = null;
+    private ServiceConnection uvcConn = null;
 
     private boolean mNeedGrantedPermission;
 
@@ -124,11 +124,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     mScreenResTv.setVisibility(View.INVISIBLE);
                     break;
                 case UVC_DISCONNECT:
-                    mScreenResTv.setVisibility(View.VISIBLE);
-                    mSelectCameraTv.setText("摄像头:后置");
-                    if (mMediaStream != null) {
-                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-                    }
+//                    mScreenResTv.setVisibility(View.VISIBLE);
+//                    mSelectCameraTv.setText("摄像头:后置");
+//                    if (mMediaStream != null) {
+//                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+//                    }
 
 //                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
 //                    switch (position) {
@@ -248,9 +248,33 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onPause() {
 
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (!mNeedGrantedPermission) {
-            unbindService(conn);
-            unbindService(uvcConn);
+            goonWithPermissionGranted();
+
+
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        BUSUtil.BUS.unregister(this);
+        if (!mNeedGrantedPermission) {
+            if (conn != null) {
+                unbindService(conn);
+                conn = null;
+            }
+            if (uvcConn != null) {
+                unbindService(uvcConn);
+                uvcConn = null;
+            }
+
             handler.removeCallbacksAndMessages(null);
         }
 
@@ -270,43 +294,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 stopService(new Intent(this, UVCCameraService.class));
             }
         }
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!mNeedGrantedPermission) {
-            goonWithPermissionGranted();
-        }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        BUSUtil.BUS.unregister(this);
-//        if (!mNeedGrantedPermission) {
-//            unbindService(conn);
-//            unbindService(uvcConn);
-//            handler.removeCallbacksAndMessages(null);
-//        }
-//
-//        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-//
-//        if (mMediaStream != null) {
-//            mMediaStream.stopPreview();
-//
-//            if (isStreaming && SPUtil.getEnableBackgroundCamera(this)) {
-//                mService.activePreview();
-//            } else {
-//                mMediaStream.stopStream();
-//                mMediaStream.release();
-//                mMediaStream = null;
-//
-//                stopService(new Intent(this, BackgroundCameraService.class));
-//                stopService(new Intent(this, UVCCameraService.class));
-//            }
-//        }
         super.onDestroy();
     }
 
@@ -406,45 +393,47 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
         //        update = new UpdateMgr(this);
         //        update.checkUpdate(url);
-
         // create background service for background use.
         Intent intent = new Intent(this, BackgroundCameraService.class);
         startService(intent);
 
         Intent intent1 = new Intent(this, UVCCameraService.class);
         startService(intent1);
+        if (conn == null) {
+            conn = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                    mService = ((BackgroundCameraService.LocalBinder) iBinder).getService();
 
-        conn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                mService = ((BackgroundCameraService.LocalBinder) iBinder).getService();
-
-                if (surfaceView.isAvailable()) {
-                    goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+                    if (surfaceView.isAvailable()) {
+                        goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+                    }
                 }
-            }
 
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
+                @Override
+                public void onServiceDisconnected(ComponentName componentName) {
 
-            }
-        };
-        uvcConn = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                mUvcCameraService = ((UVCCameraService.MyBinder) iBinder).getService();
-                mUvcCameraService.setUvcConnectCallBack(StreamActivity.this);
+                }
+            };
+        }
+        if (uvcConn == null) {
+            uvcConn = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                    mUvcCameraService = ((UVCCameraService.MyBinder) iBinder).getService();
+                    mUvcCameraService.setUvcConnectCallBack(StreamActivity.this);
 
-            }
+                }
 
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
+                @Override
+                public void onServiceDisconnected(ComponentName componentName) {
 
-            }
-        };
+                }
+            };
+            bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
+            bindService(new Intent(this, UVCCameraService.class), uvcConn, 0);
+        }
 
-        bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
-        bindService(new Intent(this, UVCCameraService.class), uvcConn, 0);
 
         if (mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
@@ -1147,7 +1136,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onUvcCameraDisConnected() {
-        handler.sendEmptyMessage(UVC_DISCONNECT);
+//        handler.sendEmptyMessage(UVC_DISCONNECT);
 
     }
 }
