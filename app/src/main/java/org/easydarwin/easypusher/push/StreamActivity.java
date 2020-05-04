@@ -32,8 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
-import com.regmode.RegOperateUtil;
-import com.regmode.Utils.RegLatestContact;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
@@ -176,6 +174,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView mBiliIv;
     private ImageView mVedioPushBottomTagIv;
     private ImageView mHuyaIv, mBlackBgIv;
+    private Intent uvcServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -394,11 +393,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         //        update = new UpdateMgr(this);
         //        update.checkUpdate(url);
         // create background service for background use.
-        Intent intent = new Intent(this, BackgroundCameraService.class);
-        startService(intent);
+        Intent backCameraIntent = new Intent(this, BackgroundCameraService.class);
+        startService(backCameraIntent);
 
-        Intent intent1 = new Intent(this, UVCCameraService.class);
-        startService(intent1);
+        Intent  uvcServiceIntent = new Intent(this, UVCCameraService.class);
+        startService(uvcServiceIntent);
         if (conn == null) {
             conn = new ServiceConnection() {
                 @Override
@@ -868,7 +867,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      * @return
      */
     private CharSequence[] getCameras() {
-        if (UVCCameraService.hasUvcCamera) {
+        if (UVCCameraService.uvcConnected) {
             return new CharSequence[]{"外置摄像头"};
         }
         return new CharSequence[]{"后置摄像头", "前置摄像头"};
@@ -882,7 +881,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      */
     private int getSelectedCameraIndex() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-        if (UVCCameraService.hasUvcCamera) {
+        if (UVCCameraService.uvcConnected) {
             SPUtil.setScreenPushingCameraIndex(this, 2);
             return 2;
         }
@@ -897,7 +896,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
      */
     private String getSelectedCamera() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-        if (UVCCameraService.hasUvcCamera) {
+        if (UVCCameraService.uvcConnected) {
             SPUtil.setScreenPushingCameraIndex(this, 2);
             return "外置";
         }
@@ -1132,6 +1131,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onUvcCameraConnected() {
         handler.sendEmptyMessage(UVC_CONNECT);
+    }
+
+    @Override
+    public void onUvcCameraAttached() {
+
     }
 
     @Override

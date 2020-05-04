@@ -7,12 +7,16 @@
 package org.easydarwin.easypusher;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.WindowManager;
 
 import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.push.UvcConnectStatus;
 
 /**
  * 启动页
@@ -25,14 +29,11 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.splash_activity);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                finish();
-            }
-        }, 2000);
+        Intent intent1 = new Intent(this, UVCCameraService.class);
+        startService(intent1);
+//        startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+//        finish();
 
     }
+
 }
