@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -16,7 +17,7 @@ import com.serenegiant.usb.IStatusCallback;
 import com.serenegiant.usb.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
 
-import org.easydarwin.easypusher.push.UvcConnectStatus;
+import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
 
@@ -24,11 +25,7 @@ public class UVCCameraService extends Service {
 
     public static boolean uvcConnected = false;
     public static boolean uvcAttached = false;
-    private UvcConnectStatus uvcConnectStatusCallBack;
 
-    public void  setUvcConnectCallBack(UvcConnectStatus uvcConnectStatusCallBack) {
-        this.uvcConnectStatusCallBack = uvcConnectStatusCallBack;
-    }
 
     public static class UVCCameraLivaData extends LiveData<UVCCamera> {
         @Override
@@ -74,18 +71,8 @@ public class UVCCameraService extends Service {
 
     private SparseArray<UVCCamera> cameras = new SparseArray<>();
 
-    public class MyBinder extends Binder {
-        public UVCCameraService getService() {
-            return UVCCameraService.this;
-        }
-    }
 
-    MyBinder binder = new MyBinder();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
 
     public UVCCamera getCamera() {
         return mUVCCamera;
@@ -105,7 +92,11 @@ public class UVCCameraService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         return super.onStartCommand(intent, flags, startId);
+
     }
 
     @Override
@@ -118,12 +109,14 @@ public class UVCCameraService extends Service {
                 Log.v(TAG, "onAttach:" + device);
                 uvcAttached = true;
                 mUSBMonitor.requestPermission(device);
+                EventBus.getDefault().post("onAttach");
             }
 
             @Override
             public void onConnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
                 releaseCamera();
                 uvcConnected = true;
+
                 if (BuildConfig.DEBUG)
                     Log.v(TAG, "onConnect:");
 
@@ -152,11 +145,8 @@ public class UVCCameraService extends Service {
 //					camera.setPreviewTexture(camera.getSurfaceTexture());
                     mUVCCamera = camera;
                     liveData.postValue(camera);
-                    if (uvcConnectStatusCallBack != null) {
-                        uvcConnectStatusCallBack.onUvcCameraConnected();
-                    }
-                    Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().post("onConnect");
                     if (device != null)
                         cameras.append(device.getDeviceId(), camera);
                 } catch (Exception ex) {
@@ -187,9 +177,7 @@ public class UVCCameraService extends Service {
                     mUVCCamera = null;
                     liveData.postValue(null);
                 }
-                if (uvcConnectStatusCallBack != null) {
-                    uvcConnectStatusCallBack.onUvcCameraDisConnected();
-                }
+                EventBus.getDefault().post("onDisconnect");
 //                if (mUSBMonitor != null) {
 //                    mUSBMonitor.destroy();
 //                }
@@ -219,11 +207,17 @@ public class UVCCameraService extends Service {
     @Override
     public void onDestroy() {
         releaseCamera();
-
+        EventBus.getDefault().unregister(this);
         if (mUSBMonitor != null) {
             mUSBMonitor.unregister();
         }
 
         super.onDestroy();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

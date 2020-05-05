@@ -32,12 +32,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BackgroundCameraService;
+import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.PushCallback;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
@@ -50,6 +52,7 @@ import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.update.UpdateMgr;
 import org.easydarwin.util.BUSUtil;
 import org.easydarwin.util.Util;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +67,7 @@ import static org.easydarwin.update.UpdateMgr.MY_PERMISSIONS_REQUEST_WRITE_EXTER
 /**
  * 预览+推流等主页
  */
-public class StreamActivity extends AppCompatActivity implements View.OnClickListener, TextureView.SurfaceTextureListener, UvcConnectStatus {
+public class StreamActivity extends BaseProjectActivity implements View.OnClickListener, TextureView.SurfaceTextureListener {
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440", "3840x2160"};
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
@@ -91,11 +94,9 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     private UpdateMgr update;
 
     private BackgroundCameraService mService;
-    private UVCCameraService mUvcCameraService;
     private ServiceConnection conn = null;
-    private ServiceConnection uvcConn = null;
 
-    private boolean mNeedGrantedPermission;
+//    private boolean mNeedGrantedPermission;
 
     private static final String STATE = "state";
     private static final int MSG_STATE = 1;
@@ -115,11 +116,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                     txtStatus.setText(state);
                     break;
                 case UVC_CONNECT:
-                    if (mMediaStream != null) {
-                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
-                    }
-                    mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
-                    mScreenResTv.setVisibility(View.INVISIBLE);
+
                     break;
                 case UVC_DISCONNECT:
 //                    mScreenResTv.setVisibility(View.VISIBLE);
@@ -185,22 +182,11 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-        // 动态获取camera和audio权限
-        if (ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.CAMERA) != PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.RECORD_AUDIO) != PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(StreamActivity.this, Manifest.permission.READ_PHONE_STATE) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(StreamActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_PHONE_STATE}, REQUEST_CAMERA_PERMISSION);
-            mNeedGrantedPermission = true;
-            return;
-        } else {
-            // resume
-        }
-
-
-        //        notifyAboutColorChange();
+//        RegOperateUtil.getInstance(this);
 
 
     }
+
 
     /**
      * 初始化view
@@ -253,29 +239,21 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mNeedGrantedPermission) {
-            goonWithPermissionGranted();
-
-
-        }
-
+        goonWithPermissionGranted();
     }
 
     @Override
     protected void onDestroy() {
         BUSUtil.BUS.unregister(this);
-        if (!mNeedGrantedPermission) {
-            if (conn != null) {
-                unbindService(conn);
-                conn = null;
-            }
-            if (uvcConn != null) {
-                unbindService(uvcConn);
-                uvcConn = null;
-            }
-
-            handler.removeCallbacksAndMessages(null);
+        if (conn != null) {
+            unbindService(conn);
+            conn = null;
         }
+
+        handler.removeCallbacksAndMessages(null);
+//        if (!mNeedGrantedPermission) {
+//
+//        }
 
         boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
 
@@ -288,7 +266,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 mMediaStream.stopStream();
                 mMediaStream.release();
                 mMediaStream = null;
-
                 stopService(new Intent(this, BackgroundCameraService.class));
                 stopService(new Intent(this, UVCCameraService.class));
             }
@@ -296,31 +273,6 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         super.onDestroy();
     }
 
-    /*
-     * android6.0权限，onRequestPermissionsResult回调
-     * */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                    update.doDownload();
-                }
-
-                break;
-            case REQUEST_CAMERA_PERMISSION: {
-                if (grantResults.length > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED && grantResults[2] == PERMISSION_GRANTED) {
-                    mNeedGrantedPermission = false;
-                    goonWithPermissionGranted();
-                } else {
-                    finish();
-                }
-
-                break;
-            }
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -388,24 +340,20 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
         //            viewById.setText(Config.getServerURL(this));
         //        }
 
-        String url = "http://www.easydarwin.org/versions/easyrtmp/version.txt";
-
         //        update = new UpdateMgr(this);
         //        update.checkUpdate(url);
         // create background service for background use.
         Intent backCameraIntent = new Intent(this, BackgroundCameraService.class);
         startService(backCameraIntent);
-
-        Intent  uvcServiceIntent = new Intent(this, UVCCameraService.class);
-        startService(uvcServiceIntent);
         if (conn == null) {
             conn = new ServiceConnection() {
                 @Override
                 public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                     mService = ((BackgroundCameraService.LocalBinder) iBinder).getService();
-
                     if (surfaceView.isAvailable()) {
-                        goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+                        if (!UVCCameraService.uvcConnected) {
+                            goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+                        }
                     }
                 }
 
@@ -415,23 +363,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
                 }
             };
         }
-        if (uvcConn == null) {
-            uvcConn = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                    mUvcCameraService = ((UVCCameraService.MyBinder) iBinder).getService();
-                    mUvcCameraService.setUvcConnectCallBack(StreamActivity.this);
-
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName componentName) {
-
-                }
-            };
-            bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
-            bindService(new Intent(this, UVCCameraService.class), uvcConn, 0);
-        }
+        bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
 
 
         if (mRecording) {
@@ -535,14 +467,7 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
             mBiliLiveStream = ms;
-            try {
-                Thread.sleep(2000);
-                startCamera();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
+            startCamera();
             mService.setMediaStream(ms);
         }
     }
@@ -1109,7 +1034,10 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onSurfaceTextureAvailable(final SurfaceTexture surface, int width, int height) {
         if (mService != null) {
-            goonWithAvailableTexture(surface);
+            if (!UVCCameraService.uvcConnected) {
+                goonWithAvailableTexture(surface);
+            }
+
         }
     }
 
@@ -1130,17 +1058,24 @@ public class StreamActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onUvcCameraConnected() {
-        handler.sendEmptyMessage(UVC_CONNECT);
+//        Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
+        if (mMediaStream != null) {
+            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+        }
+        mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
+        mScreenResTv.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onUvcCameraAttached() {
+//        Toast.makeText(getApplicationContext(),"Attached",Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onUvcCameraDisConnected() {
-//        handler.sendEmptyMessage(UVC_DISCONNECT);
+//        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
+        handler.sendEmptyMessage(UVC_DISCONNECT);
 
     }
 }

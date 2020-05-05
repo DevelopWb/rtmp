@@ -595,8 +595,7 @@ public class MediaStream {
      *  CAMERA_FACING_BACK_UVC                  UVC摄像头
      * */
     public void switchCamera(int cameraId) {
-        this.mTargetCameraId = cameraId;
-
+        mCameraId = cameraId;
         if (mCameraHandler.hasMessages(SWITCH_CAMERA)) {
             return;
         } else {
@@ -616,23 +615,22 @@ public class MediaStream {
                 return;
 
             try {
-                if (mTargetCameraId != CAMERA_FACING_BACK_LOOP && mCameraId == mTargetCameraId) {
-                    if (uvcCamera != null || mCamera != null) {
+                if (mCameraId ==CAMERA_FACING_BACK_UVC) {
+                    if (uvcCamera!=null) {
                         return;
                     }
                 }
-
-                if (mTargetCameraId == CAMERA_FACING_BACK_LOOP) {
-                    if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                        mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-                    } else if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                        mCameraId = CAMERA_FACING_BACK_UVC;// 尝试切换到外置摄像头
-                    } else {
-                        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-                    }
-                } else {
-                    mCameraId = mTargetCameraId;
-                }
+//                if (mTargetCameraId == CAMERA_FACING_BACK_LOOP) {
+//                    if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
+//                        mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
+//                    } else if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+//                        mCameraId = CAMERA_FACING_BACK_UVC;// 尝试切换到外置摄像头
+//                    } else {
+//                        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+//                    }
+//                } else {
+//                    mCameraId = mTargetCameraId;
+//                }
 
                 stopPreview();
                 destroyCamera();

@@ -26,8 +26,6 @@ dependencies {
     //图片压缩工具
 //    implementation 'top.zibin:Luban:1.1.8'
     /*   okgo*/
+    implementation project(':module_Base')
     implementation 'com.lzy.net:okgo:3.0.4'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'io.reactivex.rxjava2:rxjava:2.0.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.0'
 }
