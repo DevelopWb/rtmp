@@ -107,6 +107,7 @@ public class UVCCameraService extends Service {
             @Override
             public void onAttach(final UsbDevice device) {
                 Log.v(TAG, "onAttach:" + device);
+
                 uvcAttached = true;
                 mUSBMonitor.requestPermission(device);
                 EventBus.getDefault().post("onAttach");
@@ -117,7 +118,6 @@ public class UVCCameraService extends Service {
                 releaseCamera();
                 uvcConnected = true;
 
-                if (BuildConfig.DEBUG)
                     Log.v(TAG, "onConnect:");
 
                 try {
@@ -209,6 +209,7 @@ public class UVCCameraService extends Service {
         releaseCamera();
         EventBus.getDefault().unregister(this);
         if (mUSBMonitor != null) {
+            mUSBMonitor.destroy();
             mUSBMonitor.unregister();
         }
 

@@ -279,8 +279,8 @@ public class MediaStream {
         }
 
         if (uvcCamera == null) {
-            mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-            createNativeCamera();
+//            mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+//            createNativeCamera();
         }
     }
 
@@ -603,9 +603,6 @@ public class MediaStream {
         }
     }
 
-    public void switchCamera() {
-        switchCamera(CAMERA_FACING_BACK_LOOP);
-    }
 
     /// 切换摄像头的线程
     private Runnable switchCameraTask = new Runnable() {
