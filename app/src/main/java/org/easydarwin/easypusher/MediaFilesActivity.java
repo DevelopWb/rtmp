@@ -4,10 +4,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
@@ -210,9 +212,17 @@ public class MediaFilesActivity extends AppCompatActivity implements Toolbar.OnM
             if (path.endsWith(".mp4")) {
                 try {
                     File f = new File(path);
-                    Uri uri = Uri.fromFile(f);
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Uri uri =null;
+                    Intent intent = new Intent();
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    if (Build.VERSION.SDK_INT >= 24) {//7.0 Android N
+                        //com.xxx.xxx.fileprovider为上述manifest中provider所配置相同
+                        uri = FileProvider.getUriForFile(getContext(), "org.easydarwin.easyrtmp.fileProvider",f);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//7.0以后，系统要求授予临时uri读取权限，安装完毕以后，系统会自动收回权限，该过程没有用户交互
+                    } else {//7.0以下
+                        uri = Uri.fromFile(f);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    }
                     intent.setDataAndType(uri, "video/*");
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {

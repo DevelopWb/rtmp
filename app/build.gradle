@@ -64,7 +64,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "EasyRTMP-" + variant.versionCode + "-" + variant.versionName + ".apk"
+            outputFileName = "一见直播-" + variant.versionCode + "-" + variant.versionName + ".apk"
         }
     }
 

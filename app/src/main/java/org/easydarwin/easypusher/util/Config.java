@@ -15,6 +15,8 @@ import android.text.TextUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegOperateUtil;
 
+import java.io.File;
+
 /**
  * 推流地址的常量类
  */
@@ -35,6 +37,6 @@ public class Config {
     }
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory() + "/EasyRTMP";
+        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "一见直播";
     }
 }

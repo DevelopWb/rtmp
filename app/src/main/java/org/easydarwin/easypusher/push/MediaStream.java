@@ -279,8 +279,8 @@ public class MediaStream {
         }
 
         if (uvcCamera == null) {
-//            mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-//            createNativeCamera();
+            mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+            createNativeCamera();
         }
     }
 

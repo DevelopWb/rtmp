@@ -37,6 +37,6 @@ public class Config {
     }
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory() +"/EasyRTMP";
+        return Environment.getExternalStorageDirectory() +"/一见直播";
     }
 }
