@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.record;
 
 import android.annotation.TargetApi;
 import android.app.Service;
@@ -34,6 +34,11 @@ import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 import com.tencent.bugly.crashreport.CrashReport;
 
+import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.MyApp;
+import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.SplashActivity;
+import org.easydarwin.easypusher.push.PushCallback;
 import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.encode.AudioStream;
@@ -77,7 +82,7 @@ public class RecordService extends Service {
     private MediaCodec mMediaCodec;
     private ByteBuffer[] outputBuffers;
 
-    final AudioStream audioStream = AudioStream.getInstance(EasyApplication.getEasyApplication());
+    final AudioStream audioStream = AudioStream.getInstance(MyApp.getEasyApplication());
 
     private MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
@@ -241,7 +246,7 @@ public class RecordService extends Service {
                 }
 
                 try {
-                    audioStream.setEnableAudio(SPUtil.getEnableAudio(EasyApplication.getEasyApplication()));
+                    audioStream.setEnableAudio(SPUtil.getEnableAudio(MyApp.getEasyApplication()));
                     audioStream.addPusher(mEasyPusher);
 
                     byte[] h264 = new byte[windowWidth * windowHeight];

@@ -36,12 +36,9 @@ import com.squareup.otto.Subscribe;
 import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
-import org.easydarwin.easypusher.BackgroundCameraService;
 import org.easydarwin.easypusher.BaseProjectActivity;
-import org.easydarwin.easypusher.PushCallback;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
-import org.easydarwin.easypusher.UVCCameraService;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.DoubleClickListener;
 import org.easydarwin.easypusher.util.HawkProperty;
@@ -407,9 +404,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     //    private void notifyAboutColorChange() {
     //        ImageView iv = findViewById(R.id.toolbar_about);
     //
-    //        if (EasyApplication.activeDays >= 9999) {
+    //        if (MyApp.activeDays >= 9999) {
     //            iv.setImageResource(R.drawable.green);
-    //        } else if (EasyApplication.activeDays > 0) {
+    //        } else if (MyApp.activeDays > 0) {
     //            iv.setImageResource(R.drawable.yellow);
     //        } else {
     //            iv.setImageResource(R.drawable.red);

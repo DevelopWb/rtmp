@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.mine;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.orhanobut.hawk.Hawk;
 
+import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.util.HawkProperty;
 
 

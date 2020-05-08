@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.record;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivityMediaFilesBinding;
 import org.easydarwin.easypusher.databinding.FragmentMediaFileBinding;
 import org.easydarwin.easypusher.databinding.ImagePickerItemBinding;

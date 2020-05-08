@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher;
+package org.easydarwin.easypusher.push;
 
 /**
  * 推流状态的回调

@@ -9,15 +9,14 @@ package org.easydarwin.easypusher;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.juntai.wisdom.basecomponent.utils.SPTools;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.push.UVCCameraService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +63,7 @@ public class SplashActivity extends BaseProjectActivity {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            startService(new Intent(SplashActivity.this,UVCCameraService.class));
+                            startService(new Intent(SplashActivity.this, UVCCameraService.class));
                             //所有权限通过
                             Thread.sleep(600);
                             startActivity(new Intent(SplashActivity.this, StreamActivity.class));

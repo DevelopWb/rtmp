@@ -19,14 +19,14 @@ import java.io.InputStream;
 
 import static org.easydarwin.easyrtmp.push.EasyRTMP.getActiveDays;
 
-public class EasyApplication extends Application {
+public class MyApp extends Application {
 
     public static final String CHANNEL_CAMERA = "camera";
 
-    private static EasyApplication mApplication;
+    private static MyApp mApplication;
     public static int activeDays = 9999;
 
-    public static EasyApplication getEasyApplication() {
+    public static MyApp getEasyApplication() {
         return mApplication;
     }
 

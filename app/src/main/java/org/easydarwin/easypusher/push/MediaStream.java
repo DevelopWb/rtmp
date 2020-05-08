@@ -21,9 +21,7 @@ import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 
 import org.easydarwin.bus.SupportResolution;
-import org.easydarwin.easypusher.BackgroundCameraService;
-import org.easydarwin.easypusher.EasyApplication;
-import org.easydarwin.easypusher.UVCCameraService;
+import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
@@ -261,9 +259,8 @@ public class MediaStream {
     }
 
     private void createUvcCamera() {
-//        frameWidth = frameRotate ? height : width;
-//        frameHeight = frameRotate ? width : height;
-
+//        int previewWidth = 640;
+//        int previewHeight = 480;
         ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC);
 
         if (!infos.isEmpty()) {
@@ -273,17 +270,27 @@ public class MediaStream {
         } else {
             mSWCodec = true;
         }
-
         frameWidth = defaultWidth;
         frameHeight = defaultHeight;
+//        frameWidth = UVCCamera.DEFAULT_PREVIEW_WIDTH;
+//        frameHeight = UVCCamera.DEFAULT_PREVIEW_HEIGHT;
 
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-            uvcCamera.setPreviewSize(frameWidth,
-                    frameHeight,
-                    1,
-                    30,
-                    UVCCamera.PIXEL_FORMAT_YUV420SP, 1.0f);
+            uvcCamera.setPreviewSize(frameWidth,frameHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+//            try {
+//                uvcCamera.setPreviewSize(frameWidth,frameHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+//            } catch (final IllegalArgumentException e) {
+//                try {
+//                    // fallback to YUV mode
+//                    uvcCamera.setPreviewSize(frameWidth,frameHeight,1,30,UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
+//                } catch (final IllegalArgumentException e1) {
+//                    if (uvcCamera != null) {
+//                        uvcCamera.destroy();
+//                        uvcCamera = null;
+//                    }
+//                }
+//            }
         }
 
         if (uvcCamera == null) {
@@ -541,7 +548,7 @@ public class MediaStream {
     /// 开始推流
     public void startUrlStream(String url, InitCallback callback) throws IOException {
         try {
-            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
+            if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
                 if (!TextUtils.isEmpty(url)) {
                     mEasyPusher.initPush(url, context, callback);
                 }
@@ -560,7 +567,7 @@ public class MediaStream {
     /// 开始推流
     public void startBiliUrlStream(String biliUrl, InitCallback callback) throws IOException {
         try {
-            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
+            if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
                 if (!TextUtils.isEmpty(biliUrl)) {
                     mEasyPusherBiLi.initPush(biliUrl, context, callback);
                 }
@@ -580,7 +587,7 @@ public class MediaStream {
     /// 开始推流
     public void startHuyaUrlStream(String huyaUrl, InitCallback callback) throws IOException {
         try {
-            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
+            if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
                 if (!TextUtils.isEmpty(huyaUrl)) {
                     mEasyPusherHuYa.initPush(huyaUrl, context, callback);
                 }
