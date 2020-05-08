@@ -71,7 +71,9 @@ public class MediaStream {
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
 
     private String recordPath;          // 录像地址
-    boolean isPushStream = false;       // 是否要推送数据
+    private boolean isPushStream = false;       // 是否要推送数据
+    private boolean isBiliPushStream = false;       // 是否要推送bili数据
+    private boolean isHuyaPushStream = false;       // 是否要推送huya数据
     private int displayRotationDegree;  // 旋转角度
 
     private Context context;
@@ -101,11 +103,12 @@ public class MediaStream {
                     super.run();
                 } catch (Throwable e) {
                     e.printStackTrace();
-
                     Intent intent = new Intent(context, BackgroundCameraService.class);
                     context.stopService(intent);
                 } finally {
-                    stopStream();
+                    stopPusherStream();
+                    stopBiliPusherStream();
+                    stopHuyaPusherStream();
                     stopPreview();
                     destroyCamera();
                 }
@@ -500,6 +503,8 @@ public class MediaStream {
         // 关闭音频采集和音频编码器
         if (audioStream != null) {
             audioStream.removePusher(mEasyPusher);
+            audioStream.removePusher(mEasyPusherBiLi);
+            audioStream.removePusher(mEasyPusherHuYa);
             audioStream.setMuxer(null);
             Log.i(TAG, "Stop AudioStream");
         }
@@ -532,14 +537,19 @@ public class MediaStream {
         }
     }
 
-    /// 开始推流
-    public void startStream(String url, InitCallback callback) throws IOException {
-        try {
-            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication()))
-                mEasyPusher.initPush(url, context, callback);
-            else
-                mEasyPusher.initPush(url, context, callback, ~0);
 
+    /// 开始推流
+    public void startUrlStream(String url, InitCallback callback) throws IOException {
+        try {
+            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
+                if (!TextUtils.isEmpty(url)) {
+                    mEasyPusher.initPush(url, context, callback);
+                }
+            } else {
+                if (!TextUtils.isEmpty(url)) {
+                    mEasyPusher.initPush(url, context, callback, ~0);
+                }
+            }
             isPushStream = true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -548,49 +558,67 @@ public class MediaStream {
     }
 
     /// 开始推流
-    public void startStream(String url, String biliUrl, String huyaUrl, InitCallback callback) throws IOException {
+    public void startBiliUrlStream(String biliUrl, InitCallback callback) throws IOException {
         try {
             if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
-                if (!TextUtils.isEmpty(url)) {
-                    mEasyPusher.initPush(url, context, callback);
-                }
                 if (!TextUtils.isEmpty(biliUrl)) {
                     mEasyPusherBiLi.initPush(biliUrl, context, callback);
                 }
-                if (!TextUtils.isEmpty(huyaUrl)) {
-                    mEasyPusherHuYa.initPush(huyaUrl, context, callback);
-                }
             } else {
-                if (!TextUtils.isEmpty(url)) {
-                    mEasyPusher.initPush(url, context, callback, ~0);
-                }
                 if (!TextUtils.isEmpty(biliUrl)) {
                     mEasyPusherBiLi.initPush(biliUrl, context, callback, ~0);
                 }
-                if (!TextUtils.isEmpty(huyaUrl)) {
-                    mEasyPusherHuYa.initPush(huyaUrl, context, callback, ~0);
-                }
-                isPushStream = true;
+
             }
+            isBiliPushStream = true;
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new IOException(ex.getMessage());
         }
     }
 
+    /// 开始推流
+    public void startHuyaUrlStream(String huyaUrl, InitCallback callback) throws IOException {
+        try {
+            if (SPUtil.getEnableVideo(EasyApplication.getEasyApplication())) {
+                if (!TextUtils.isEmpty(huyaUrl)) {
+                    mEasyPusherHuYa.initPush(huyaUrl, context, callback);
+                }
+            } else {
+                if (!TextUtils.isEmpty(huyaUrl)) {
+                    mEasyPusherHuYa.initPush(huyaUrl, context, callback, ~0);
+                }
+
+            }
+            isHuyaPushStream = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new IOException(ex.getMessage());
+        }
+    }
 
     /// 停止推流
-    public void stopStream() {
+    public void stopPusherStream() {
         if (mEasyPusher != null) {
             mEasyPusher.stop();
         }
+        isPushStream = false;
+    }
+
+    /// 停止bili推流
+    public void stopBiliPusherStream() {
         if (mEasyPusherBiLi != null) {
             mEasyPusherBiLi.stop();
         }
+        isBiliPushStream = false;
+    }
+
+    /// 停止虎牙推流
+    public void stopHuyaPusherStream() {
         if (mEasyPusherHuYa != null) {
             mEasyPusherHuYa.stop();
         }
-        isPushStream = false;
+        isHuyaPushStream = false;
     }
 
     /// 开始录像
@@ -949,8 +977,16 @@ public class MediaStream {
         mSurfaceHolderRef = new WeakReference<SurfaceTexture>(texture);
     }
 
-    public boolean isStreaming() {
+    public boolean isPushStreaming() {
         return isPushStream;
+    }
+
+    public boolean isBiliPushStreaming() {
+        return isBiliPushStream;
+    }
+
+    public boolean isHuyaPushStreaming() {
+        return isHuyaPushStream;
     }
 
     public Camera getCamera() {

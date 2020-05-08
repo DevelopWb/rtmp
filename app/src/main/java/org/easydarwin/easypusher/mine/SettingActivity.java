@@ -24,10 +24,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegOperateUtil;
 
+import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
@@ -39,13 +42,28 @@ import org.easydarwin.easypusher.util.SPUtil;
 /**
  * 设置页
  */
-public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
+public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
 
     public static final int REQUEST_OVERLAY_PERMISSION = 1004;  // 悬浮框
     private static final int REQUEST_SCAN_TEXT_URL_BILI = 1003;      // 扫描二维码bili
     private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
 
     private ActivitySettingBinding binding;
+
+    @Override
+    public void onUvcCameraConnected() {
+
+    }
+
+    @Override
+    public void onUvcCameraAttached() {
+
+    }
+
+    @Override
+    public void onUvcCameraDisConnected() {
+
+    }
 
     //    EditText url;
     @Override
@@ -62,7 +80,7 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL));
         binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL));
-        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG,"hls"));
+        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
         binding.biliScanIv.setOnClickListener(this);
         binding.huyaScanIv.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
@@ -239,23 +257,35 @@ public class SettingActivity extends AppCompatActivity implements Toolbar.OnMenu
 
     @Override
     public void onBackPressed() {
-        String text = binding.pushServerIpEt.getText().toString().trim();
-        if (text.contains("//")) {
-            text = text.substring(text.indexOf("//") + 2, text.length());
+        if (!isPushingStream) {
+            String text = binding.pushServerIpEt.getText().toString().trim();
+            if (text.contains("//")) {
+                text = text.substring(text.indexOf("//") + 2, text.length());
+            }
+            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
+            String textPort = binding.pushServerPortEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT, textPort);
+            String tag = binding.liveTagEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
+        } else {
+            ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
         }
-        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
-        String textPort = binding.pushServerPortEt.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT, textPort);
-        String tag = binding.liveTagEt.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
+        if (!isPushingBiliStream) {
+            String bilibili = binding.biliValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
+
+        } else {
+            ToastUtils.toast(mContext, "正在推送哔哩直播，无法更改地址");
+        }
+        if (!isPushingHuyaStream) {
+            String huya = binding.huyaValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
+        } else {
+            ToastUtils.toast(mContext, "正在推送虎牙直播，无法更改地址");
+        }
         String registCode = binding.registCodeValue.getText().toString().trim();
         Hawk.put(HawkProperty.KEY_REGIST_CODE, registCode);
-        String bilibili = binding.biliValueEt.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
-        String huya = binding.huyaValueEt.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
-
-       super.onBackPressed();
+        super.onBackPressed();
     }
 
 

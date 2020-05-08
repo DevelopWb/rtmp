@@ -1,5 +1,6 @@
 package org.easydarwin.easypusher;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +21,22 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class BaseProjectActivity extends RxAppCompatActivity {
 
+    protected boolean isPushingStream = false;//是否正在推流
+    protected boolean isPushingBiliStream = false;//是否正在推流
+    protected boolean isPushingHuyaStream = false;//是否正在推流
 
     public abstract void onUvcCameraConnected();
+
     public abstract void onUvcCameraAttached();
+
     public abstract void onUvcCameraDisConnected();
+
+    protected Context mContext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -35,8 +45,10 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mContext = null;
         EventBus.getDefault().unregister(this);
     }
+
     @org.greenrobot.eventbus.Subscribe(threadMode = ThreadMode.MAIN)
     public void receivedStringMsg(String msg) {
         switch (msg) {
@@ -57,4 +69,6 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
                 break;
         }
     }
+
+
 }
