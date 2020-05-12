@@ -6,12 +6,18 @@
     android:background="#000000"
     tools:context="org.easydarwin.easypusher.push.StreamActivity">
 
-    <TextureView
-        android:id="@+id/sv_surfaceview"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/option_bar_container"
-        android:keepScreenOn="true" />
+        android:layout_above="@+id/option_bar_container">
+
+        <TextureView
+            android:id="@+id/sv_surfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:keepScreenOn="true" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/stream_stat"
@@ -82,15 +88,15 @@
         <!--            android:src="@drawable/green"-->
         <!--            android:textAlignment="@id/txt_res" />-->
     </LinearLayout>
-<!--    <ImageView-->
-<!--        android:id="@+id/push_bg_iv"-->
-<!--        android:layout_width="35dp"-->
-<!--        android:layout_height="35dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_below="@+id/res_container"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:src="@mipmap/push_stream_off" />-->
+    <!--    <ImageView-->
+    <!--        android:id="@+id/push_bg_iv"-->
+    <!--        android:layout_width="35dp"-->
+    <!--        android:layout_height="35dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:layout_alignParentRight="true"-->
+    <!--        android:layout_below="@+id/res_container"-->
+    <!--        android:scaleType="fitCenter"-->
+    <!--        android:src="@mipmap/push_stream_off" />-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -250,6 +256,7 @@
         android:layout_above="@+id/push_screen_url"
         android:padding="5dp"
         android:textColor="#ff0000" />
+
     <ImageView
         android:id="@+id/black_bg_iv"
         android:layout_width="match_parent"

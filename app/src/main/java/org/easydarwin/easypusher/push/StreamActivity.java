@@ -27,9 +27,11 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 
@@ -63,12 +65,11 @@ import static org.easydarwin.easyrtmp.push.EasyRTMP.OnInitPusherCallback.CODE.EA
 public class StreamActivity extends BaseProjectActivity implements View.OnClickListener, TextureView.SurfaceTextureListener {
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440", "3840x2160"};
+    private CharSequence[] resUvcDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080"};
     public static final int REQUEST_MEDIA_PROJECTION = 1002;
     public static final int REQUEST_CAMERA_PERMISSION = 1003;
     public static final int REQUEST_STORAGE_PERMISSION = 1004;
 
-    // 默认分辨率
-    int width = 1280, height = 720;
     TextView txtStreamAddress;
     TextView mSelectCameraTv;
     //    Spinner spnResolution;
@@ -215,7 +216,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
             }
         });
-        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3)].toString();
+        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 1)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
     }
@@ -463,7 +464,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     private void startCamera() {
-        mMediaStream.updateResolution(width, height);
+        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();
@@ -638,16 +639,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /**
      * 获取推流状态信息
+     *
      * @return
      */
     private String getPushStatusMsg() {
         if (mMediaStream.isPushStreaming()) {
-            if (mMediaStream.isBiliPushStreaming()||mMediaStream.isHuyaPushStreaming()) {
+            if (mMediaStream.isBiliPushStreaming() || mMediaStream.isHuyaPushStreaming()) {
                 return "取证+直播中";
             }
             return "取证中";
-        }else{
-            if (mMediaStream.isBiliPushStreaming()||mMediaStream.isHuyaPushStreaming()) {
+        } else {
+            if (mMediaStream.isBiliPushStreaming() || mMediaStream.isHuyaPushStreaming()) {
                 return "直播中";
             }
         }
@@ -728,7 +730,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (isStreaming()) {
-                            Toast.makeText(StreamActivity.this, getPushStatusMsg()+",无法切换摄像头", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",无法切换摄像头", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                             return;
                         }
@@ -897,34 +899,47 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 切换分辨率
      * */
     public void onClickResolution(View view) {
-        new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 3), new DialogInterface.OnClickListener() {
+        if (UVCCameraService.uvcConnected) {
+            setCameraRes(resUvcDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
+        }else {
+            setCameraRes(resDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 1));
+        }
+
+    }
+
+    /**
+     *配置相机的分辨率
+     */
+    private void setCameraRes(CharSequence[] res_display, int index) {
+        new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(res_display, index, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int position) {
-                String title = resDisplay[position].toString();
-                if (!Util.getSupportResolution(StreamActivity.this).contains(title)) {
-                    Toast.makeText(StreamActivity.this, "您的相机不支持此分辨率", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    return;
-                }
+                String title = res_display[position].toString();
                 if (isStreaming()) {
-                    Toast.makeText(StreamActivity.this, getPushStatusMsg()+",无法切换分辨率", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",无法切换分辨率", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     return;
                 }
-                Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
-                mScreenResTv.setText("分辨率:" + title);
-                String[] splitR = title.split("x");
-
-                int wh = Integer.parseInt(splitR[0]);
-                int ht = Integer.parseInt(splitR[1]);
-
-                if (width != wh || height != ht) {
-                    width = wh;
-                    height = ht;
-
-                    if (mMediaStream != null) {
-                        mMediaStream.updateResolution(width, height);
+                String[] titles = title.split("x");
+                if (res_display.length>3) {
+                    //原生相机配置分辨率
+                    if (!Util.getSupportResolution(StreamActivity.this).contains(title)) {
+                        Toast.makeText(StreamActivity.this, "您的相机不支持此分辨率", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        return;
                     }
+                    Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
+                    Hawk.put(HawkProperty.KEY_NATIVE_WIDTH,Integer.parseInt(titles[0]));
+                    Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT,Integer.parseInt(titles[1]));
+                }else{
+                    Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
+                    Hawk.put(HawkProperty.KEY_UVC_WIDTH,Integer.parseInt(titles[0]));
+                    Hawk.put(HawkProperty.KEY_UVC_HEIGHT,Integer.parseInt(titles[1]));
+                }
+                mScreenResTv.setText("分辨率:" + title);
+
+                if (mMediaStream != null) {
+                    mMediaStream.updateResolution();
                 }
                 dialog.dismiss();
             }
@@ -1092,8 +1107,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
         }
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        params.height = DisplayUtil.dp2px(mContext, 300);
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
         mScreenResTv.setVisibility(View.INVISIBLE);
+//        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
+//        mScreenResTv.setText(String.format("分辨率:%s", title));
     }
 
     @Override
