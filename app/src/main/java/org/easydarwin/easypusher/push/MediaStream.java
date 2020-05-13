@@ -156,7 +156,7 @@ public class MediaStream {
             return;
         }
 
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, false);
+        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         mHevc = SPUtil.getHevcCodec(context);
         mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
         mEasyPusherBiLi = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
@@ -308,11 +308,13 @@ public class MediaStream {
             return;
         }
         if (uvcCamera != null) {
-            initConsumer(uvcWidth, uvcHeight);
+
             startUvcPreview();
+            initConsumer(uvcWidth, uvcHeight);
         } else if (mCamera != null) {
-            initConsumer(nativeWidth, nativeHeight);
+
             startCameraPreview();
+            initConsumer(nativeWidth, nativeHeight);
         }
 
         audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
@@ -329,15 +331,13 @@ public class MediaStream {
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));
-            SWConsumer sw_bili = new SWConsumer(context, mEasyPusherBiLi, SPUtil.getBitrateKbps(context));
             mVCBili = new ClippableVideoConsumer(context,
-                    sw_bili,
+                    sw,
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));
-            SWConsumer sw_huya = new SWConsumer(context, mEasyPusherHuYa, SPUtil.getBitrateKbps(context));
             mVCHuya = new ClippableVideoConsumer(context,
-                    sw_huya,
+                    sw,
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));
@@ -353,25 +353,13 @@ public class MediaStream {
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));
-            HWConsumer hwBili = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
-                    mEasyPusherBiLi,
-                    SPUtil.getBitrateKbps(context),
-                    info.mName,
-                    info.mColorFormat);
             mVCBili = new ClippableVideoConsumer(context,
-                    hwBili,
+                    hw,
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));
-            HWConsumer hw_huya = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
-                    mEasyPusherHuYa,
-                    SPUtil.getBitrateKbps(context),
-                    info.mName,
-                    info.mColorFormat);
             mVCHuya = new ClippableVideoConsumer(context,
-                    hw_huya,
+                    hw,
                     width,
                     height,
                     SPUtil.getEnableVideoOverlay(context));

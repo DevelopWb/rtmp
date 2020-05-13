@@ -152,7 +152,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     }
 
     /**
-     * 编码 没啥用 里面没有逻辑 只有按钮的选中状态
+     *
      */
     private void onEncodeType() {
         // 是否使用软编码
