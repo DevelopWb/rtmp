@@ -424,22 +424,6 @@ public class MediaStream {
 
         mCamera.startPreview();
 
-        boolean frameRotate;
-        int result;
-
-        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (camInfo.orientation + displayRotationDegree) % 360;
-        } else {  // back-facing
-            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
-        }
-
-        frameRotate = result % 180 != 0;
-
-//        frameWidth = frameRotate ? defaultHeight : defaultWidth;
-//        frameHeight = frameRotate ? defaultWidth : defaultHeight;
-//        mVC.onVideoStart(nativeWidth, nativeHeight);
-//        mVCBili.onVideoStart(nativeWidth, nativeHeight);
-//        mVCHuya.onVideoStart(nativeWidth, nativeHeight);
     }
 
     /// 停止预览
@@ -459,7 +443,6 @@ public class MediaStream {
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.setPreviewCallbackWithBuffer(null);
-            Log.i(TAG, "StopPreview");
         }
 
         // 关闭音频采集和音频编码器
@@ -607,7 +590,16 @@ public class MediaStream {
         if (uvcCamera != null) {
             mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         }else{
-            mRecordVC.onVideoStart(nativeHeight, nativeWidth);
+            boolean frameRotate;
+            int result;
+
+            if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                result = (camInfo.orientation + displayRotationDegree) % 360;
+            } else {  // back-facing
+                result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+            }
+            frameRotate = result % 180 != 0;
+            mRecordVC.onVideoStart(frameRotate ? nativeHeight : nativeWidth, frameRotate ? nativeWidth : nativeHeight);
         }
         if (audioStream != null) {
             audioStream.setMuxer(mMuxer);
