@@ -97,7 +97,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_FRONT = 1;
     public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
-    int defaultWidth = 1280, defaultHeight = 720;
+    int defaultWidth = 1920, defaultHeight = 1080;
     int nativeWidth, nativeHeight;//原生camera的宽高
     int uvcWidth, uvcHeight;//uvcCamera的宽高
     private int mTargetCameraId;
@@ -277,9 +277,7 @@ public class MediaStream {
         uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-            mVC.onVideoStart(uvcWidth, uvcHeight);
-            mVCBili.onVideoStart(uvcWidth, uvcHeight);
-            mVCHuya.onVideoStart(uvcWidth, uvcHeight);
+
 //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
                 uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
@@ -310,12 +308,13 @@ public class MediaStream {
             return;
         }
         if (uvcCamera != null) {
-            startUvcPreview();
             initConsumer(uvcWidth, uvcHeight);
+            startUvcPreview();
         } else if (mCamera != null) {
             initConsumer(nativeWidth, nativeHeight);
             startCameraPreview();
         }
+
         audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
         audioStream.addPusher(mEasyPusher);
         audioStream.addPusher(mEasyPusherBiLi);
@@ -394,6 +393,9 @@ public class MediaStream {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+//        mVC.onVideoStart(uvcWidth, uvcHeight);
+//        mVCBili.onVideoStart(uvcWidth, uvcHeight);
+//        mVCHuya.onVideoStart(uvcWidth, uvcHeight);
     }
 
     private void startCameraPreview() {
@@ -435,6 +437,9 @@ public class MediaStream {
 
 //        frameWidth = frameRotate ? defaultHeight : defaultWidth;
 //        frameHeight = frameRotate ? defaultWidth : defaultHeight;
+//        mVC.onVideoStart(nativeWidth, nativeHeight);
+//        mVCBili.onVideoStart(nativeWidth, nativeHeight);
+//        mVCHuya.onVideoStart(nativeWidth, nativeHeight);
     }
 
     /// 停止预览
@@ -602,7 +607,7 @@ public class MediaStream {
         if (uvcCamera != null) {
             mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         }else{
-            mRecordVC.onVideoStart(nativeWidth, nativeHeight);
+            mRecordVC.onVideoStart(nativeHeight, nativeWidth);
         }
         if (audioStream != null) {
             audioStream.setMuxer(mMuxer);

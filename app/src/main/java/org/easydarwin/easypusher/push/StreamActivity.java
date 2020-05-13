@@ -216,7 +216,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
             }
         });
-        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 1)].toString();
+        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
     }
@@ -902,7 +902,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (UVCCameraService.uvcConnected) {
             setCameraRes(resUvcDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
         }else {
-            setCameraRes(resDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 1));
+            setCameraRes(resDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
         }
 
     }
