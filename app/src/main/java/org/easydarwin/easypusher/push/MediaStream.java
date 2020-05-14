@@ -100,7 +100,8 @@ public class MediaStream {
     int nativeWidth, nativeHeight;//原生camera的宽高
     int uvcWidth, uvcHeight;//uvcCamera的宽高
     private int mTargetCameraId;
-
+    private int frameWidth;
+    private int frameHeight;
     /**
      * 初始化MediaStream
      */
@@ -272,18 +273,20 @@ public class MediaStream {
         } else {
             mSWCodec = true;
         }
-        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
-        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
+        frameWidth = nativeWidth;
+        frameHeight = nativeHeight;
+//        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
+//        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
-                uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             } catch (final IllegalArgumentException e) {
                 try {
                     // fallback to YUV mode
-                    uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
+                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
                 } catch (final IllegalArgumentException e1) {
                     if (uvcCamera != null) {
                         uvcCamera.destroy();
@@ -313,7 +316,7 @@ public class MediaStream {
         } else if (mCamera != null) {
 
             startCameraPreview();
-            initConsumer(nativeWidth, nativeHeight);
+            initConsumer(frameWidth, frameHeight);
         }
         audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
         audioStream.addPusher(mEasyPusher);
@@ -424,7 +427,19 @@ public class MediaStream {
         }
 
         mCamera.startPreview();
+        boolean frameRotate;
+        int result;
 
+        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (camInfo.orientation + displayRotationDegree) % 360;
+        } else {  // back-facing
+            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+        }
+
+        frameRotate = result % 180 != 0;
+
+        frameWidth = frameRotate ? nativeHeight : nativeWidth;
+        frameHeight = frameRotate ? nativeWidth : nativeHeight;
     }
 
     /// 停止预览
