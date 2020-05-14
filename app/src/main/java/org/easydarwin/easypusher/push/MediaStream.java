@@ -77,7 +77,7 @@ public class MediaStream {
     private Context context;
     WeakReference<SurfaceTexture> mSurfaceHolderRef;
 
-    private VideoConsumer mVC, mRecordVC;
+    private VideoConsumer mVC, mRecordVC,mVCBili,mVCHuya;
     private AudioStream audioStream;
     private EasyMuxer mMuxer;
     private Pusher mEasyPusher;
@@ -324,18 +324,61 @@ public class MediaStream {
     private void initConsumer(int width, int height) {
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
-            mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
-//            mVCBili = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
-//            mVCHuya = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVC = new ClippableVideoConsumer(context,
+                    sw,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swBili = new SWConsumer(context, mEasyPusherBiLi, SPUtil.getBitrateKbps(context));
+            mVCBili = new ClippableVideoConsumer(context,
+                    swBili,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swHuya = new SWConsumer(context, mEasyPusherHuYa, SPUtil.getBitrateKbps(context));
+            mVCHuya = new ClippableVideoConsumer(context,
+                    swHuya,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
         } else {
-            HWConsumer hw = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-            mVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
-//            mVCBili = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
-//            mVCHuya = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
+            HWConsumer hw = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
+                    mEasyPusher,
+                    SPUtil.getBitrateKbps(context),
+                    info.mName,
+                    info.mColorFormat);
+            HWConsumer hwBili = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
+                    mEasyPusherBiLi,
+                    SPUtil.getBitrateKbps(context),
+                    info.mName,
+                    info.mColorFormat);
+            HWConsumer hwHuya = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
+                    mEasyPusherHuYa,
+                    SPUtil.getBitrateKbps(context),
+                    info.mName,
+                    info.mColorFormat);
+            mVC = new ClippableVideoConsumer(context,
+                    hw,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
+            mVCBili = new ClippableVideoConsumer(context,
+                    hwBili,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
+            mVCHuya = new ClippableVideoConsumer(context,
+                    hwHuya,
+                    width,
+                    height,
+                    SPUtil.getEnableVideoOverlay(context));
         }
         mVC.onVideoStart(width, height);
-//        mVCBili.onVideoStart(width, height);
-//        mVCHuya.onVideoStart(width, height);
+        mVCBili.onVideoStart(width, height);
+        mVCHuya.onVideoStart(width, height);
     }
 
     /**
@@ -417,16 +460,16 @@ public class MediaStream {
             mVC.onVideoStop();
             Log.i(TAG, "Stop VC");
         }
-//        // 关闭视频编码器
-//        if (mVCBili != null) {
-//            mVCBili.onVideoStop();
-//            Log.i(TAG, "Stop VC");
-//        }
-//        // 关闭视频编码器
-//        if (mVCHuya != null) {
-//            mVCHuya.onVideoStop();
-//            Log.i(TAG, "Stop VC");
-//        }
+        // 关闭视频编码器
+        if (mVCBili != null) {
+            mVCBili.onVideoStop();
+            Log.i(TAG, "Stop VC");
+        }
+        // 关闭视频编码器
+        if (mVCHuya != null) {
+            mVCHuya.onVideoStop();
+            Log.i(TAG, "Stop VC");
+        }
 
         // 关闭录像的编码器
         if (mRecordVC != null) {
@@ -684,8 +727,8 @@ public class MediaStream {
         }
 
         mVC.onVideo(data, 0);
-//        mVCBili.onVideo(data, 0);
-//        mVCHuya.onVideo(data, 0);
+        mVCBili.onVideo(data, 0);
+        mVCHuya.onVideo(data, 0);
         mCamera.addCallbackBuffer(data);
     };
 

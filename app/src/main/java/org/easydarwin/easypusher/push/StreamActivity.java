@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 
