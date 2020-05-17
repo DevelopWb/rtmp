@@ -160,6 +160,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mPushBgIv;
     private ImageView mPushStreamIv;
     private ImageView mBiliIv;
+    private ImageView mYiIv;
+    private ImageView mNowIv;
     private ImageView mVedioPushBottomTagIv;
     private ImageView mHuyaIv, mBlackBgIv;
     private Intent uvcServiceIntent;
@@ -199,6 +201,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mPushStreamIv.setOnClickListener(this);
         mBiliIv = (ImageView) findViewById(R.id.bili_iv);
         mBiliIv.setOnClickListener(this);
+        mYiIv = (ImageView) findViewById(R.id.yi_iv);
+        mYiIv.setOnClickListener(this);
+        mNowIv = (ImageView) findViewById(R.id.now_iv);
+        mNowIv.setOnClickListener(this);
         mHuyaIv = (ImageView) findViewById(R.id.huya_iv);
         mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
         mHuyaIv.setOnClickListener(this);
@@ -247,9 +253,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
                 mService.activePreview();
             } else {
-                mMediaStream.stopPusherStream();
-                mMediaStream.stopBiliPusherStream();
-                mMediaStream.stopHuyaPusherStream();
+                for (int i = 0; i < 5; i++) {
+                    mMediaStream.stopPusherStream(i);
+                }
                 mMediaStream.release();
                 mMediaStream = null;
                 stopService(new Intent(this, BackgroundCameraService.class));
@@ -263,7 +269,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isPushStreaming() || mMediaStream.isBiliPushStreaming() || mMediaStream.isHuyaPushStreaming());
+        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream);
     }
 
 
@@ -433,7 +439,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
             mMediaStream = ms;
 
-            if (ms.isPushStreaming() || ms.isBiliPushStreaming() || ms.isHuyaPushStreaming()) {
+            if (isStreaming()) {
                 String url = Config.getServerURL();
 //                txtStreamAddress.setText(url);
 
@@ -643,13 +649,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getPushStatusMsg() {
-        if (mMediaStream.isPushStreaming()) {
-            if (mMediaStream.isBiliPushStreaming() || mMediaStream.isHuyaPushStreaming()) {
+        if (mMediaStream.isPushStream) {
+            if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
                 return "取证+直播中";
             }
             return "取证中";
         } else {
-            if (mMediaStream.isBiliPushStreaming() || mMediaStream.isHuyaPushStreaming()) {
+            if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
                 return "直播中";
             }
         }
@@ -702,9 +708,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。").setNeutralButton("后台采集", (dialogInterface, i) -> {
                 StreamActivity.super.onBackPressed();
             }).setPositiveButton("退出程序", (dialogInterface, i) -> {
-                mMediaStream.stopPusherStream();
-                mMediaStream.stopBiliPusherStream();
-                mMediaStream.stopHuyaPusherStream();
+                for (int i1 = 0; i1 < 5; i1++) {
+                    mMediaStream.stopPusherStream(i1);
+                }
                 StreamActivity.super.onBackPressed();
                 Toast.makeText(StreamActivity.this, "程序已退出。", Toast.LENGTH_SHORT).show();
             }).setNegativeButton(android.R.string.cancel, null).show();
@@ -766,6 +772,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     return;
                 }
                 startOrStopBiliPush();
+                break;
+            case R.id.yi_iv:
+                String url_yi = Hawk.get(HawkProperty.KEY_YI_URL);
+                if (TextUtils.isEmpty(url_yi)) {
+                    Toast.makeText(getApplicationContext(), "还没有配置一直播地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                startOrStopYiPush();
+                break;
+            case R.id.now_iv:
+                String url_now = Hawk.get(HawkProperty.KEY_NOW_URL);
+                if (TextUtils.isEmpty(url_now)) {
+                    Toast.makeText(getApplicationContext(), "还没有配置now直播地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                startOrStopNowPush();
                 break;
             case R.id.huya_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_HU_YA_URL);
@@ -977,11 +999,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopPush() {
 
-        String url = Config.getServerURL();
-        if (mMediaStream != null && !mMediaStream.isPushStreaming()) {
+        if (mMediaStream != null && !mMediaStream.isPushStream) {
             isPushingStream = true;
             try {
-                mMediaStream.startUrlStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
@@ -991,7 +1012,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             isPushingStream = false;
-            mMediaStream.stopPusherStream();
+            mMediaStream.stopPusherStream(0);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
             sendMessage("断开连接");
@@ -1004,12 +1025,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopBiliPush() {
 
-        String url_bi = Hawk.get(HawkProperty.KEY_BILIBILI_URL);
-        if (mMediaStream != null && !mMediaStream.isBiliPushStreaming()) {
+
+        if (mMediaStream != null && !mMediaStream.isBiliPushStream) {
             isPushingBiliStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startBiliUrlStream(url_bi, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(1, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mBiliIv.setImageResource(R.mipmap.bilibili_on);
 
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
@@ -1020,9 +1041,62 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             isPushingBiliStream = false;
-            mMediaStream.stopBiliPusherStream();
+            mMediaStream.stopPusherStream(1);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             mBiliIv.setImageResource(R.mipmap.bilibili_off);
+            sendMessage("断开连接");
+        }
+    }
+    /*
+     * 推流or停止
+     * type   bili直播
+     * */
+    public void startOrStopYiPush() {
+
+
+        if (mMediaStream != null && !mMediaStream.isYiPushStream) {
+            isPushingYiStream = true;
+            try {
+//                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mYiIv.setImageResource(R.mipmap.yi_live_on);
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+//                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("激活失败，无效Key");
+            }
+        } else {
+            isPushingYiStream = false;
+            mMediaStream.stopPusherStream(3);
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            mYiIv.setImageResource(R.mipmap.yi_live_off);
+            sendMessage("断开连接");
+        }
+    }
+    /*
+     * 推流or停止
+     * type   bili直播
+     * */
+    public void startOrStopNowPush() {
+
+
+        if (mMediaStream != null && !mMediaStream.isNowPushStream) {
+            isPushingNowStream = true;
+            try {
+                mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mNowIv.setImageResource(R.mipmap.now_live_on);
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+//                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("激活失败，无效Key");
+            }
+        } else {
+            isPushingNowStream = false;
+            mMediaStream.stopPusherStream(4);
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            mNowIv.setImageResource(R.mipmap.now_live_off);
             sendMessage("断开连接");
         }
     }
@@ -1033,12 +1107,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopHuyaPush() {
 
-        String url_hu = Hawk.get(HawkProperty.KEY_HU_YA_URL);
-        if (mMediaStream != null && !mMediaStream.isHuyaPushStreaming()) {
+        if (mMediaStream != null && !mMediaStream.isHuyaPushStream) {
             isPushingHuyaStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startHuyaUrlStream(url_hu, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(2, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mHuyaIv.setImageResource(R.mipmap.huya_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
@@ -1048,7 +1121,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             isPushingHuyaStream = false;
-            mMediaStream.stopHuyaPusherStream();
+            mMediaStream.stopPusherStream(2);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             mHuyaIv.setImageResource(R.mipmap.huya_off);
             sendMessage("断开连接");
@@ -1056,14 +1129,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
-    //    /*
-    //     * 关于我们
-    //     * */
-    //    public void onAbout(View view) {
-    //        Intent intent = new Intent(this, AboutActivity.class);
-    //        startActivityForResult(intent, 0);
-    //        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
-    //    }
 
     /*
      * 设置

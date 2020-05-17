@@ -45,6 +45,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final int REQUEST_OVERLAY_PERMISSION = 1004;  // 悬浮框
     private static final int REQUEST_SCAN_TEXT_URL_BILI = 1003;      // 扫描二维码bili
     private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
+    private static final int REQUEST_SCAN_TEXT_URL_YI = 1006;      // 扫描二维码yi
+    private static final int REQUEST_SCAN_TEXT_URL_NOW = 1007;      // 扫描二维码now
 
     private ActivitySettingBinding binding;
 
@@ -76,11 +78,15 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.registCodeValue.setText(RegOperateUtil.strreg);
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL));
-        binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL));
+        binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL,""));
+        binding.yiValueEt.setText(Hawk.get(HawkProperty.KEY_YI_URL,""));
+        binding.nowValueEt.setText(Hawk.get(HawkProperty.KEY_NOW_URL,""));
+        binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL,""));
         binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
         binding.biliScanIv.setOnClickListener(this);
         binding.huyaScanIv.setOnClickListener(this);
+        binding.yiScanIv.setOnClickListener(this);
+        binding.nowScanIv.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
         // 使能摄像头后台采集
         onPushBackground();
@@ -275,6 +281,20 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         } else {
             ToastUtils.toast(mContext, "正在推送哔哩直播，无法更改地址");
         }
+        if (!isPushingYiStream) {
+            String url = binding.yiValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_YI_URL, url);
+
+        } else {
+            ToastUtils.toast(mContext, "正在推送一直播，无法更改地址");
+        }
+        if (!isPushingNowStream) {
+            String url = binding.nowValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_NOW_URL, url);
+
+        } else {
+            ToastUtils.toast(mContext, "正在推送Now直播，无法更改地址");
+        }
         if (!isPushingHuyaStream) {
             String huya = binding.huyaValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
@@ -322,6 +342,16 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 String url = data.getStringExtra("result");
                 this.binding.huyaValueEt.setText(url);
             }
+        }else if (requestCode == REQUEST_SCAN_TEXT_URL_YI) {
+            if (resultCode == RESULT_OK) {
+                String url = data.getStringExtra("result");
+                this.binding.yiValueEt.setText(url);
+            }
+        }else if (requestCode == REQUEST_SCAN_TEXT_URL_NOW) {
+            if (resultCode == RESULT_OK) {
+                String url = data.getStringExtra("result");
+                this.binding.nowValueEt.setText(url);
+            }
         }
     }
 
@@ -359,6 +389,12 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 break;
             case R.id.huya_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_HUYA);
+                break;
+            case R.id.yi_scan_iv:
+                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_YI);
+                break;
+            case R.id.now_scan_iv:
+                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_NOW);
                 break;
             default:
                 break;

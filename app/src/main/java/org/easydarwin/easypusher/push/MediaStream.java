@@ -22,6 +22,7 @@ import com.serenegiant.usb.UVCCamera;
 
 import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.MyApp;
+import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
@@ -69,20 +70,24 @@ public class MediaStream {
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
 
     private String recordPath;          // 录像地址
-    private boolean isPushStream = false;       // 是否要推送数据
-    private boolean isBiliPushStream = false;       // 是否要推送bili数据
-    private boolean isHuyaPushStream = false;       // 是否要推送huya数据
+    protected boolean isPushStream = false;       // 是否要推送数据
+    protected boolean isBiliPushStream = false;       // 是否要推送bili数据
+    protected boolean isHuyaPushStream = false;       // 是否要推送huya数据
+    protected boolean isYiPushStream = false;       // 是否要推送huya数据
+    protected boolean isNowPushStream = false;       // 是否要推送huya数据
     private int displayRotationDegree;  // 旋转角度
 
     private Context context;
     WeakReference<SurfaceTexture> mSurfaceHolderRef;
 
-    private VideoConsumer mVC, mRecordVC,mVCBili,mVCHuya;
+    private VideoConsumer mVC, mRecordVC, mVCBili, mVCHuya, mVCYi, mVCNow;
     private AudioStream audioStream;
     private EasyMuxer mMuxer;
     private Pusher mEasyPusher;
     private Pusher mEasyPusherBiLi;//哔哩
     private Pusher mEasyPusherHuYa;//虎牙
+    private Pusher mEasyPusherYi;//yi
+    private Pusher mEasyPusherNow;//now
 
     private final HandlerThread mCameraThread;
     private final Handler mCameraHandler;
@@ -102,6 +107,8 @@ public class MediaStream {
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
+    private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
+
     /**
      * 初始化MediaStream
      */
@@ -119,9 +126,9 @@ public class MediaStream {
                     Intent intent = new Intent(context, BackgroundCameraService.class);
                     context.stopService(intent);
                 } finally {
-                    stopPusherStream();
-                    stopBiliPusherStream();
-                    stopHuyaPusherStream();
+                    for (int i = 0; i < 5; i++) {
+                        stopPusherStream(i);
+                    }
                     stopPreview();
                     destroyCamera();
                 }
@@ -161,6 +168,8 @@ public class MediaStream {
         mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
         mEasyPusherBiLi = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
         mEasyPusherHuYa = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+        mEasyPusherYi = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+        mEasyPusherNow = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 
         if (!enableVideo) {
             return;
@@ -275,8 +284,8 @@ public class MediaStream {
         }
         frameWidth = nativeWidth;
         frameHeight = nativeHeight;
-//        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
-//        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
+        //        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
+        //        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 
@@ -322,66 +331,39 @@ public class MediaStream {
         audioStream.addPusher(mEasyPusher);
         audioStream.addPusher(mEasyPusherBiLi);
         audioStream.addPusher(mEasyPusherHuYa);
+        audioStream.addPusher(mEasyPusherYi);
+        audioStream.addPusher(mEasyPusherNow);
     }
 
     private void initConsumer(int width, int height) {
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
-            mVC = new ClippableVideoConsumer(context,
-                    sw,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
+            mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
             SWConsumer swBili = new SWConsumer(context, mEasyPusherBiLi, SPUtil.getBitrateKbps(context));
-            mVCBili = new ClippableVideoConsumer(context,
-                    swBili,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
+            mVCBili = new ClippableVideoConsumer(context, swBili, width, height, SPUtil.getEnableVideoOverlay(context));
             SWConsumer swHuya = new SWConsumer(context, mEasyPusherHuYa, SPUtil.getBitrateKbps(context));
-            mVCHuya = new ClippableVideoConsumer(context,
-                    swHuya,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
+            mVCHuya = new ClippableVideoConsumer(context, swHuya, width, height, SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swYi = new SWConsumer(context, mEasyPusherYi, SPUtil.getBitrateKbps(context));
+            mVCYi = new ClippableVideoConsumer(context, swYi, width, height, SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swNow = new SWConsumer(context, mEasyPusherNow, SPUtil.getBitrateKbps(context));
+            mVCNow = new ClippableVideoConsumer(context, swNow, width, height, SPUtil.getEnableVideoOverlay(context));
         } else {
-            HWConsumer hw = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
-                    mEasyPusher,
-                    SPUtil.getBitrateKbps(context),
-                    info.mName,
-                    info.mColorFormat);
-            HWConsumer hwBili = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
-                    mEasyPusherBiLi,
-                    SPUtil.getBitrateKbps(context),
-                    info.mName,
-                    info.mColorFormat);
-            HWConsumer hwHuya = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC,
-                    mEasyPusherHuYa,
-                    SPUtil.getBitrateKbps(context),
-                    info.mName,
-                    info.mColorFormat);
-            mVC = new ClippableVideoConsumer(context,
-                    hw,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
-            mVCBili = new ClippableVideoConsumer(context,
-                    hwBili,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
-            mVCHuya = new ClippableVideoConsumer(context,
-                    hwHuya,
-                    width,
-                    height,
-                    SPUtil.getEnableVideoOverlay(context));
+            HWConsumer hw = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            HWConsumer hwBili = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusherBiLi, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            HWConsumer hwHuya = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusherHuYa, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            HWConsumer hwYi = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusherYi, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            HWConsumer hwNow = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusherNow, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            mVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVCBili = new ClippableVideoConsumer(context, hwBili, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVCHuya = new ClippableVideoConsumer(context, hwHuya, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVCYi = new ClippableVideoConsumer(context, hwYi, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVCNow = new ClippableVideoConsumer(context, hwNow, width, height, SPUtil.getEnableVideoOverlay(context));
         }
         mVC.onVideoStart(width, height);
         mVCBili.onVideoStart(width, height);
         mVCHuya.onVideoStart(width, height);
+        mVCYi.onVideoStart(width, height);
+        mVCNow.onVideoStart(width, height);
     }
 
     /**
@@ -466,24 +448,13 @@ public class MediaStream {
             audioStream.removePusher(mEasyPusher);
             audioStream.removePusher(mEasyPusherBiLi);
             audioStream.removePusher(mEasyPusherHuYa);
+            audioStream.removePusher(mEasyPusherYi);
+            audioStream.removePusher(mEasyPusherNow);
             audioStream.setMuxer(null);
             Log.i(TAG, "Stop AudioStream");
         }
-
-        // 关闭视频编码器
-        if (mVC != null) {
-            mVC.onVideoStop();
-            Log.i(TAG, "Stop VC");
-        }
-        // 关闭视频编码器
-        if (mVCBili != null) {
-            mVCBili.onVideoStop();
-            Log.i(TAG, "Stop VC");
-        }
-        // 关闭视频编码器
-        if (mVCHuya != null) {
-            mVCHuya.onVideoStop();
-            Log.i(TAG, "Stop VC");
+        for (int i = 0; i < 5; i++) {
+            stopVcVedio(i);
         }
 
         // 关闭录像的编码器
@@ -498,88 +469,122 @@ public class MediaStream {
         }
     }
 
+    /**
+     * 关闭视频编码器
+     *  private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
+     * @param type
+     */
+    private void stopVcVedio(int type) {
+        VideoConsumer videoConsumer = null;
+        switch (type) {
+            case 0:
+                videoConsumer = mVC;
+                break;
+            case 1:
+                videoConsumer = mVCBili;
+                break;
+            case 2:
+                videoConsumer = mVCHuya;
+                break;
+            case 3:
+                videoConsumer = mVCYi;
+                break;
+            case 4:
+                videoConsumer = mVCNow;
+                break;
+            default:
+                break;
+        }
+        // 关闭视频编码器
+        if (videoConsumer != null) {
+            videoConsumer.onVideoStop();
+        }
+
+    }
+
 
     /// 开始推流
-    public void startUrlStream(String url, InitCallback callback) throws IOException {
+    // private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
+    public void startPushStream(int pushType, InitCallback callback) throws IOException {
+        Pusher pusher = null;
+        String url = null;
+        switch (pushType) {
+            case 0:
+                pusher = mEasyPusher;
+                url = Config.getServerURL();
+                isPushStream = true;
+                break;
+            case 1:
+                pusher = mEasyPusherBiLi;
+                url = Hawk.get(HawkProperty.KEY_BILIBILI_URL);
+                isBiliPushStream = true;
+                break;
+            case 2:
+                pusher = mEasyPusherHuYa;
+                url = Hawk.get(HawkProperty.KEY_HU_YA_URL);
+                isHuyaPushStream = true;
+                break;
+            case 3:
+                pusher = mEasyPusherYi;
+                url = Hawk.get(HawkProperty.KEY_YI_URL);
+                isYiPushStream = true;
+                break;
+            case 4:
+                pusher = mEasyPusherNow;
+                url = Hawk.get(HawkProperty.KEY_NOW_URL);
+                isNowPushStream = true;
+                break;
+            default:
+                break;
+        }
         try {
             if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
                 if (!TextUtils.isEmpty(url)) {
-                    mEasyPusher.initPush(url, context, callback);
+                    pusher.initPush(url, context, callback);
                 }
             } else {
                 if (!TextUtils.isEmpty(url)) {
-                    mEasyPusher.initPush(url, context, callback, ~0);
+                    pusher.initPush(url, context, callback, ~0);
                 }
+
             }
-            isPushStream = true;
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new IOException(ex.getMessage());
         }
     }
 
-    /// 开始推流
-    public void startBiliUrlStream(String biliUrl, InitCallback callback) throws IOException {
-        try {
-            if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
-                if (!TextUtils.isEmpty(biliUrl)) {
-                    mEasyPusherBiLi.initPush(biliUrl, context, callback);
-                }
-            } else {
-                if (!TextUtils.isEmpty(biliUrl)) {
-                    mEasyPusherBiLi.initPush(biliUrl, context, callback, ~0);
-                }
-
-            }
-            isBiliPushStream = true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new IOException(ex.getMessage());
-        }
-    }
-
-    /// 开始推流
-    public void startHuyaUrlStream(String huyaUrl, InitCallback callback) throws IOException {
-        try {
-            if (SPUtil.getEnableVideo(MyApp.getEasyApplication())) {
-                if (!TextUtils.isEmpty(huyaUrl)) {
-                    mEasyPusherHuYa.initPush(huyaUrl, context, callback);
-                }
-            } else {
-                if (!TextUtils.isEmpty(huyaUrl)) {
-                    mEasyPusherHuYa.initPush(huyaUrl, context, callback, ~0);
-                }
-
-            }
-            isHuyaPushStream = true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new IOException(ex.getMessage());
-        }
-    }
 
     /// 停止推流
-    public void stopPusherStream() {
-        if (mEasyPusher != null) {
-            mEasyPusher.stop();
+    public void stopPusherStream(int pushType) {
+        Pusher pusher = null;
+        switch (pushType) {
+            case 0:
+                pusher = mEasyPusher;
+                isPushStream = false;
+                break;
+            case 1:
+                pusher = mEasyPusherBiLi;
+                isBiliPushStream = false;
+                break;
+            case 2:
+                pusher = mEasyPusherHuYa;
+                isHuyaPushStream = false;
+                break;
+            case 3:
+                pusher = mEasyPusherYi;
+                isYiPushStream = false;
+                break;
+            case 4:
+                pusher = mEasyPusherNow;
+                isNowPushStream = false;
+                break;
+            default:
+                break;
         }
-        isPushStream = false;
-    }
-
-    /// 停止bili推流
-    public void stopBiliPusherStream() {
-        if (mEasyPusherBiLi != null) {
-            mEasyPusherBiLi.stop();
+        if (pusher != null) {
+            pusher.stop();
         }
-        isBiliPushStream = false;
-    }
-
-    /// 停止虎牙推流
-    public void stopHuyaPusherStream() {
-        if (mEasyPusherHuYa != null) {
-            mEasyPusherHuYa.stop();
-        }
-        isHuyaPushStream = false;
     }
 
     /// 开始录像
@@ -687,17 +692,6 @@ public class MediaStream {
                         return;
                     }
                 }
-                //                if (mTargetCameraId == CAMERA_FACING_BACK_LOOP) {
-                //                    if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                //                        mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-                //                    } else if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                //                        mCameraId = CAMERA_FACING_BACK_UVC;// 尝试切换到外置摄像头
-                //                    } else {
-                //                        mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
-                //                    }
-                //                } else {
-                //                    mCameraId = mTargetCameraId;
-                //                }
 
                 stopPreview();
                 destroyCamera();
@@ -744,6 +738,8 @@ public class MediaStream {
         mVC.onVideo(data, 0);
         mVCBili.onVideo(data, 0);
         mVCHuya.onVideo(data, 0);
+        mVCYi.onVideo(data, 0);
+        mVCNow.onVideo(data, 0);
         mCamera.addCallbackBuffer(data);
     };
 
@@ -752,28 +748,6 @@ public class MediaStream {
     private UVCCamera uvcCamera;
 
     BlockingQueue<byte[]> cache = new ArrayBlockingQueue<byte[]>(100);
-    //    BlockingQueue<byte[]>
-    //    = new ArrayBlockingQueue<byte[]>(10);
-    //    final Runnable dequeueRunnable = new Runnable() {
-    //        @Override
-    //        public void run() {
-    //            try {
-    //                byte[] data = bufferQueue.poll(10, TimeUnit.MICROSECONDS);
-    //
-    //                if (data != null) {
-    //                    onUvcCameraPreviewFrame(data, uvcCamera);
-    //                    cache.offer(data);
-    //                }
-    //
-    //                if (uvcCamera == null)
-    //                    return;
-    //
-    //                mCameraHandler.post(this);
-    //            } catch (InterruptedException ex) {
-    //                ex.printStackTrace();
-    //            }
-    //        }
-    //    };
 
     final IFrameCallback uvcFrameCallback = new IFrameCallback() {
         @Override
@@ -922,17 +896,6 @@ public class MediaStream {
         mSurfaceHolderRef = new WeakReference<SurfaceTexture>(texture);
     }
 
-    public boolean isPushStreaming() {
-        return isPushStream;
-    }
-
-    public boolean isBiliPushStreaming() {
-        return isBiliPushStream;
-    }
-
-    public boolean isHuyaPushStreaming() {
-        return isHuyaPushStream;
-    }
 
     public Camera getCamera() {
         return mCamera;

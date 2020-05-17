@@ -24,6 +24,8 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
     protected boolean isPushingStream = false;//是否正在推流
     protected boolean isPushingBiliStream = false;//是否正在推流
     protected boolean isPushingHuyaStream = false;//是否正在推流
+    protected boolean isPushingYiStream = false;//是否正在推流
+    protected boolean isPushingNowStream = false;//是否正在推流
 
     public abstract void onUvcCameraConnected();
 
