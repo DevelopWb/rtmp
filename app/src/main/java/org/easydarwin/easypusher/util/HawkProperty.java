@@ -33,11 +33,11 @@ public class HawkProperty {
     /**
      * 保存一直播地址
      */
-    public static final String KEY_YI_URL = "key_bilibili_url";
+    public static final String KEY_YI_URL = "key_yi_url";
     /**
      * 保存Now直播地址
      */
-    public static final String KEY_NOW_URL = "key_bilibili_url";
+    public static final String KEY_NOW_URL = "key_now_url";
 
 
 
