@@ -158,7 +158,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     private TextureView surfaceView;
     private ImageView mPushBgIv;
-    private ImageView mPushStreamIv;
+    private ImageView mPushStreamIv,mSwitchOritation;
     private ImageView mBiliIv;
     private ImageView mYiIv;
     private ImageView mNowIv;
@@ -198,7 +198,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mPushStreamIv = (ImageView) findViewById(R.id.push_stream_iv);
+        mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
         mPushStreamIv.setOnClickListener(this);
+        mSwitchOritation.setOnClickListener(this);
         mBiliIv = (ImageView) findViewById(R.id.bili_iv);
         mBiliIv.setOnClickListener(this);
         mYiIv = (ImageView) findViewById(R.id.yi_iv);
@@ -760,6 +762,26 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
                 startOrStopHuyaPush();
                 break;
+
+            case R.id.switch_oritation_iv:
+                /*
+                 * 切换屏幕方向
+                 * */
+
+                if (isStreaming()) {
+                    Toast.makeText(this,"正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int orientation = getRequestedOrientation();
+
+                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+
+                break;
         }
     }
 
@@ -933,28 +955,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }).show();
     }
 
-    //    /*
-    //     * 切换屏幕方向
-    //     * */
-    //    public void onSwitchOrientation(View view) {
-    //        if (mMediaStream != null) {
-    //            if (mMediaStream.isStreaming()){
-    //                Toast.makeText(this,"正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
-    //                return;
-    //            }
-    //        }
-    //
-    //        int orientation = getRequestedOrientation();
-    //
-    //        if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
-    //            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    //        } else {
-    //            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    //        }
-    //
-    ////        if (mMediaStream != null)
-    ////            mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
-    //    }
 
     /*
      * 推流or停止
