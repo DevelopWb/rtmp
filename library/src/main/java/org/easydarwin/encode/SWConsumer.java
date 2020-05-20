@@ -82,7 +82,7 @@ public class SWConsumer extends Thread implements VideoConsumer {
 
         x264 = new X264Encoder();
         int bitrate = 72 * 1000 + bitrateKbps;
-        x264.create(width, height, 20, bitrate/1000);
+        x264.create(width, height, 30, bitrate/1000);
         mVideoStarted = true;
         start();
     }

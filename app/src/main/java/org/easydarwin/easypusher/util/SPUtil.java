@@ -44,7 +44,7 @@ public class SPUtil {
 
     public static int getBitrateKbps(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(KEY_BITRATE_ADDED_KBPS, 300000);
+                .getInt(KEY_BITRATE_ADDED_KBPS, 3000000);
     }
 
     public static void setBitrateKbps(Context context, int value) {

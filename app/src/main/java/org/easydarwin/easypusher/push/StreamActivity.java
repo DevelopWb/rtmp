@@ -405,20 +405,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         });
     }
 
-    //    /*
-    //     * 显示key有效期
-    //     * */
-    //    private void notifyAboutColorChange() {
-    //        ImageView iv = findViewById(R.id.toolbar_about);
-    //
-    //        if (MyApp.activeDays >= 9999) {
-    //            iv.setImageResource(R.drawable.green);
-    //        } else if (MyApp.activeDays > 0) {
-    //            iv.setImageResource(R.drawable.yellow);
-    //        } else {
-    //            iv.setImageResource(R.drawable.red);
-    //        }
-    //    }
 
     /*
      * 初始化MediaStream
@@ -502,29 +488,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         return degrees;
     }
 
-    //    /*
-    //     * 初始化下拉控件的列表（显示分辨率）
-    //     * */
-    //    private void initSpinner() {
-    //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spn_item, listResolution);
-    //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    //        spnResolution.setAdapter(adapter);
-    //
-    //        int position = listResolution.indexOf(String.format("%dx%d", width, height));
-    //        spnResolution.setSelection(position, false);
-    //
-    //        spnResolution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    //            @Override
-    //            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-    //
-    //            }
-    //
-    //            @Override
-    //            public void onNothingSelected(AdapterView<?> parent) {
-    //
-    //            }
-    //        });
-    //    }
 
     /*
      * 开始录像的通知
@@ -651,9 +614,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private String getPushStatusMsg() {
         if (mMediaStream.isPushStream) {
             if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
-                return "取证+直播中";
+                return "直播中";
             }
-            return "取证中";
+            return "直播中";
         } else {
             if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
                 return "直播中";
