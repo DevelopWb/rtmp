@@ -116,5 +116,19 @@ public class SPUtil {
                 .apply();
     }
 
+    /* ============================ 屏幕直播 ============================ */
 
+    private static final String KEY_SCREEN_PUSHING = "alert_screen_background_pushing";
+
+    public static boolean getScreenPushing(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(KEY_SCREEN_PUSHING, false);
+    }
+
+    public static void setScreenPushing(Context context, boolean value) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(KEY_SCREEN_PUSHING, true)
+                .apply();
+    }
 }

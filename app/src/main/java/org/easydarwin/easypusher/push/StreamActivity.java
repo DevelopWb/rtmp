@@ -14,10 +14,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.graphics.SurfaceTexture;
+import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -41,6 +45,7 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
+import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.DoubleClickListener;
 import org.easydarwin.easypusher.util.HawkProperty;
@@ -291,27 +296,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     }
 
-    //    /*
-    //     * 推送屏幕
-    //     * */
-    //    private void startScreenPushIntent() {
-    //        if (StreamActivity.mResultIntent != null && StreamActivity.mResultCode != 0) {
-    //            Intent intent = new Intent(getApplicationContext(), RecordService.class);
-    //            startService(intent);
-    //
-    //            ImageView im = findViewById(R.id.streaming_activity_push_screen);
-    //            im.setImageResource(R.drawable.push_screen_click);
-    //
-    //            TextView viewById = findViewById(R.id.push_screen_url);
-    //            viewById.setText(Config.getServerURL(this));
-    //        } else {
-    //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    //                // 2.创建屏幕捕捉的Intent
-    //                MediaProjectionManager mMpMngr = (MediaProjectionManager) getApplicationContext().getSystemService(MEDIA_PROJECTION_SERVICE);
-    //                startActivityForResult(mMpMngr.createScreenCaptureIntent(), StreamActivity.REQUEST_MEDIA_PROJECTION);
-    //            }
-    //        }
-    //    }
+
 
     private void goonWithPermissionGranted() {
 
@@ -851,57 +836,77 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     }
 
-    //    /*
-    //     * 推送屏幕
-    //     * */
-    //    public void onPushScreen(final View view) {
-    //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-    //            new AlertDialog.Builder(this).setMessage("推送屏幕需要安卓5.0以上,您当前系统版本过低,不支持该功能。").setTitle("抱歉").show();
-    //            return;
-    //        }
-    //
-    //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    //            if (!Settings.canDrawOverlays(this)) {
-    //                new AlertDialog.Builder(this)
-    //                        .setMessage("推送屏幕需要APP出现在顶部.是否确定?")
-    //                        .setPositiveButton(android.R.string.ok,
-    //                                (dialogInterface, i) -> {
-    //                                    // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
-    //                                    final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
-    //                                    startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
-    //                                })
-    //                        .setNegativeButton(android.R.string.cancel, null)
-    //                        .setCancelable(false)
-    //                        .show();
-    //                return;
-    //            }
-    //        }
-    //
-    //        if (!SPUtil.getScreenPushing(this)) {
-    //            new AlertDialog.Builder(this).setTitle("提醒").setMessage("屏幕直播将要开始,直播过程中您可以切换到其它屏幕。不过记得直播结束后,再进来停止直播哦!").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-    //                @Override
-    //                public void onClick(DialogInterface dialogInterface, int i) {
-    //                    SPUtil.setScreenPushing(StreamActivity.this, true);
-    //                    onPushScreen(view);
-    //                }
-    //            }).show();
-    //            return;
-    //        }
-    //
-    //        if (RecordService.mEasyPusher != null) {
-    //            Intent intent = new Intent(getApplicationContext(), RecordService.class);
-    //            stopService(intent);
-    //
-    //            TextView viewById = findViewById(R.id.push_screen_url);
-    //            viewById.setText(Config.getServerURL(this));
-    //
-    //            ImageView im = findViewById(R.id.streaming_activity_push_screen);
-    //            im.setImageResource(R.drawable.push_screen);
-    //        } else {
-    //            startScreenPushIntent();
-    //        }
-    //    }
+        /*
+         * 推送屏幕
+         * */
+        public void onPushScreen(final View view) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                new AlertDialog.Builder(this).setMessage("推送屏幕需要安卓5.0以上,您当前系统版本过低,不支持该功能。").setTitle("抱歉").show();
+                return;
+            }
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    new AlertDialog.Builder(this)
+                            .setMessage("推送屏幕需要APP出现在顶部.是否确定?")
+                            .setPositiveButton(android.R.string.ok,
+                                    (dialogInterface, i) -> {
+                                        // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
+                                        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                                        startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+                                    })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setCancelable(false)
+                            .show();
+                    return;
+                }
+            }
+
+            if (!SPUtil.getScreenPushing(this)) {
+                new AlertDialog.Builder(this).setTitle("提醒").setMessage("屏幕直播将要开始,直播过程中您可以切换到其它屏幕。不过记得直播结束后,再进来停止直播哦!").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        SPUtil.setScreenPushing(StreamActivity.this, true);
+                        onPushScreen(view);
+                    }
+                }).show();
+                return;
+            }
+
+            if (RecordService.mEasyPusher != null) {
+                Intent intent = new Intent(getApplicationContext(), RecordService.class);
+                stopService(intent);
+
+                TextView viewById = findViewById(R.id.push_screen_url);
+                viewById.setText(Config.getServerURL(this));
+
+                ImageView im = findViewById(R.id.streaming_activity_push_screen);
+                im.setImageResource(R.drawable.push_screen);
+            } else {
+                startScreenPushIntent();
+            }
+        }
+    /*
+     * 推送屏幕
+     * */
+    private void startScreenPushIntent() {
+        if (StreamActivity.mResultIntent != null && StreamActivity.mResultCode != 0) {
+            Intent intent = new Intent(getApplicationContext(), RecordService.class);
+            startService(intent);
+
+            ImageView im = findViewById(R.id.streaming_activity_push_screen);
+            im.setImageResource(R.drawable.push_screen_click);
+
+            TextView viewById = findViewById(R.id.push_screen_url);
+            viewById.setText(Config.getServerURL(this));
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // 2.创建屏幕捕捉的Intent
+                MediaProjectionManager mMpMngr = (MediaProjectionManager) getApplicationContext().getSystemService(MEDIA_PROJECTION_SERVICE);
+                startActivityForResult(mMpMngr.createScreenCaptureIntent(), StreamActivity.REQUEST_MEDIA_PROJECTION);
+            }
+        }
+    }
     /*
      * 切换分辨率
      * */
