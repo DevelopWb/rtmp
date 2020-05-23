@@ -43,6 +43,7 @@ import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
+import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
@@ -163,7 +164,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     private TextureView surfaceView;
     private ImageView mPushBgIv;
-    private ImageView mPushStreamIv,mSwitchOritation;
+    private ImageView mPushStreamIv, mSwitchOritation;
     private ImageView mBiliIv;
     private ImageView mYiIv;
     private ImageView mNowIv;
@@ -276,7 +277,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream);
+        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream);
     }
 
 
@@ -295,7 +296,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
     }
-
 
 
     private void goonWithPermissionGranted() {
@@ -600,12 +600,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private String getPushStatusMsg() {
         if (mMediaStream.isPushStream) {
-            if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
+            if (mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream) {
                 return "直播中";
             }
             return "直播中";
         } else {
-            if (mMediaStream.isBiliPushStream|| mMediaStream.isHuyaPushStream||mMediaStream.isYiPushStream||mMediaStream.isNowPushStream) {
+            if (mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream) {
                 return "直播中";
             }
         }
@@ -754,13 +754,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * */
 
                 if (isStreaming()) {
-                    Toast.makeText(this,"正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 int orientation = getRequestedOrientation();
 
-                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -836,56 +836,53 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     }
 
-        /*
-         * 推送屏幕
-         * */
-        public void onPushScreen(final View view) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                new AlertDialog.Builder(this).setMessage("推送屏幕需要安卓5.0以上,您当前系统版本过低,不支持该功能。").setTitle("抱歉").show();
+    /*
+     * 推送屏幕
+     * */
+    public void onPushScreen(final View view) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            new AlertDialog.Builder(this).setMessage("推送屏幕需要安卓5.0以上,您当前系统版本过低,不支持该功能。").setTitle("抱歉").show();
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                new AlertDialog.Builder(this)
+                        .setMessage("推送屏幕需要APP出现在顶部.是否确定?")
+                        .setPositiveButton(android.R.string.ok,
+                                (dialogInterface, i) -> {
+                                    // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
+                                    final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                                    startActivityForResult(intent, SettingActivity.REQUEST_OVERLAY_PERMISSION);
+                                })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setCancelable(false)
+                        .show();
                 return;
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    new AlertDialog.Builder(this)
-                            .setMessage("推送屏幕需要APP出现在顶部.是否确定?")
-                            .setPositiveButton(android.R.string.ok,
-                                    (dialogInterface, i) -> {
-                                        // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
-                                        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
-                                        startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
-                                    })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .setCancelable(false)
-                            .show();
-                    return;
-                }
-            }
-
-            if (!SPUtil.getScreenPushing(this)) {
-                new AlertDialog.Builder(this).setTitle("提醒").setMessage("屏幕直播将要开始,直播过程中您可以切换到其它屏幕。不过记得直播结束后,再进来停止直播哦!").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        SPUtil.setScreenPushing(StreamActivity.this, true);
-                        onPushScreen(view);
-                    }
-                }).show();
-                return;
-            }
-
-            if (RecordService.mEasyPusher != null) {
-                Intent intent = new Intent(getApplicationContext(), RecordService.class);
-                stopService(intent);
-
-                TextView viewById = findViewById(R.id.push_screen_url);
-                viewById.setText(Config.getServerURL(this));
-
-                ImageView im = findViewById(R.id.streaming_activity_push_screen);
-                im.setImageResource(R.drawable.push_screen);
-            } else {
-                startScreenPushIntent();
             }
         }
+
+        if (!SPUtil.getScreenPushing(this)) {
+            new AlertDialog.Builder(this).setTitle("提醒").setMessage("屏幕直播将要开始,直播过程中您可以切换到其它屏幕。不过记得直播结束后,再进来停止直播哦!").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    SPUtil.setScreenPushing(StreamActivity.this, true);
+                    onPushScreen(view);
+                }
+            }).show();
+            return;
+        }
+
+        if (RecordService.mEasyPusher != null) {
+            Intent intent = new Intent(getApplicationContext(), RecordService.class);
+            stopService(intent);
+//                ImageView im = findViewById(R.id.streaming_activity_push_screen);
+//                im.setImageResource(R.drawable.push_screen);
+        } else {
+            startScreenPushIntent();
+        }
+    }
+
     /*
      * 推送屏幕
      * */
@@ -894,11 +891,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             Intent intent = new Intent(getApplicationContext(), RecordService.class);
             startService(intent);
 
-            ImageView im = findViewById(R.id.streaming_activity_push_screen);
-            im.setImageResource(R.drawable.push_screen_click);
+//            ImageView im = findViewById(R.id.streaming_activity_push_screen);
+//            im.setImageResource(R.drawable.push_screen_click);
 
-            TextView viewById = findViewById(R.id.push_screen_url);
-            viewById.setText(Config.getServerURL(this));
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 // 2.创建屏幕捕捉的Intent
@@ -907,20 +902,21 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
     }
+
     /*
      * 切换分辨率
      * */
     public void onClickResolution(View view) {
         if (UVCCameraService.uvcConnected) {
-            setCameraRes(resUvcDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
-        }else {
-            setCameraRes(resDisplay,Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
+            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
+        } else {
+            setCameraRes(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
         }
 
     }
 
     /**
-     *配置相机的分辨率
+     * 配置相机的分辨率
      */
     private void setCameraRes(CharSequence[] res_display, int index) {
         new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(res_display, index, new DialogInterface.OnClickListener() {
@@ -933,7 +929,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     return;
                 }
                 String[] titles = title.split("x");
-                if (res_display.length>3) {
+                if (res_display.length > 3) {
                     //原生相机配置分辨率
                     if (!Util.getSupportResolution(StreamActivity.this).contains(title)) {
                         Toast.makeText(StreamActivity.this, "您的相机不支持此分辨率", Toast.LENGTH_SHORT).show();
@@ -941,12 +937,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         return;
                     }
                     Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
-                    Hawk.put(HawkProperty.KEY_NATIVE_WIDTH,Integer.parseInt(titles[0]));
-                    Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT,Integer.parseInt(titles[1]));
-                }else{
+                    Hawk.put(HawkProperty.KEY_NATIVE_WIDTH, Integer.parseInt(titles[0]));
+                    Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT, Integer.parseInt(titles[1]));
+                } else {
                     Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
-                    Hawk.put(HawkProperty.KEY_UVC_WIDTH,Integer.parseInt(titles[0]));
-                    Hawk.put(HawkProperty.KEY_UVC_HEIGHT,Integer.parseInt(titles[1]));
+                    Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
+                    Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
                 }
                 mScreenResTv.setText("分辨率:" + title);
 
@@ -1015,6 +1011,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             sendMessage("断开连接");
         }
     }
+
     /*
      * 推流or停止
      * type   bili直播
@@ -1042,6 +1039,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             sendMessage("断开连接");
         }
     }
+
     /*
      * 推流or停止
      * type   bili直播
@@ -1095,7 +1093,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             sendMessage("断开连接");
         }
     }
-
 
 
     /*

@@ -51,7 +51,7 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @org.greenrobot.eventbus.Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void receivedStringMsg(String msg) {
         switch (msg) {
             case "onAttach":

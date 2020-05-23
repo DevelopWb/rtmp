@@ -189,28 +189,28 @@
                 android:textColor="#fff" />
         </LinearLayout>
 
-        <!--        <LinearLayout-->
-        <!--            android:id="@+id/push_screen_container"-->
-        <!--            android:layout_width="0dp"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_weight="1"-->
-        <!--            android:gravity="center_horizontal"-->
-        <!--            android:onClick="onPushScreen"-->
-        <!--            android:orientation="vertical">-->
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/push_screen_container"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center_horizontal"-->
+<!--                    android:onClick="onPushScreen"-->
+<!--                    android:orientation="vertical">-->
 
-        <!--            <ImageView-->
-        <!--                android:id="@+id/streaming_activity_push_screen"-->
-        <!--                android:layout_width="20dp"-->
-        <!--                android:layout_height="20dp"-->
-        <!--                android:src="@drawable/push_screen" />-->
+<!--                    <ImageView-->
+<!--                        android:id="@+id/streaming_activity_push_screen"-->
+<!--                        android:layout_width="20dp"-->
+<!--                        android:layout_height="20dp"-->
+<!--                        android:src="@drawable/push_screen" />-->
 
-        <!--            <TextView-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_marginTop="6dp"-->
-        <!--                android:text="推送屏幕"-->
-        <!--                android:textColor="#fff" />-->
-        <!--        </LinearLayout>-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="6dp"-->
+<!--                        android:text="推送屏幕"-->
+<!--                        android:textColor="#fff" />-->
+<!--                </LinearLayout>-->
 
         <LinearLayout
             android:layout_width="0dp"

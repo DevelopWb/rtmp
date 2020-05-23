@@ -25,7 +25,12 @@ public class UVCCameraService extends Service {
 
     public static boolean uvcConnected = false;
     public static boolean uvcAttached = false;
+    private static  UvcConnectionStatus  uvcConnectedCallBack;
 
+
+    public static void  setUvcConnectedCallBack(UvcConnectionStatus  uvcConnectedCallBack){
+        UVCCameraService.uvcConnectedCallBack = uvcConnectedCallBack;
+    }
 
     public static class UVCCameraLivaData extends LiveData<UVCCamera> {
         @Override
@@ -110,6 +115,9 @@ public class UVCCameraService extends Service {
 
                 uvcAttached = true;
                 mUSBMonitor.requestPermission(device);
+                if (uvcConnectedCallBack != null) {
+                    uvcConnectedCallBack.onUvcCameraAttached();
+                }
                 EventBus.getDefault().post("onAttach");
             }
 
@@ -147,6 +155,9 @@ public class UVCCameraService extends Service {
                     liveData.postValue(camera);
 //                    Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
                     EventBus.getDefault().post("onConnect");
+                    if (uvcConnectedCallBack != null) {
+                        uvcConnectedCallBack.onUvcCameraConnected();
+                    }
                     if (device != null)
                         cameras.append(device.getDeviceId(), camera);
                 } catch (Exception ex) {
@@ -176,6 +187,9 @@ public class UVCCameraService extends Service {
                     Toast.makeText(UVCCameraService.this, "UVCCamera disconnected!", Toast.LENGTH_SHORT).show();
                     mUVCCamera = null;
                     liveData.postValue(null);
+                }
+                if (uvcConnectedCallBack != null) {
+                    uvcConnectedCallBack.onUvcCameraDisConnected();
                 }
                 EventBus.getDefault().post("onDisconnect");
 //                if (mUSBMonitor != null) {
