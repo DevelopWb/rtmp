@@ -288,21 +288,25 @@ public class MediaStream {
         //        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-
+            uvcCamera.setPreviewSize(frameHeight,
+                    frameWidth,
+                    1,
+                    30,
+                    UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-            try {
-                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-            } catch (final IllegalArgumentException e) {
-                try {
-                    // fallback to YUV mode
-                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
-                } catch (final IllegalArgumentException e1) {
-                    if (uvcCamera != null) {
-                        uvcCamera.destroy();
-                        uvcCamera = null;
-                    }
-                }
-            }
+//            try {
+//                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+//            } catch (final IllegalArgumentException e) {
+//                try {
+//                    // fallback to YUV mode
+//                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
+//                } catch (final IllegalArgumentException e1) {
+//                    if (uvcCamera != null) {
+//                        uvcCamera.destroy();
+//                        uvcCamera = null;
+//                    }
+//                }
+//            }
         }
 
         if (uvcCamera == null) {
