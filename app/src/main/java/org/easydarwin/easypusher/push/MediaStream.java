@@ -288,8 +288,8 @@ public class MediaStream {
         //        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-            uvcCamera.setPreviewSize(frameHeight,
-                    frameWidth,
+            uvcCamera.setPreviewSize(frameWidth,
+                    frameHeight,
                     1,
                     30,
                     UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
