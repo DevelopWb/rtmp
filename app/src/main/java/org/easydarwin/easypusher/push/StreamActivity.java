@@ -721,7 +721,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     Toast.makeText(getApplicationContext(), "还没有配置哔哩哔哩直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startOrStopBiliPush();
+                startOrStopFirstPush();
                 break;
             case R.id.yi_iv:
                 String url_yi = Hawk.get(HawkProperty.KEY_YI_URL);
@@ -729,7 +729,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     Toast.makeText(getApplicationContext(), "还没有配置一直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startOrStopYiPush();
+                startOrStopThirdPush();
                 break;
             case R.id.now_iv:
                 String url_now = Hawk.get(HawkProperty.KEY_NOW_URL);
@@ -737,7 +737,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     Toast.makeText(getApplicationContext(), "还没有配置now直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startOrStopNowPush();
+                startOrStopFourthPush();
                 break;
             case R.id.huya_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_HU_YA_URL);
@@ -745,7 +745,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     Toast.makeText(getApplicationContext(), "还没有配置虎牙直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startOrStopHuyaPush();
+                startOrStopSecendPush();
                 break;
 
             case R.id.switch_oritation_iv:
@@ -985,9 +985,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /*
      * 推流or停止
-     * type   bili直播
+     * type   第一个直播
      * */
-    public void startOrStopBiliPush() {
+    public void startOrStopFirstPush() {
 
 
         if (mMediaStream != null && !mMediaStream.isBiliPushStream) {
@@ -1014,9 +1014,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /*
      * 推流or停止
-     * type   bili直播
+     * type   第三个直播
      * */
-    public void startOrStopYiPush() {
+    public void startOrStopThirdPush() {
 
 
         if (mMediaStream != null && !mMediaStream.isYiPushStream) {
@@ -1042,9 +1042,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /*
      * 推流or停止
-     * type   bili直播
+     * type   第四个直播
      * */
-    public void startOrStopNowPush() {
+    public void startOrStopFourthPush() {
 
 
         if (mMediaStream != null && !mMediaStream.isNowPushStream) {
@@ -1069,9 +1069,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /*
      * 推流or停止
-     * type   虎牙直播
+     * type   第二个直播
      * */
-    public void startOrStopHuyaPush() {
+    public void startOrStopSecendPush() {
 
         if (mMediaStream != null && !mMediaStream.isHuyaPushStream) {
             isPushingHuyaStream = true;

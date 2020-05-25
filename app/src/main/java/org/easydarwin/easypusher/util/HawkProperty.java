@@ -86,4 +86,27 @@ public class HawkProperty {
      * 使用软编码
      */
     public static final String KEY_SW_CODEC = "key-sw-codec";
+
+    /**
+     * 第一个直播平台
+     */
+    public static final String FIRST_LIVE = "first_live";
+    /**
+     * 第一个直播平台
+     */
+    public static final String SECENDLIVE = "secend_live";
+    /**
+     * 第一个直播平台
+     */
+    public static final String THIRD_LIVE = "third_live";
+    /**
+     * 第一个直播平台
+     */
+    public static final String FOURTH_LIVE = "fourth_live";
+
+
+
+
+
+
 }

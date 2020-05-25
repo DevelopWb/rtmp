@@ -23,6 +23,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
@@ -30,12 +31,17 @@ import com.regmode.RegOperateUtil;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
+import org.easydarwin.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 设置页
@@ -47,8 +53,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
     private static final int REQUEST_SCAN_TEXT_URL_YI = 1006;      // 扫描二维码yi
     private static final int REQUEST_SCAN_TEXT_URL_NOW = 1007;      // 扫描二维码now
-
+    private CharSequence[] lives = new CharSequence[]{"哔哩哔哩", "虎牙直播", "斗鱼直播", "一直播", "NOW直播", "战旗TV", "西瓜视频", "映客直播", "cc直播"};
+    private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
+    private List<Boolean> selectArray = new ArrayList<>();
+    ;
 
     @Override
     public void onUvcCameraConnected() {
@@ -78,15 +87,23 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.registCodeValue.setText(RegOperateUtil.strreg);
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        binding.biliValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL,""));
-        binding.yiValueEt.setText(Hawk.get(HawkProperty.KEY_YI_URL,""));
-        binding.nowValueEt.setText(Hawk.get(HawkProperty.KEY_NOW_URL,""));
-        binding.huyaValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL,""));
+        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL, ""));
+        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_YI_URL, ""));
+        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_NOW_URL, ""));
+        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL, ""));
         binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
-        binding.biliScanIv.setOnClickListener(this);
-        binding.huyaScanIv.setOnClickListener(this);
-        binding.yiScanIv.setOnClickListener(this);
-        binding.nowScanIv.setOnClickListener(this);
+        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, "哔哩哔哩"));
+        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, "虎牙直播"));
+        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, "一直播"));
+        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, "NOW直播"));
+        binding.firstLiveScanIv.setOnClickListener(this);
+        binding.secendLiveScanIv.setOnClickListener(this);
+        binding.thirdLiveScanIv.setOnClickListener(this);
+        binding.fourthLiveScanIv.setOnClickListener(this);
+        binding.firstLiveKey.setOnClickListener(this);
+        binding.secendLiveKey.setOnClickListener(this);
+        binding.thirdLiveKey.setOnClickListener(this);
+        binding.fourthLiveKey.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
         // 使能摄像头后台采集
         onPushBackground();
@@ -275,28 +292,28 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
         }
         if (!isPushingBiliStream) {
-            String bilibili = binding.biliValueEt.getText().toString().trim();
+            String bilibili = binding.firstLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
 
         } else {
             ToastUtils.toast(mContext, "正在推送哔哩直播，无法更改地址");
         }
         if (!isPushingYiStream) {
-            String url = binding.yiValueEt.getText().toString().trim();
+            String url = binding.thirdLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_YI_URL, url);
 
         } else {
             ToastUtils.toast(mContext, "正在推送一直播，无法更改地址");
         }
         if (!isPushingNowStream) {
-            String url = binding.nowValueEt.getText().toString().trim();
+            String url = binding.fourthLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_NOW_URL, url);
 
         } else {
             ToastUtils.toast(mContext, "正在推送Now直播，无法更改地址");
         }
         if (!isPushingHuyaStream) {
-            String huya = binding.huyaValueEt.getText().toString().trim();
+            String huya = binding.secendLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
         } else {
             ToastUtils.toast(mContext, "正在推送虎牙直播，无法更改地址");
@@ -334,23 +351,23 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         } else if (requestCode == REQUEST_SCAN_TEXT_URL_BILI) {
             if (resultCode == RESULT_OK) {
                 String url = data.getStringExtra("result");
-                this.binding.biliValueEt.setText(url);
+                this.binding.firstLiveValueEt.setText(url);
             }
 
         } else if (requestCode == REQUEST_SCAN_TEXT_URL_HUYA) {
             if (resultCode == RESULT_OK) {
                 String url = data.getStringExtra("result");
-                this.binding.huyaValueEt.setText(url);
+                this.binding.secendLiveValueEt.setText(url);
             }
-        }else if (requestCode == REQUEST_SCAN_TEXT_URL_YI) {
+        } else if (requestCode == REQUEST_SCAN_TEXT_URL_YI) {
             if (resultCode == RESULT_OK) {
                 String url = data.getStringExtra("result");
-                this.binding.yiValueEt.setText(url);
+                this.binding.thirdLiveValueEt.setText(url);
             }
-        }else if (requestCode == REQUEST_SCAN_TEXT_URL_NOW) {
+        } else if (requestCode == REQUEST_SCAN_TEXT_URL_NOW) {
             if (resultCode == RESULT_OK) {
                 String url = data.getStringExtra("result");
-                this.binding.nowValueEt.setText(url);
+                this.binding.fourthLiveValueEt.setText(url);
             }
         }
     }
@@ -384,20 +401,88 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
-            case R.id.bili_scan_iv:
+            case R.id.first_live_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_BILI);
                 break;
-            case R.id.huya_scan_iv:
+            case R.id.secend_live_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_HUYA);
                 break;
-            case R.id.yi_scan_iv:
+            case R.id.third_live_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_YI);
                 break;
-            case R.id.now_scan_iv:
+            case R.id.fourth_live_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_NOW);
+                break;
+            case R.id.first_live_key:
+                selectLiveType(1);
+                break;
+            case R.id.secend_live_key:
+                selectLiveType(2);
+                break;
+            case R.id.third_live_key:
+                selectLiveType(3);
+                break;
+            case R.id.fourth_live_key:
+                selectLiveType(4);
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 选择平台
+     *
+     * @param type
+     */
+    private void selectLiveType(int type) {
+        new AlertDialog.Builder(mContext).setSingleChoiceItems(getCharSequence(), -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                CharSequence name = getCharSequence()[which];
+                switch (type) {
+                    case 1:
+                        binding.firstLiveKey.setText(name);
+                        Hawk.put(HawkProperty.FIRST_LIVE, name);
+                        break;
+                    case 2:
+                        binding.secendLiveKey.setText(name);
+                        Hawk.put(HawkProperty.SECENDLIVE, name);
+                        break;
+                    case 3:
+                        binding.thirdLiveKey.setText(name);
+                        Hawk.put(HawkProperty.THIRD_LIVE, name);
+                        break;
+                    case 4:
+                        binding.fourthLiveKey.setText(name);
+                        Hawk.put(HawkProperty.FOURTH_LIVE, name);
+                        break;
+                    default:
+                        break;
+                }
+                dialog.dismiss();
+            }
+        }).show();
+    }
+
+    //"哔哩哔哩", "虎牙直播", "斗鱼直播", "一直播  ", "NOW直播",
+    private List<String> getLives() {
+        List<String> arrays = new ArrayList<>();
+        arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, "哔哩哔哩"));
+        arrays.add(Hawk.get(HawkProperty.SECENDLIVE, "虎牙直播"));
+        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, "一直播"));
+        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, "NOW直播"));
+        return arrays;
+    }
+
+    private CharSequence[] getCharSequence() {
+        List<CharSequence> charSequences = new ArrayList<>();
+        for (int i = 0; i < lives.length; i++) {
+            CharSequence life = lives[i];
+            if (!getLives().contains(life)) {
+                charSequences.add(life);
+            }
+        }
+        return charSequences.toArray(new CharSequence[charSequences.size()]);
     }
 }

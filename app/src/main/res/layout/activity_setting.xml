@@ -66,7 +66,7 @@
 
                     <TextView
                         android:id="@+id/server_ip_tv"
-                        android:layout_width="80dp"
+                        android:layout_width="100dp"
                         android:layout_height="35dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center|right"
@@ -142,19 +142,21 @@
                         app:layout_constraintTop_toTopOf="@+id/live_tag_tv" />
 
                     <TextView
-                        android:id="@+id/bili_key"
+                        android:id="@+id/first_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
+                        android:drawableRight="@mipmap/arrow_down_icon"
+                        android:drawablePadding="5dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:inputType="number"
-                        android:text="哔哩:"
+                        android:text="哔哩"
                         app:layout_constraintRight_toRightOf="@+id/live_tag_tv"
                         app:layout_constraintTop_toBottomOf="@+id/live_tag_tv" />
                     <ImageView
-                        android:id="@+id/bili_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/bili_key"
-                        app:layout_constraintTop_toBottomOf="@+id/bili_key"
+                        android:id="@+id/first_live_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/first_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/first_live_key"
                         android:layout_width="30dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
@@ -162,89 +164,95 @@
                         android:layout_height="35dp"></ImageView>
 
                     <EditText
-                        android:id="@+id/bili_value_et"
+                        android:id="@+id/first_live_value_et"
                         style="@style/set_url_editText"
                         android:layout_marginLeft="15dp"
-                        app:layout_constraintTop_toTopOf="@+id/bili_key"
+                        app:layout_constraintTop_toTopOf="@+id/first_live_key"
                         app:layout_constraintLeft_toRightOf="@+id/live_tag_tv"
                         app:layout_constraintRight_toRightOf="parent"
                         />
                     <TextView
-                        android:id="@+id/huya_key"
+                        android:id="@+id/secend_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:gravity="center"
                         android:layout_marginRight="15dp"
                         android:inputType="number"
-                        android:text="虎牙:"
-                        app:layout_constraintRight_toLeftOf="@+id/huya_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/huya_value_et"
+                        android:drawableRight="@mipmap/arrow_down_icon"
+                        android:drawablePadding="5dp"
+                        android:text="虎牙"
+                        app:layout_constraintRight_toLeftOf="@+id/secend_live_value_et"
+                        app:layout_constraintTop_toTopOf="@+id/secend_live_value_et"
                      />
                     <ImageView
-                        android:id="@+id/huya_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/huya_key"
-                        app:layout_constraintTop_toBottomOf="@+id/huya_key"
+                        android:id="@+id/secend_live_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/secend_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/secend_live_key"
                         android:layout_width="30dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
                         android:layout_height="35dp"></ImageView>
                     <EditText
-                        android:id="@+id/huya_value_et"
-                        app:layout_constraintLeft_toLeftOf="@+id/bili_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/bili_value_et"
+                        android:id="@+id/secend_live_value_et"
+                        app:layout_constraintLeft_toLeftOf="@+id/first_live_value_et"
+                        app:layout_constraintTop_toBottomOf="@+id/first_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
                         style="@style/set_url_editText" />
                     <TextView
-                        android:id="@+id/yi_key"
+                        android:id="@+id/third_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:gravity="center"
+                        android:drawableRight="@mipmap/arrow_down_icon"
+                        android:drawablePadding="5dp"
                         android:layout_marginRight="15dp"
                         android:inputType="number"
-                        android:text="一直播地址:"
-                        app:layout_constraintRight_toLeftOf="@+id/yi_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/yi_value_et"
+                        android:text="一直播"
+                        app:layout_constraintRight_toLeftOf="@+id/third_live_value_et"
+                        app:layout_constraintTop_toTopOf="@+id/third_live_value_et"
                      />
                     <ImageView
-                        android:id="@+id/yi_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/yi_key"
-                        app:layout_constraintTop_toBottomOf="@+id/yi_key"
+                        android:id="@+id/third_live_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/third_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/third_live_key"
                         android:layout_width="30dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
                         android:layout_height="35dp"></ImageView>
                     <EditText
-                        android:id="@+id/yi_value_et"
-                        app:layout_constraintLeft_toLeftOf="@+id/huya_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/huya_value_et"
+                        android:id="@+id/third_live_value_et"
+                        app:layout_constraintLeft_toLeftOf="@+id/secend_live_value_et"
+                        app:layout_constraintTop_toBottomOf="@+id/secend_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
                         style="@style/set_url_editText" />
                     <TextView
-                        android:id="@+id/now_key"
+                        android:id="@+id/fourth_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:gravity="center"
+                        android:drawableRight="@mipmap/arrow_down_icon"
+                        android:drawablePadding="5dp"
                         android:layout_marginRight="15dp"
                         android:inputType="number"
-                        android:text="Now地址:"
-                        app:layout_constraintRight_toLeftOf="@+id/now_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/now_value_et"
+                        android:text="Now直播"
+                        app:layout_constraintRight_toLeftOf="@+id/fourth_live_value_et"
+                        app:layout_constraintTop_toTopOf="@+id/fourth_live_value_et"
                      />
                     <ImageView
-                        android:id="@+id/now_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/now_key"
-                        app:layout_constraintTop_toBottomOf="@+id/now_key"
+                        android:id="@+id/fourth_live_scan_iv"
+                        app:layout_constraintRight_toRightOf="@+id/fourth_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/fourth_live_key"
                         android:layout_width="30dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
                         android:layout_height="35dp"></ImageView>
                     <EditText
-                        android:id="@+id/now_value_et"
-                        app:layout_constraintLeft_toLeftOf="@+id/yi_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/yi_value_et"
+                        android:id="@+id/fourth_live_value_et"
+                        app:layout_constraintLeft_toLeftOf="@+id/third_live_value_et"
+                        app:layout_constraintTop_toBottomOf="@+id/third_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
                         style="@style/set_url_editText" />
 
