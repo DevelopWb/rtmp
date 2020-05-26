@@ -191,7 +191,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 初始化view
      */
     private void initView() {
-        setPushLiveIv();
+
         //        spnResolution = findViewById(R.id.spn_resolution);
         streamStat = findViewById(R.id.stream_stat);
         txtStatus = findViewById(R.id.txt_stream_status);
@@ -234,6 +234,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
+        setPushLiveIv();
     }
 
     @Override

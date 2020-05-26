@@ -437,22 +437,22 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private void selectLiveType(int type) {
         if (1 == type) {
             if (isPushingFirstStream) {
-                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FIRST_LIVE)+"直播，无法更改地址");
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FIRST_LIVE,LIVE_TYPE_BILI)+"直播，无法更改地址");
                 return;
             }
         } else if (2 == type) {
             if (isPushingSecendStream) {
-                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.SECENDLIVE)+"直播，无法更改地址");
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.SECENDLIVE,LIVE_TYPE_HUYA)+"直播，无法更改地址");
                 return;
             }
         } else if (3 == type) {
             if (isPushingThirdStream) {
-                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.THIRD_LIVE)+"直播，无法更改地址");
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.THIRD_LIVE,LIVE_TYPE_YI)+"直播，无法更改地址");
                 return;
             }
         } else {
-            if (!isPushingFourthStream) {
-                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FOURTH_LIVE)+"直播，无法更改地址");
+            if (isPushingFourthStream) {
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FOURTH_LIVE,LIVE_TYPE_NOW)+"直播，无法更改地址");
                 return;
             }
         }
