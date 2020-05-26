@@ -23,7 +23,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
@@ -31,14 +30,12 @@ import com.regmode.RegOperateUtil;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
-import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import org.easydarwin.easypusher.util.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
-import org.easydarwin.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +50,16 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
     private static final int REQUEST_SCAN_TEXT_URL_YI = 1006;      // 扫描二维码yi
     private static final int REQUEST_SCAN_TEXT_URL_NOW = 1007;      // 扫描二维码now
-    private CharSequence[] lives = new CharSequence[]{"哔哩哔哩", "虎牙直播", "斗鱼直播", "一直播", "NOW直播", "战旗TV", "西瓜视频", "映客直播", "cc直播"};
+    public static final String LIVE_TYPE_BILI = "哔哩哔哩";
+    public static final String LIVE_TYPE_HUYA = "虎牙直播";
+    public static final String LIVE_TYPE_YI = "一直播";
+    public static final String LIVE_TYPE_NOW = "NOW直播";
+    public static final String LIVE_TYPE_DOUYU = "斗鱼直播";
+    public static final String LIVE_TYPE_ZHANQI = "战旗TV";
+    public static final String LIVE_TYPE_XIGUA = "西瓜视频";
+    public static final String LIVE_TYPE_YINGKE = "映客直播";
+    public static final String LIVE_TYPE_CC = "cc直播";
+    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_YINGKE, LIVE_TYPE_CC};
     private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
@@ -87,15 +93,16 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.registCodeValue.setText(RegOperateUtil.strreg);
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_BILIBILI_URL, ""));
-        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_YI_URL, ""));
-        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_NOW_URL, ""));
-        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_HU_YA_URL, ""));
+        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
+        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
+        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FOURTH_URL, ""));
+        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
         binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
-        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, "哔哩哔哩"));
-        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, "虎牙直播"));
-        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, "一直播"));
-        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, "NOW直播"));
+        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
+        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
+        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_YI));
+
+        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_NOW));
         binding.firstLiveScanIv.setOnClickListener(this);
         binding.secendLiveScanIv.setOnClickListener(this);
         binding.thirdLiveScanIv.setOnClickListener(this);
@@ -181,8 +188,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         // 是否使用软编码
         CheckBox x264enc = findViewById(R.id.use_x264_encode);
         x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, true));
-        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked)
-        );
+        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked));
 
         //        // 使能H.265编码
         //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
@@ -291,33 +297,26 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         } else {
             ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
         }
-        if (!isPushingBiliStream) {
+        if (!isPushingFirstStream) {
             String bilibili = binding.firstLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_BILIBILI_URL, bilibili);
+            Hawk.put(HawkProperty.KEY_FIRST_URL, bilibili);
 
-        } else {
-            ToastUtils.toast(mContext, "正在推送哔哩直播，无法更改地址");
         }
-        if (!isPushingYiStream) {
-            String url = binding.thirdLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_YI_URL, url);
-
-        } else {
-            ToastUtils.toast(mContext, "正在推送一直播，无法更改地址");
-        }
-        if (!isPushingNowStream) {
-            String url = binding.fourthLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_NOW_URL, url);
-
-        } else {
-            ToastUtils.toast(mContext, "正在推送Now直播，无法更改地址");
-        }
-        if (!isPushingHuyaStream) {
+        if (!isPushingSecendStream) {
             String huya = binding.secendLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_HU_YA_URL, huya);
-        } else {
-            ToastUtils.toast(mContext, "正在推送虎牙直播，无法更改地址");
+            Hawk.put(HawkProperty.KEY_SECEND_URL, huya);
         }
+        if (!isPushingThirdStream) {
+            String url = binding.thirdLiveValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_THIRD_URL, url);
+
+        }
+        if (!isPushingFourthStream) {
+            String url = binding.fourthLiveValueEt.getText().toString().trim();
+            Hawk.put(HawkProperty.KEY_FOURTH_URL, url);
+
+        }
+
         String registCode = binding.registCodeValue.getText().toString().trim();
         Hawk.put(HawkProperty.KEY_REGIST_CODE, registCode);
         super.onBackPressed();
@@ -436,6 +435,29 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
      * @param type
      */
     private void selectLiveType(int type) {
+        if (1 == type) {
+            if (isPushingFirstStream) {
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FIRST_LIVE)+"直播，无法更改地址");
+                return;
+            }
+        } else if (2 == type) {
+            if (isPushingSecendStream) {
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.SECENDLIVE)+"直播，无法更改地址");
+                return;
+            }
+        } else if (3 == type) {
+            if (isPushingThirdStream) {
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.THIRD_LIVE)+"直播，无法更改地址");
+                return;
+            }
+        } else {
+            if (!isPushingFourthStream) {
+                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FOURTH_LIVE)+"直播，无法更改地址");
+                return;
+            }
+        }
+
+
         new AlertDialog.Builder(mContext).setSingleChoiceItems(getCharSequence(), -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -468,10 +490,10 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     //"哔哩哔哩", "虎牙直播", "斗鱼直播", "一直播  ", "NOW直播",
     private List<String> getLives() {
         List<String> arrays = new ArrayList<>();
-        arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, "哔哩哔哩"));
-        arrays.add(Hawk.get(HawkProperty.SECENDLIVE, "虎牙直播"));
-        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, "一直播"));
-        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, "NOW直播"));
+        arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
+        arrays.add(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
+        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_YI));
+        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_NOW));
         return arrays;
     }
 

@@ -27,31 +27,31 @@ public class HawkProperty {
      */
     public static final String KEY_REGIST_CODE = "key_regist_code";
     /**
-     * 保存bilibili
+     * 保存1
      */
-    public static final String KEY_BILIBILI_URL = "key_bilibili_url";
+    public static final String KEY_FIRST_URL = "key_bilibili_url";
     /**
-     * 保存一直播地址
+     * 保存2
      */
-    public static final String KEY_YI_URL = "key_yi_url";
+    public static final String KEY_THIRD_URL = "key_yi_url";
     /**
-     * 保存Now直播地址
+     * 保存3
      */
-    public static final String KEY_NOW_URL = "key_now_url";
-
-
-
-
-
-
-
-
-
-
+    public static final String KEY_FOURTH_URL = "key_now_url";
     /**
-     * 保存huya
+     * 保存4
      */
-    public static final String KEY_HU_YA_URL = "key_huya_url";
+    public static final String KEY_SECEND_URL = "key_huya_url";
+
+
+
+
+
+
+
+
+
+
     /* ============================ 屏幕直播 ============================ */
 
     public static final String KEY_SCREEN_PUSHING = "alert_screen_background_pushing";

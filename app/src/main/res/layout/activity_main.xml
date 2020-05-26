@@ -126,7 +126,7 @@
             android:src="@mipmap/push_stream_off" />
 
         <ImageView
-            android:id="@+id/bili_iv"
+            android:id="@+id/first_live_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="5dp"
@@ -134,21 +134,21 @@
             android:src="@mipmap/bilibili_off" />
 
         <ImageView
-            android:id="@+id/huya_iv"
+            android:id="@+id/secend_live_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="5dp"
             android:scaleType="fitCenter"
             android:src="@mipmap/huya_off" />
         <ImageView
-            android:id="@+id/yi_iv"
+            android:id="@+id/third_live_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="5dp"
             android:scaleType="fitCenter"
             android:src="@mipmap/yi_live_off" />
         <ImageView
-            android:id="@+id/now_iv"
+            android:id="@+id/fourth_live_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="5dp"

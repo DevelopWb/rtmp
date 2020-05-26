@@ -165,11 +165,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private TextureView surfaceView;
     private ImageView mPushBgIv;
     private ImageView mPushStreamIv, mSwitchOritation;
-    private ImageView mBiliIv;
-    private ImageView mYiIv;
-    private ImageView mNowIv;
+    private ImageView mFirstLiveIv;
+    private ImageView mThirdLiveIv;
+    private ImageView mFourthLiveIv;
     private ImageView mVedioPushBottomTagIv;
-    private ImageView mHuyaIv, mBlackBgIv;
+    private ImageView mSecendLiveIv, mBlackBgIv;
     private Intent uvcServiceIntent;
 
     @Override
@@ -191,6 +191,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 初始化view
      */
     private void initView() {
+        setPushLiveIv();
         //        spnResolution = findViewById(R.id.spn_resolution);
         streamStat = findViewById(R.id.stream_stat);
         txtStatus = findViewById(R.id.txt_stream_status);
@@ -207,15 +208,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
         mPushStreamIv.setOnClickListener(this);
         mSwitchOritation.setOnClickListener(this);
-        mBiliIv = (ImageView) findViewById(R.id.bili_iv);
-        mBiliIv.setOnClickListener(this);
-        mYiIv = (ImageView) findViewById(R.id.yi_iv);
-        mYiIv.setOnClickListener(this);
-        mNowIv = (ImageView) findViewById(R.id.now_iv);
-        mNowIv.setOnClickListener(this);
-        mHuyaIv = (ImageView) findViewById(R.id.huya_iv);
+        mFirstLiveIv = (ImageView) findViewById(R.id.first_live_iv);
+        mFirstLiveIv.setOnClickListener(this);
+        mThirdLiveIv = (ImageView) findViewById(R.id.third_live_iv);
+        mThirdLiveIv.setOnClickListener(this);
+        mFourthLiveIv = (ImageView) findViewById(R.id.fourth_live_iv);
+        mFourthLiveIv.setOnClickListener(this);
+        mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
         mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
-        mHuyaIv.setOnClickListener(this);
+        mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
         mBlackBgIv.setOnClickListener(new DoubleClickListener() {
             @Override
@@ -294,6 +295,83 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 //                startScreenPushIntent();
             }
+        }else if(requestCode==100){
+            //设置界面返回
+            setPushLiveIv();
+
+
+        }
+    }
+
+    /**
+     * 配置推送直播的图标
+     */
+    private void setPushLiveIv() {
+        String firstLiveName = Hawk.get(HawkProperty.FIRST_LIVE, SettingActivity.LIVE_TYPE_BILI);
+        String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
+        String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_YI);
+        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_NOW);
+        initLiveImage(firstLiveName,1);
+        initLiveImage(secendLiveName,2);
+        initLiveImage(thirdLiveName,3);
+        initLiveImage(fourthLiveName,4);
+    }
+
+    /**
+     *
+     * @param liveName
+     * @param index   1代表第一个live平台
+     */
+    private void initLiveImage(String liveName,int index) {
+        ImageView  imageView = null;
+        switch (index) {
+            case 1:
+                imageView = mFirstLiveIv;
+                break;
+            case 2:
+                imageView = mSecendLiveIv;
+                break;
+            case 3:
+                imageView = mThirdLiveIv;
+                break;
+            case 4:
+                imageView = mFourthLiveIv;
+                break;
+            default:
+                break;
+        }
+
+        switch (liveName) {
+            case SettingActivity.LIVE_TYPE_BILI:
+                imageView.setImageResource(R.mipmap.bilibili_off);
+
+                break;
+            case SettingActivity.LIVE_TYPE_HUYA:
+                imageView.setImageResource(R.mipmap.huya_off);
+                break;
+            case SettingActivity.LIVE_TYPE_YI:
+                imageView.setImageResource(R.mipmap.yi_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_NOW:
+                imageView.setImageResource(R.mipmap.now_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_DOUYU:
+                imageView.setImageResource(R.mipmap.douyu_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_ZHANQI:
+                imageView.setImageResource(R.mipmap.zhanqi_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_XIGUA:
+                imageView.setImageResource(R.mipmap.xigua_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_YINGKE:
+                imageView.setImageResource(R.mipmap.yingke_live_off);
+                break;
+            case SettingActivity.LIVE_TYPE_CC:
+                imageView.setImageResource(R.mipmap.cc_live_off);
+                break;
+            default:
+                break;
         }
     }
 
@@ -715,37 +793,38 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.push_stream_iv:
                 startOrStopPush();
                 break;
-            case R.id.bili_iv:
-                String url_bili = Hawk.get(HawkProperty.KEY_BILIBILI_URL);
+            case R.id.first_live_iv:
+                String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 if (TextUtils.isEmpty(url_bili)) {
-                    Toast.makeText(getApplicationContext(), "还没有配置哔哩哔哩直播地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "还没有配置对应直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFirstPush();
                 break;
-            case R.id.yi_iv:
-                String url_yi = Hawk.get(HawkProperty.KEY_YI_URL);
+            case R.id.secend_live_iv:
+                String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
+                if (TextUtils.isEmpty(url_huya)) {
+                    Toast.makeText(getApplicationContext(), "还没有配置对应直播地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                startOrStopSecendPush();
+                break;
+
+            case R.id.third_live_iv:
+                String url_yi = Hawk.get(HawkProperty.KEY_THIRD_URL);
                 if (TextUtils.isEmpty(url_yi)) {
-                    Toast.makeText(getApplicationContext(), "还没有配置一直播地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "还没有配置对应直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopThirdPush();
                 break;
-            case R.id.now_iv:
-                String url_now = Hawk.get(HawkProperty.KEY_NOW_URL);
+            case R.id.fourth_live_iv:
+                String url_now = Hawk.get(HawkProperty.KEY_FOURTH_URL);
                 if (TextUtils.isEmpty(url_now)) {
-                    Toast.makeText(getApplicationContext(), "还没有配置now直播地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "还没有配置对应直播地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFourthPush();
-                break;
-            case R.id.huya_iv:
-                String url_huya = Hawk.get(HawkProperty.KEY_HU_YA_URL);
-                if (TextUtils.isEmpty(url_huya)) {
-                    Toast.makeText(getApplicationContext(), "还没有配置虎牙直播地址", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                startOrStopSecendPush();
                 break;
 
             case R.id.switch_oritation_iv:
@@ -991,11 +1070,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
         if (mMediaStream != null && !mMediaStream.isBiliPushStream) {
-            isPushingBiliStream = true;
+            isPushingFirstStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(1, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mBiliIv.setImageResource(R.mipmap.bilibili_on);
+                mFirstLiveIv.setImageResource(R.mipmap.bilibili_on);
 
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
@@ -1004,10 +1083,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingBiliStream = false;
+            isPushingFirstStream = false;
             mMediaStream.stopPusherStream(1);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mBiliIv.setImageResource(R.mipmap.bilibili_off);
+            mFirstLiveIv.setImageResource(R.mipmap.bilibili_off);
             sendMessage("断开连接");
         }
     }
@@ -1020,11 +1099,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
         if (mMediaStream != null && !mMediaStream.isYiPushStream) {
-            isPushingYiStream = true;
+            isPushingThirdStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mYiIv.setImageResource(R.mipmap.yi_live_on);
+                mThirdLiveIv.setImageResource(R.mipmap.yi_live_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1032,10 +1111,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingYiStream = false;
+            isPushingThirdStream = false;
             mMediaStream.stopPusherStream(3);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mYiIv.setImageResource(R.mipmap.yi_live_off);
+            mThirdLiveIv.setImageResource(R.mipmap.yi_live_off);
             sendMessage("断开连接");
         }
     }
@@ -1048,10 +1127,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
         if (mMediaStream != null && !mMediaStream.isNowPushStream) {
-            isPushingNowStream = true;
+            isPushingFourthStream = true;
             try {
                 mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mNowIv.setImageResource(R.mipmap.now_live_on);
+                mFourthLiveIv.setImageResource(R.mipmap.now_live_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1059,10 +1138,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingNowStream = false;
+            isPushingFourthStream = false;
             mMediaStream.stopPusherStream(4);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mNowIv.setImageResource(R.mipmap.now_live_off);
+            mFourthLiveIv.setImageResource(R.mipmap.now_live_off);
             sendMessage("断开连接");
         }
     }
@@ -1074,11 +1153,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopSecendPush() {
 
         if (mMediaStream != null && !mMediaStream.isHuyaPushStream) {
-            isPushingHuyaStream = true;
+            isPushingSecendStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(2, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mHuyaIv.setImageResource(R.mipmap.huya_on);
+                mSecendLiveIv.setImageResource(R.mipmap.huya_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1086,10 +1165,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingHuyaStream = false;
+            isPushingSecendStream = false;
             mMediaStream.stopPusherStream(2);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mHuyaIv.setImageResource(R.mipmap.huya_off);
+            mSecendLiveIv.setImageResource(R.mipmap.huya_off);
             sendMessage("断开连接");
         }
     }
@@ -1100,7 +1179,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void onSetting(View view) {
         Intent intent = new Intent(this, SettingActivity.class);
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 100);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 

@@ -520,22 +520,22 @@ public class MediaStream {
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_BILIBILI_URL);
+                url = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 isBiliPushStream = true;
                 break;
             case 2:
                 pusher = mSecendEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_HU_YA_URL);
+                url = Hawk.get(HawkProperty.KEY_SECEND_URL);
                 isHuyaPushStream = true;
                 break;
             case 3:
                 pusher = mThirdEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_YI_URL);
+                url = Hawk.get(HawkProperty.KEY_THIRD_URL);
                 isYiPushStream = true;
                 break;
             case 4:
                 pusher = mFourthEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_NOW_URL);
+                url = Hawk.get(HawkProperty.KEY_FOURTH_URL);
                 isNowPushStream = true;
                 break;
             default:
