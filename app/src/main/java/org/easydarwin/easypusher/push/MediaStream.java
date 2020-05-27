@@ -71,10 +71,10 @@ public class MediaStream {
 
     private String recordPath;          // 录像地址
     protected boolean isPushStream = false;       // 是否要推送数据
-    protected boolean isBiliPushStream = false;       // 是否要推送bili数据
-    protected boolean isHuyaPushStream = false;       // 是否要推送huya数据
-    protected boolean isYiPushStream = false;       // 是否要推送huya数据
-    protected boolean isNowPushStream = false;       // 是否要推送huya数据
+    protected boolean isFirstPushStream = false;       // 是否要推送bili数据
+    protected boolean isSecendPushStream = false;       // 是否要推送huya数据
+    protected boolean isThirdPushStream = false;       // 是否要推送huya数据
+    protected boolean isFourthPushStream = false;       // 是否要推送huya数据
     private int displayRotationDegree;  // 旋转角度
 
     private Context context;
@@ -521,22 +521,22 @@ public class MediaStream {
             case 1:
                 pusher = mFirstEasyPusher;
                 url = Hawk.get(HawkProperty.KEY_FIRST_URL);
-                isBiliPushStream = true;
+                isFirstPushStream = true;
                 break;
             case 2:
                 pusher = mSecendEasyPusher;
                 url = Hawk.get(HawkProperty.KEY_SECEND_URL);
-                isHuyaPushStream = true;
+                isSecendPushStream = true;
                 break;
             case 3:
                 pusher = mThirdEasyPusher;
                 url = Hawk.get(HawkProperty.KEY_THIRD_URL);
-                isYiPushStream = true;
+                isThirdPushStream = true;
                 break;
             case 4:
                 pusher = mFourthEasyPusher;
                 url = Hawk.get(HawkProperty.KEY_FOURTH_URL);
-                isNowPushStream = true;
+                isFourthPushStream = true;
                 break;
             default:
                 break;
@@ -569,19 +569,19 @@ public class MediaStream {
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
-                isBiliPushStream = false;
+                isFirstPushStream = false;
                 break;
             case 2:
                 pusher = mSecendEasyPusher;
-                isHuyaPushStream = false;
+                isSecendPushStream = false;
                 break;
             case 3:
                 pusher = mThirdEasyPusher;
-                isYiPushStream = false;
+                isThirdPushStream = false;
                 break;
             case 4:
                 pusher = mFourthEasyPusher;
-                isNowPushStream = false;
+                isFourthPushStream = false;
                 break;
             default:
                 break;

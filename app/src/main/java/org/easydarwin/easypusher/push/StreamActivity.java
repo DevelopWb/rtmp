@@ -279,7 +279,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream);
+        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
     }
 
 
@@ -325,18 +325,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private void initLiveImage(String liveName,int index) {
         ImageView  imageView = null;
+        boolean  isOn = false;
         switch (index) {
             case 1:
                 imageView = mFirstLiveIv;
+                isOn = isPushingFirstStream;
                 break;
             case 2:
                 imageView = mSecendLiveIv;
+                isOn = isPushingSecendStream;
                 break;
             case 3:
                 imageView = mThirdLiveIv;
+                isOn = isPushingThirdStream;
                 break;
             case 4:
                 imageView = mFourthLiveIv;
+                isOn = isPushingFourthStream;
                 break;
             default:
                 break;
@@ -344,32 +349,73 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         switch (liveName) {
             case SettingActivity.LIVE_TYPE_BILI:
-                imageView.setImageResource(R.mipmap.bilibili_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.bilibili_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.bilibili_off);
+                }
 
                 break;
             case SettingActivity.LIVE_TYPE_HUYA:
-                imageView.setImageResource(R.mipmap.huya_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.huya_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.huya_off);
+                }
+
                 break;
             case SettingActivity.LIVE_TYPE_YI:
-                imageView.setImageResource(R.mipmap.yi_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.yi_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.yi_live_off);                }
+
                 break;
             case SettingActivity.LIVE_TYPE_NOW:
-                imageView.setImageResource(R.mipmap.now_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.now_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.now_live_off);
+                }
+
                 break;
             case SettingActivity.LIVE_TYPE_DOUYU:
-                imageView.setImageResource(R.mipmap.douyu_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.douyu_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.douyu_live_off);
+                }
+
                 break;
             case SettingActivity.LIVE_TYPE_ZHANQI:
-                imageView.setImageResource(R.mipmap.zhanqi_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.zhanqi_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.zhanqi_live_off);
+                }
+
                 break;
             case SettingActivity.LIVE_TYPE_XIGUA:
-                imageView.setImageResource(R.mipmap.xigua_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.xigua_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.xigua_live_off);
+                }
+
                 break;
             case SettingActivity.LIVE_TYPE_YINGKE:
-                imageView.setImageResource(R.mipmap.yingke_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.yingke_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.yingke_live_off);
+                }
                 break;
             case SettingActivity.LIVE_TYPE_CC:
-                imageView.setImageResource(R.mipmap.cc_live_off);
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.cc_live_on);
+                }else {
+                    imageView.setImageResource(R.mipmap.cc_live_off);
+                }
                 break;
             default:
                 break;
@@ -495,7 +541,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 String url = Config.getServerURL();
 //                txtStreamAddress.setText(url);
 
-                sendMessage(getPushStatusMsg());
+//                sendMessage(getPushStatusMsg());
 
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
             }
@@ -527,7 +573,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();
 
-        sendMessage(getPushStatusMsg());
+//        sendMessage(getPushStatusMsg());
 //        txtStreamAddress.setText(Config.getServerURL());
     }
 
@@ -652,7 +698,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("连接异常中断");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_PUSHING:
-                sendMessage(getPushStatusMsg());
+                sendMessage("直播中");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_DISCONNECTED:
                 sendMessage("断开连接");
@@ -679,12 +725,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private String getPushStatusMsg() {
         if (mMediaStream.isPushStream) {
-            if (mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream) {
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
                 return "直播中";
             }
             return "直播中";
         } else {
-            if (mMediaStream.isBiliPushStream || mMediaStream.isHuyaPushStream || mMediaStream.isYiPushStream || mMediaStream.isNowPushStream) {
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
                 return "直播中";
             }
         }
@@ -1057,7 +1103,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         } else {
             isPushingStream = false;
             mMediaStream.stopPusherStream(0);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
             sendMessage("断开连接");
         }
@@ -1070,13 +1115,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFirstPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isBiliPushStream) {
+        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
             isPushingFirstStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(1, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mFirstLiveIv.setImageResource(R.mipmap.bilibili_on);
-
+                setPushLiveIv();
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1086,8 +1130,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         } else {
             isPushingFirstStream = false;
             mMediaStream.stopPusherStream(1);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mFirstLiveIv.setImageResource(R.mipmap.bilibili_off);
+            setPushLiveIv();
             sendMessage("断开连接");
         }
     }
@@ -1099,12 +1142,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopThirdPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isYiPushStream) {
+        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
             isPushingThirdStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mThirdLiveIv.setImageResource(R.mipmap.yi_live_on);
+                setPushLiveIv();
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1114,8 +1157,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         } else {
             isPushingThirdStream = false;
             mMediaStream.stopPusherStream(3);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mThirdLiveIv.setImageResource(R.mipmap.yi_live_off);
+            setPushLiveIv();
             sendMessage("断开连接");
         }
     }
@@ -1127,11 +1169,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFourthPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isNowPushStream) {
+        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
             isPushingFourthStream = true;
             try {
                 mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mFourthLiveIv.setImageResource(R.mipmap.now_live_on);
+                setPushLiveIv();
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1142,7 +1184,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             isPushingFourthStream = false;
             mMediaStream.stopPusherStream(4);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mFourthLiveIv.setImageResource(R.mipmap.now_live_off);
+            setPushLiveIv();
             sendMessage("断开连接");
         }
     }
@@ -1153,12 +1195,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopSecendPush() {
 
-        if (mMediaStream != null && !mMediaStream.isHuyaPushStream) {
+        if (mMediaStream != null && !mMediaStream.isSecendPushStream) {
             isPushingSecendStream = true;
             try {
 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(2, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mSecendLiveIv.setImageResource(R.mipmap.huya_on);
+                setPushLiveIv();
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1169,7 +1211,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             isPushingSecendStream = false;
             mMediaStream.stopPusherStream(2);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            mSecendLiveIv.setImageResource(R.mipmap.huya_off);
+            setPushLiveIv();
             sendMessage("断开连接");
         }
     }
