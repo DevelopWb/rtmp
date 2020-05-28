@@ -32,7 +32,6 @@ import com.gyf.barlibrary.ImmersionBar;
 import com.juntai.wisdom.basecomponent.R;
 import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.juntai.wisdom.basecomponent.utils.EventManager;
-import com.juntai.wisdom.basecomponent.utils.FileCacheUtils;
 import com.juntai.wisdom.basecomponent.utils.ImageLoadUtil;
 import com.juntai.wisdom.basecomponent.utils.LoadingDialog;
 import com.juntai.wisdom.basecomponent.utils.ScreenUtils;
@@ -369,40 +368,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements Toolba
         return textView.getText().toString().trim();
     }
 
-
-    /**
-     * 图片压缩
-     */
-    public void compressImages(List<String> paths, ImageLoadUtil.ImageCompress compressCallback) {
-        Luban.with(this)
-                .load(paths)
-                .ignoreBy(100)
-                .setTargetDir(FileCacheUtils.getAppImagePath())
-                .filter(new CompressionPredicate() {
-                    @Override
-                    public boolean apply(String path) {
-                        return !(TextUtils.isEmpty(path) || path.toLowerCase().endsWith(".gif"));
-                    }
-                })
-                .setCompressListener(new OnCompressListener() {
-                    @Override
-                    public void onStart() {
-                        // TODO 压缩开始前调用，可以在方法内启动 loading UI
-                    }
-
-                    @Override
-                    public void onSuccess(File file) {
-                        // TODO 压缩成功后调用，返回压缩后的图片文件
-                        compressCallback.compressSuccessed(file);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        // TODO 当压缩过程出现问题时调用
-                        compressCallback.compressFailed(e);
-                    }
-                }).launch();
-    }
 
     /**
      * 初始化窗口 在界面为初始化之前调用
