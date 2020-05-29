@@ -352,16 +352,20 @@ public class MediaStream {
             SWConsumer swNow = new SWConsumer(context, mFourthEasyPusher, SPUtil.getBitrateKbps(context));
             mFourthVC = new ClippableVideoConsumer(context, swNow, width, height, SPUtil.getEnableVideoOverlay(context));
         } else {
-            HWConsumer hw = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            HWConsumer hw = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusher,
+                    SPUtil.getBitrateKbps(context),
+                    info.mName,
+                    info.mColorFormat);
             HWConsumer hwBili = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFirstEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
             HWConsumer hwHuya = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mSecendEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
             HWConsumer hwYi = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mThirdEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
             HWConsumer hwNow = new HWConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFourthEasyPusher, SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-            mVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
-            mFirstVC = new ClippableVideoConsumer(context, hwBili, width, height, SPUtil.getEnableVideoOverlay(context));
-            mSecendVC = new ClippableVideoConsumer(context, hwHuya, width, height, SPUtil.getEnableVideoOverlay(context));
-            mThirdVC = new ClippableVideoConsumer(context, hwYi, width, height, SPUtil.getEnableVideoOverlay(context));
-            mFourthVC = new ClippableVideoConsumer(context, hwNow, width, height, SPUtil.getEnableVideoOverlay(context));
+            mVC = new ClippableVideoConsumer(context, hw, frameWidth, frameHeight, SPUtil.getEnableVideoOverlay(context));
+            mFirstVC = new ClippableVideoConsumer(context, hwBili, frameWidth, frameHeight, SPUtil.getEnableVideoOverlay(context));
+            mSecendVC = new ClippableVideoConsumer(context, hwHuya, frameWidth, frameHeight, SPUtil.getEnableVideoOverlay(context));
+            mThirdVC = new ClippableVideoConsumer(context, hwYi, frameWidth, frameHeight, SPUtil.getEnableVideoOverlay(context));
+            mFourthVC = new ClippableVideoConsumer(context, hwNow, frameWidth, frameHeight, SPUtil.getEnableVideoOverlay(context));
         }
         mVC.onVideoStart(width, height);
         mFirstVC.onVideoStart(width, height);
