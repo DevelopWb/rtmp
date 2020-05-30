@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -42,6 +43,7 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        ActivityManagerTool.getInstance().addActivity(this);
     }
 
     @Override
@@ -49,6 +51,7 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
         super.onDestroy();
         mContext = null;
         EventBus.getDefault().unregister(this);
+        ActivityManagerTool.getInstance().removeActivity(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

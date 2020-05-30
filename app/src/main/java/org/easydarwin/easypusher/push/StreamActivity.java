@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
@@ -310,8 +311,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private void setPushLiveIv() {
         String firstLiveName = Hawk.get(HawkProperty.FIRST_LIVE, SettingActivity.LIVE_TYPE_BILI);
         String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
-        String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_YI);
-        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_NOW);
+        String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_DOUYU);
+        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_XIGUA);
         initLiveImage(firstLiveName,1);
         initLiveImage(secendLiveName,2);
         initLiveImage(thirdLiveName,3);
@@ -403,13 +404,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
 
                 break;
-            case SettingActivity.LIVE_TYPE_YINGKE:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.yingke_live_on);
-                }else {
-                    imageView.setImageResource(R.mipmap.yingke_live_off);
-                }
-                break;
+//            case SettingActivity.LIVE_TYPE_YINGKE:
+//                if (isOn) {
+//                    imageView.setImageResource(R.mipmap.yingke_live_on);
+//                }else {
+//                    imageView.setImageResource(R.mipmap.yingke_live_off);
+//                }
+//                break;
             case SettingActivity.LIVE_TYPE_CC:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.cc_live_on);

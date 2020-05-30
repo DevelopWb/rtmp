@@ -24,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegOperateUtil;
@@ -57,9 +58,9 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_DOUYU = "斗鱼直播";
     public static final String LIVE_TYPE_ZHANQI = "战旗TV";
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
-    public static final String LIVE_TYPE_YINGKE = "映客直播";
+//    public static final String LIVE_TYPE_YINGKE = "映客直播";
     public static final String LIVE_TYPE_CC = "cc直播";
-    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_YINGKE, LIVE_TYPE_CC};
+    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_CC};
     private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
@@ -100,10 +101,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
         binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_YI));
+        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
 
-        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_NOW));
+        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
         binding.firstLiveScanIv.setOnClickListener(this);
+        binding.quitAppBt.setOnClickListener(this);
         binding.secendLiveScanIv.setOnClickListener(this);
         binding.thirdLiveScanIv.setOnClickListener(this);
         binding.fourthLiveScanIv.setOnClickListener(this);
@@ -400,6 +402,24 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
+            case R.id.quit_app_bt:
+                new AlertDialog.Builder(this).setCancelable(false)
+                        .setTitle("是否退出App")
+                        .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        })
+                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                ActivityManagerTool.getInstance().finishApp();
+                            }
+                        }).show();
+                break;
             case R.id.first_live_scan_iv:
                 startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_BILI);
                 break;
@@ -492,8 +512,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         List<String> arrays = new ArrayList<>();
         arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         arrays.add(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_YI));
-        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_NOW));
+        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
+        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
         return arrays;
     }
 

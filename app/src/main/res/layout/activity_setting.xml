@@ -260,33 +260,6 @@
                 </android.support.constraint.ConstraintLayout>
 
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@drawable/setting_url_shape"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:padding="5dp">-->
-
-<!--                    <EditText-->
-<!--                        android:id="@+id/push_url"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:background="@null"-->
-<!--                        android:text=""-->
-<!--                        android:textColor="#4c4c4c"-->
-<!--                        android:textSize="12sp" />-->
-
-<!--                    <ImageView-->
-<!--                        android:layout_width="36dp"-->
-<!--                        android:layout_height="36dp"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:onClick="onScanQRCode"-->
-<!--                        android:padding="8dp"-->
-<!--                        android:src="@drawable/qr_scan_btn" />-->
-<!--                </LinearLayout>-->
-
 
                 <CheckBox
                     android:id="@+id/auto_push_when_run_cb"
@@ -310,51 +283,6 @@
                     android:text="使用软编码" />
 
 
-                <!--                <View-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="1dp"-->
-                <!--                    android:layout_marginVertical="5dp"-->
-                <!--                    android:background="?android:attr/listDivider" />-->
-
-                <!--                <CheckBox-->
-                <!--                    android:id="@+id/enable_video_overlay"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:checked="false"-->
-                <!--                    android:text="叠加水印" />-->
-
-                <!--                <LinearLayout-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginTop="8dp"-->
-                <!--                    android:paddingLeft="5dp"-->
-                <!--                    android:paddingRight="5dp">-->
-
-                <!--                    <TextView-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:text="码率:" />-->
-
-                <!--                    <TextView-->
-                <!--                        android:id="@+id/bitrate_value"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:text="1023Kbps" />-->
-
-                <!--                </LinearLayout>-->
-
-                <!--                <android.support.v7.widget.AppCompatSeekBar-->
-                <!--                    android:id="@+id/bitrate_seekbar"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginTop="8dp"-->
-                <!--                    android:max="100" />-->
-                <!--                <TextView-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:paddingLeft="5dp"-->
-                <!--                    android:paddingRight="5dp"-->
-                <!--                    android:text="硬编码码率可能设置值与实际值不完全准" />-->
 
 
                 <TextView
@@ -397,11 +325,22 @@
                 <Button
                     android:id="@+id/open_record_local_bt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
                     android:background="@color/colorTheme"
-                    android:onClick="onOpenLocalRecord"
                     android:text="打开录像文件夹"
+                    android:textColor="#ffffff" />
+                <Button
+                    android:id="@+id/quit_app_bt"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/colorTheme"
+                    android:text="安全退出"
                     android:textColor="#ffffff" />
 
 

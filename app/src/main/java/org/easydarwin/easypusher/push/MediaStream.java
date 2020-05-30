@@ -163,7 +163,7 @@ public class MediaStream {
             return;
         }
 
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, false);
+        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         mHevc = SPUtil.getHevcCodec(context);
         if (mEasyPusher == null) {
             mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
@@ -482,6 +482,7 @@ public class MediaStream {
             audioStream.setMuxer(null);
             Log.i(TAG, "Stop AudioStream");
         }
+        stopVcVedio(0);
         for (int i = 0; i < 5; i++) {
             stopVcVedio(i);
         }
