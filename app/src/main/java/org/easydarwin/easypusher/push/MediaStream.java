@@ -103,7 +103,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_BACK_LOOP = -1;
     int defaultWidth = 1920, defaultHeight = 1080;
     int nativeWidth, nativeHeight;//原生camera的宽高
-    int uvcWidth, uvcHeight;//uvcCamera的宽高
+    int uvcWidth =640, uvcHeight = 480;//uvcCamera的宽高
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
@@ -292,31 +292,31 @@ public class MediaStream {
         } else {
             mSWCodec = true;
         }
-        frameWidth = nativeWidth;
-        frameHeight = nativeHeight;
+        frameWidth = uvcWidth;
+        frameHeight = uvcHeight;
         //        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
         //        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-            uvcCamera.setPreviewSize(frameWidth,
-                    frameHeight,
-                    1,
-                    30,
-                    UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
+//            uvcCamera.setPreviewSize(frameWidth,
+//                    frameHeight,
+//                    1,
+//                    30,
+//                    UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-//            try {
-//                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-//            } catch (final IllegalArgumentException e) {
-//                try {
-//                    // fallback to YUV mode
-//                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
-//                } catch (final IllegalArgumentException e1) {
-//                    if (uvcCamera != null) {
-//                        uvcCamera.destroy();
-//                        uvcCamera = null;
-//                    }
-//                }
-//            }
+            try {
+                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+            } catch (final IllegalArgumentException e) {
+                try {
+                    // fallback to YUV mode
+                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
+                } catch (final IllegalArgumentException e1) {
+                    if (uvcCamera != null) {
+                        uvcCamera.destroy();
+                        uvcCamera = null;
+                    }
+                }
+            }
         }
 
         if (uvcCamera == null) {
@@ -335,7 +335,7 @@ public class MediaStream {
         if (uvcCamera != null) {
 
             startUvcPreview();
-            initConsumer(uvcWidth, uvcHeight);
+            initConsumer(frameWidth, frameWidth);
         } else if (mCamera != null) {
 
             startCameraPreview();
