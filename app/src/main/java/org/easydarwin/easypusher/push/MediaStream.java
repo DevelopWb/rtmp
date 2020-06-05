@@ -103,7 +103,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_BACK_LOOP = -1;
     int defaultWidth = 1920, defaultHeight = 1080;
     int nativeWidth, nativeHeight;//原生camera的宽高
-    int uvcWidth =640, uvcHeight = 480;//uvcCamera的宽高
+    int uvcWidth = 1920, uvcHeight = 1080;//uvcCamera的宽高
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
@@ -292,10 +292,11 @@ public class MediaStream {
         } else {
             mSWCodec = true;
         }
-        frameWidth = uvcWidth;
-        frameHeight = uvcHeight;
-        //        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, defaultWidth);
-        //        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, defaultHeight);
+
+        frameWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
+        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
+//        frameWidth = uvcWidth;
+//        frameHeight = uvcHeight;
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 //            uvcCamera.setPreviewSize(frameWidth,
@@ -501,7 +502,8 @@ public class MediaStream {
 
     /**
      * 关闭视频编码器
-     *  private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
+     * private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
+     *
      * @param type
      */
     private void stopVcVedio(int type) {
@@ -633,7 +635,7 @@ public class MediaStream {
 
         mRecordVC = new RecordVideoConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mMuxer, SPUtil.getEnableVideoOverlay(context), SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
         if (uvcCamera != null) {
-            mRecordVC.onVideoStart(uvcWidth, uvcHeight);
+            mRecordVC.onVideoStart(frameWidth, frameHeight);
         } else {
             boolean frameRotate;
             int result;
@@ -810,7 +812,7 @@ public class MediaStream {
             i420_buffer = new byte[data.length];
         }
 
-        JNIUtil.ConvertToI420(data, i420_buffer, uvcWidth, uvcHeight, 0, 0, uvcWidth, uvcHeight, 0, 2);
+        JNIUtil.ConvertToI420(data, i420_buffer, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight, 0, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
         if (mRecordVC != null) {
@@ -818,6 +820,10 @@ public class MediaStream {
         }
 
         mVC.onVideo(data, 0);
+        mFirstVC.onVideo(data, 0);
+        mSecendVC.onVideo(data, 0);
+        mThirdVC.onVideo(data, 0);
+        mFourthVC.onVideo(data, 0);
     }
 
     /* ============================== CodecInfo ============================== */
