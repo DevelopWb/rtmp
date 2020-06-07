@@ -103,7 +103,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_BACK_LOOP = -1;
     int defaultWidth = 1920, defaultHeight = 1080;
     int nativeWidth, nativeHeight;//原生camera的宽高
-    int uvcWidth = 1920, uvcHeight = 1080;//uvcCamera的宽高
+    int uvcWidth = 1280, uvcHeight = 720;//uvcCamera的宽高
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
@@ -294,7 +294,7 @@ public class MediaStream {
         }
 
         frameWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
-        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
+        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight/2);
 //        frameWidth = uvcWidth;
 //        frameHeight = uvcHeight;
         uvcCamera = UVCCameraService.liveData.getValue();

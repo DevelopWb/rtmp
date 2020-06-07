@@ -26,6 +26,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -297,7 +298,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 //                startScreenPushIntent();
             }
-        }else if(requestCode==100){
+        } else if (requestCode == 100) {
             //设置界面返回
             setPushLiveIv();
 
@@ -313,20 +314,19 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
         String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_DOUYU);
         String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_XIGUA);
-        initLiveImage(firstLiveName,1);
-        initLiveImage(secendLiveName,2);
-        initLiveImage(thirdLiveName,3);
-        initLiveImage(fourthLiveName,4);
+        initLiveImage(firstLiveName, 1);
+        initLiveImage(secendLiveName, 2);
+        initLiveImage(thirdLiveName, 3);
+        initLiveImage(fourthLiveName, 4);
     }
 
     /**
-     *
      * @param liveName
-     * @param index   1代表第一个live平台
+     * @param index    1代表第一个live平台
      */
-    private void initLiveImage(String liveName,int index) {
-        ImageView  imageView = null;
-        boolean  isOn = false;
+    private void initLiveImage(String liveName, int index) {
+        ImageView imageView = null;
+        boolean isOn = false;
         switch (index) {
             case 1:
                 imageView = mFirstLiveIv;
@@ -352,7 +352,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_BILI:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.bilibili_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.bilibili_off);
                 }
 
@@ -360,7 +360,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_HUYA:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.huya_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.huya_off);
                 }
 
@@ -368,14 +368,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_YI:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.yi_live_on);
-                }else {
-                    imageView.setImageResource(R.mipmap.yi_live_off);                }
+                } else {
+                    imageView.setImageResource(R.mipmap.yi_live_off);
+                }
 
                 break;
             case SettingActivity.LIVE_TYPE_NOW:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.now_live_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.now_live_off);
                 }
 
@@ -383,7 +384,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_DOUYU:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.douyu_live_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.douyu_live_off);
                 }
 
@@ -391,7 +392,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_ZHANQI:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.zhanqi_live_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.zhanqi_live_off);
                 }
 
@@ -399,7 +400,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_XIGUA:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.xigua_live_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.xigua_live_off);
                 }
 
@@ -414,7 +415,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case SettingActivity.LIVE_TYPE_CC:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.cc_live_on);
-                }else {
+                } else {
                     imageView.setImageResource(R.mipmap.cc_live_off);
                 }
                 break;
@@ -1260,9 +1261,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
         }
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-        params.height = DisplayUtil.dp2px(mContext, 300);
-        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+//        Display mDisplay = getWindowManager().getDefaultDisplay();
+//
+//        int W = mDisplay.getWidth();
+//
+//        int H = mDisplay.getHeight();
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+//        params.height = H/2;
+//        params.width = W;
+//        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
         mScreenResTv.setVisibility(View.INVISIBLE);
 //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
