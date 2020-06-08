@@ -16,6 +16,7 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.orhanobut.hawk.Hawk;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
@@ -294,7 +295,7 @@ public class MediaStream {
         }
 
         frameWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
-        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight/2);
+        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
 //        frameWidth = uvcWidth;
 //        frameHeight = uvcHeight;
         uvcCamera = UVCCameraService.liveData.getValue();
@@ -306,7 +307,8 @@ public class MediaStream {
 //                    UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
-                uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+//                uvcCamera.setPreviewSize(DisplayUtil.dp2px(context,300), DisplayUtil.dp2px(context,300), 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+                uvcCamera.setPreviewSize(frameWidth,frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             } catch (final IllegalArgumentException e) {
                 try {
                     // fallback to YUV mode
