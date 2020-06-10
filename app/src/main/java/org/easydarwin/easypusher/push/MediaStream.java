@@ -293,8 +293,8 @@ public class MediaStream {
             mSWCodec = true;
         }
 
-        frameWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
-        frameHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
+        uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
+        uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
 //        frameWidth = uvcWidth;
 //        frameHeight = uvcHeight;
         uvcCamera = UVCCameraService.liveData.getValue();
@@ -307,11 +307,11 @@ public class MediaStream {
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
 //                uvcCamera.setPreviewSize(DisplayUtil.dp2px(context,300), DisplayUtil.dp2px(context,300), 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-                uvcCamera.setPreviewSize(frameWidth,frameHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+                uvcCamera.setPreviewSize(uvcWidth,uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             } catch (final IllegalArgumentException e) {
                 try {
                     // fallback to YUV mode
-                    uvcCamera.setPreviewSize(frameWidth, frameHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
+                    uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.DEFAULT_PREVIEW_MODE, 1.0f);
                 } catch (final IllegalArgumentException e1) {
                     if (uvcCamera != null) {
                         uvcCamera.destroy();
@@ -328,7 +328,7 @@ public class MediaStream {
     }
 
 
-    /// 开启预览
+    /// 第二步 开启预览
     public synchronized void startPreview() {
         if (Thread.currentThread() != mCameraThread) {
             mCameraHandler.post(() -> startPreview());
@@ -337,7 +337,7 @@ public class MediaStream {
         if (uvcCamera != null) {
 
             startUvcPreview();
-            initConsumer(frameWidth, frameWidth);
+            initConsumer(uvcWidth, uvcHeight);
         } else if (mCamera != null) {
 
             startCameraPreview();
@@ -408,7 +408,7 @@ public class MediaStream {
         }
 
         try {
-            uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP/*UVCCamera.PIXEL_FORMAT_NV21*/);
+            uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_NV21/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
             uvcCamera.startPreview();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -637,7 +637,7 @@ public class MediaStream {
 
         mRecordVC = new RecordVideoConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mMuxer, SPUtil.getEnableVideoOverlay(context), SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
         if (uvcCamera != null) {
-            mRecordVC.onVideoStart(frameWidth, frameHeight);
+            mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         } else {
             boolean frameRotate;
             int result;
@@ -814,7 +814,7 @@ public class MediaStream {
             i420_buffer = new byte[data.length];
         }
 
-        JNIUtil.ConvertToI420(data, i420_buffer, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight, 0, 2);
+        JNIUtil.ConvertToI420(data, i420_buffer, uvcWidth, uvcHeight, 0, 0, uvcWidth, uvcHeight, 0, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
         if (mRecordVC != null) {
