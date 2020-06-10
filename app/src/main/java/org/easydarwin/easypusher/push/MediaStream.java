@@ -164,7 +164,6 @@ public class MediaStream {
             return;
         }
 
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         mHevc = SPUtil.getHevcCodec(context);
         if (mEasyPusher == null) {
             mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
@@ -353,6 +352,7 @@ public class MediaStream {
     }
 
     private void initConsumer(int width, int height) {
+        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
             mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
