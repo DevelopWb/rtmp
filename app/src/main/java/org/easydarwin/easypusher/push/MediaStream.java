@@ -102,8 +102,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_FRONT = 1;
     public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
-    int defaultWidth = 1920, defaultHeight = 1080;
-    int nativeWidth, nativeHeight;//原生camera的宽高
+    int nativeWidth = 1920, nativeHeight = 1080;//原生camera的宽高
     int uvcWidth = 1280, uvcHeight = 720;//uvcCamera的宽高
     private int mTargetCameraId;
     private int frameWidth;
@@ -237,8 +236,8 @@ public class MediaStream {
             } else {
                 mSWCodec = true;
             }
-            nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, defaultWidth);
-            nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, defaultHeight);
+            nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
+            nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
             //            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             parameters.setPreviewSize(nativeWidth, nativeHeight);// 设置预览尺寸
 
@@ -295,8 +294,6 @@ public class MediaStream {
 
         uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
         uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
-//        frameWidth = uvcWidth;
-//        frameHeight = uvcHeight;
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 //            uvcCamera.setPreviewSize(frameWidth,
@@ -408,7 +405,7 @@ public class MediaStream {
         }
 
         try {
-            uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_NV21/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
+            uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
             uvcCamera.startPreview();
         } catch (Throwable e) {
             e.printStackTrace();

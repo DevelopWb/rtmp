@@ -1261,15 +1261,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
         }
-//        Display mDisplay = getWindowManager().getDefaultDisplay();
-//
-//        int W = mDisplay.getWidth();
-//
-//        int H = mDisplay.getHeight();
-//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-//        params.height = H/2;
-//        params.width = W;
-//        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+
+        int W = mDisplay.getWidth();
+
+        int H = mDisplay.getHeight();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        params.height = H/2;
+        params.width = W;
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
         mScreenResTv.setVisibility(View.INVISIBLE);
 //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
