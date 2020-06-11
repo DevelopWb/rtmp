@@ -1,4 +1,4 @@
-package com.regmode;
+package com.regmode.Utils;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -34,10 +34,9 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.GsonManager;
-import com.regmode.Utils.BaseReg;
-import com.regmode.Utils.RegLatestContact;
-import com.regmode.Utils.RegLatestPresent;
-import com.regmode.Utils.RegPubUtils;
+import com.regmode.R;
+import com.regmode.RegLatestContact;
+import com.regmode.RegLatestPresent;
 import com.regmode.adapter.CommonProgressDialog;
 import com.regmode.adapter.DialogAdapter;
 import com.regmode.bean.RegBean;

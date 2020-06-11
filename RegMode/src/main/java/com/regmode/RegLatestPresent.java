@@ -1,4 +1,4 @@
-package com.regmode.Utils;
+package com.regmode;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.networkProxy.HttpProxy;
@@ -10,8 +10,7 @@ import com.basenetlib.okgo.NetResponseCallBack;
  * Description:This is RegLatestPresent
  */
 public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
-    public static String URL_Reg_Center = "https://zc.xun365.net";//注册码中心系统
-    public static String APP_MARK = "YJZB";//软件标识
+
 
     @Override
     public void setRegisCodeNumber(String regisCode, int size, final RequestStatus requestStatus) {
@@ -19,7 +18,8 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
                 .params("softType", "mb")
                 .params("regisCode", regisCode)
                 .params("number", size)
-                .postToNetwork(URL_Reg_Center + "/WebService/RegisCode.asmx/setRegisCodeNumber", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/RegisCode.asmx/setRegisCodeNumber",
+                        new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.SET_CODE);
@@ -37,8 +37,8 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("softwareId", APP_MARK)
-                .postToNetwork(URL_Reg_Center + "/WebService/SoftWare.asmx/GetRegisCodeInfo_NoPhoneMessage", new NetResponseCallBack() {
+                .params("softwareId", AppHttpUrl.APP_MARK)
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetRegisCodeInfo_NoPhoneMessage", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.CHECK_REG);
@@ -56,7 +56,7 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("regisCode", regisCode)
                 .params("versionMsg", versionMsg)
-                .postToNetwork(URL_Reg_Center + "/WebService/SoftWare.asmx/SetVersionInfo", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/SetVersionInfo", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.UPLOAD_V_INFO);
@@ -74,8 +74,8 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
     public void getNearestVersionFromService(final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
-                .params("softwareId", APP_MARK)
-                .postToNetwork(URL_Reg_Center + "/WebService/SoftWare.asmx/GetAllSoftWareInfo", new NetResponseCallBack() {
+                .params("softwareId", AppHttpUrl.APP_MARK)
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetAllSoftWareInfo", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.GET_VERSION);
@@ -92,9 +92,9 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("softType", "mb")
                 .params("regisCode", regisCode)
-                .params("softIdentification", APP_MARK)
+                .params("softIdentification", AppHttpUrl.APP_MARK)
                 .params("model","")
-                .postToNetwork(URL_Reg_Center + "/WebService/RegisCode.asmx/GetRegisCodeInfo", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/RegisCode.asmx/GetRegisCodeInfo", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.REGIST);
@@ -114,7 +114,7 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
                 .params("imei",imei)
-                .postToNetwork(URL_Reg_Center + "/WebService/SoftWare.asmx/SoftWareRegister", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/SoftWareRegister", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.REGIST_IMEI);

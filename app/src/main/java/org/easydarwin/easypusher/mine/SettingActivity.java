@@ -27,7 +27,7 @@ import android.widget.RadioGroup;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
-import com.regmode.RegOperateUtil;
+import com.regmode.Utils.RegOperateUtil;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;

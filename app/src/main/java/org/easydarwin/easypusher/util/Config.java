@@ -7,13 +7,9 @@
 
 package org.easydarwin.easypusher.util;
 
-import android.content.Context;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import com.orhanobut.hawk.Hawk;
-import com.regmode.RegOperateUtil;
 
 import java.io.File;
 
