@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 def configs = rootProject.ext.android
 android {
     compileSdkVersion configs.compileSdkVersion
-    buildToolsVersion '28.0.3'
     signingConfigs {
         config {
             keyAlias 'dwh'
@@ -93,6 +92,7 @@ dependencies {
     implementation 'com.android.support:preference-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.github.chrisbanes:PhotoView:1.3.0'
+    implementation 'com.squareup:otto:1.3.8'
 
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -100,9 +100,5 @@ dependencies {
     implementation project(path: ':RegMode')
     implementation project(path: ':module_Base')
     implementation project(path: ':base_net_lib')
-    implementation(name: 'libuvccamera-release', ext: 'aar') {
-        exclude module: 'support-v4'
-        exclude module: 'appcompat-v7'
-    }
     implementation project(path: ':libusbcamera')
 }

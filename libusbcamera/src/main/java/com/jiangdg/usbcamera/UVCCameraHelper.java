@@ -264,14 +264,14 @@ public class UVCCameraHelper {
         }
     }
 
-    public void startPusher(RecordParams params, AbstractUVCCameraHandler.OnEncodeResultListener listener) {
-        if (mCameraHandler != null && !isPushing()) {
-            if(params.isSupportOverlay()) {
-                TxtOverlay.install(mActivity.getApplicationContext());
-            }
-            mCameraHandler.startRecording(params, listener);
-        }
-    }
+//    public void startPusher(RecordParams params, AbstractUVCCameraHandler.OnEncodeResultListener listener) {
+//        if (mCameraHandler != null && !isPushing()) {
+//            if(params.isSupportOverlay()) {
+//                TxtOverlay.install(mActivity.getApplicationContext());
+//            }
+//            mCameraHandler.startRecording(params, listener);
+//        }
+//    }
 
     public void stopPusher() {
         if (mCameraHandler != null && isPushing()) {
