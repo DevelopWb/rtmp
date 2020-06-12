@@ -36,9 +36,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.orhanobut.hawk.Hawk;
-import com.regmode.RegOperateUtil;
+import com.regmode.Utils.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
@@ -178,7 +177,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-//        RegOperateUtil.getInstance(this);
+        RegOperateUtil.getInstance(this);
 
 
     }

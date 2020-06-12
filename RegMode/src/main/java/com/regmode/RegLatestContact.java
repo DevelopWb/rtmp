@@ -1,4 +1,4 @@
-package com.regmode.Utils;
+package com.regmode;
 
 import com.basenetlib.RequestStatus;
 
