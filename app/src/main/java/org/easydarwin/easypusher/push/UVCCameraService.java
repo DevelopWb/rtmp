@@ -1,14 +1,15 @@
 package org.easydarwin.easypusher.push;
 
 import android.app.Service;
-import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.IButtonCallback;

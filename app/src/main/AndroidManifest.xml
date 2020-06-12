@@ -58,7 +58,6 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".mine.AboutActivity" />
         <activity android:name=".mine.scan.QRScanActivity" />
 
         <activity

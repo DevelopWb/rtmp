@@ -25,17 +25,17 @@ ext {
     ]
     dependencies = [
             //android 官方库
-            "appcompat-v7"                 : "com.android.support:appcompat-v7:$rootProject.supportVersion",
-            "support-v4"                   : "com.android.support:support-v4:$rootProject.supportVersion",
-            "design"                       : "com.android.support:design:$rootProject.supportVersion",
-            "annotations"                  : "com.android.support:support-annotations:$rootProject.supportVersion",
-            "gson"                         : "com.google.code.gson:gson:2.6.2",
+            "appcompat-v7": "androidx.appcompat:appcompat:1.0.0",
+            "support-v4"  : "com.android.support:support-v4:$rootProject.supportVersion",
+            "design"      : "com.google.android.material:material:1.0.0",
+            "annotations" : "com.android.support:support-annotations:$rootProject.supportVersion",
+            "gson"        : "com.google.code.gson:gson:2.6.2",
 //            "fastjson"                     :'com.alibaba:fastjson:1.2.67',
             //路由通讯
-            "arouter-api"                  : "com.alibaba:arouter-api:1.4.1",
-            "arouter-compiler"             : "com.alibaba:arouter-compiler:1.2.2",
+            "arouter-api" : "com.alibaba:arouter-api:1.4.1",
+            "arouter-compiler": "com.alibaba:arouter-compiler:1.2.2",
             // OkHttp
-            "okhttp"                       : "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion",
+            "okhttp"          : "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion",
             "logging-interceptor"          : "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion",
             //retrofit
             "retrofit"                     : "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion",
@@ -52,20 +52,20 @@ ext {
             "glide"                        : "com.github.bumptech.glide:glide:$rootProject.glideVersion",
             "compiler"                     : "com.github.bumptech.glide:compiler:$rootProject.glideVersion",
             //
-            "rxlifecycle"                  : "com.trello.rxlifecycle2:rxlifecycle:$rootProject.rxlifecycleVersion",
-            "rxlifecycle-android"          : "com.trello.rxlifecycle2:rxlifecycle-android:$rootProject.rxlifecycleVersion",
-            "rxlifecycle-components"       : "com.trello.rxlifecycle2:rxlifecycle-components:$rootProject.rxlifecycleVersion",
+            "rxlifecycle"             : "com.trello.rxlifecycle2:rxlifecycle:$rootProject.rxlifecycleVersion",
+            "rxlifecycle-android"     : "com.trello.rxlifecycle2:rxlifecycle-android:$rootProject.rxlifecycleVersion",
+            "rxlifecycle-components"  : "com.trello.rxlifecycle2:rxlifecycle-components:$rootProject.rxlifecycleVersion",
             //tool
-            "eventbus"                     : "org.greenrobot:eventbus:3.2.0",
+            "eventbus"                : "org.greenrobot:eventbus:3.2.0",
             //日志工具
-            "logger"                       : "com.orhanobut:logger:2.2.0",
-            "multidex"                     : "com.android.support:multidex:1.0.3",
+            "logger"                  : "com.orhanobut:logger:2.2.0",
+            "multidex"                : 'androidx.multidex:multidex:2.0.0',
 
-            "leakcanary-android"           : "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion",
-            "leakcanary-android-no-op"     : "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion",
+            "leakcanary-android"      : "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion",
+            "leakcanary-android-no-op": "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion",
             //其他第三发-刷新-状态栏-适配器-标签-轮播
-            "SmartRefreshLayout"           : "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartRefresh",
-            "SmartRefreshHeader"           : "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartRefresh",
+            "SmartRefreshLayout"      : "com.scwang.smartrefresh:SmartRefreshLayout:$rootProject.smartRefresh",
+            "SmartRefreshHeader"      : "com.scwang.smartrefresh:SmartRefreshHeader:$rootProject.smartRefresh",
             //万能适配器
             "BaseRecyclerViewAdapterHelper": "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30",
             //图片压缩

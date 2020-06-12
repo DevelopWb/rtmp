@@ -1,32 +1,22 @@
 package org.easydarwin.easypusher.mine.scan;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
-import android.text.NoCopySpan;
-import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
+
 import com.king.zxing.CaptureHelper;
 import com.king.zxing.OnCaptureCallback;
 import com.king.zxing.ViewfinderView;
-import com.king.zxing.util.CodeUtils;
 
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
-
-import java.util.function.Consumer;
-
 
 
 public class QRScanActivity extends Activity implements View.OnClickListener, OnCaptureCallback {

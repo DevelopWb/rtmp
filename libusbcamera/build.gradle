@@ -8,7 +8,7 @@ android {
     defaultConfig {
         minSdkVersion configs.minSdkVersion
         targetSdkVersion configs.targetSdkVersion
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // "armeabi-v7a" can adapter most of the devices
         ndk {
@@ -22,10 +22,6 @@ android {
         }
     }
     // solving com.android.tools.r8.CompilationFailedException: Compilation failed to complete
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 

@@ -22,8 +22,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -182,7 +182,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-        RegOperateUtil.getInstance(this);
+//        RegOperateUtil.getInstance(this);
 
 
     }

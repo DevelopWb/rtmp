@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.juntai.wisdom.basecomponent.BuildConfig;
 import com.juntai.wisdom.basecomponent.R;
