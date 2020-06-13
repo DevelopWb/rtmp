@@ -41,7 +41,7 @@
                 android:padding="15dp"
                 tools:context="org.easydarwin.easypusher.mine.SettingActivity">
 
-                <androidx.constraintlayout.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_only_bottom_gray_shape_1px"
@@ -257,7 +257,7 @@
                         style="@style/set_url_editText" />
 
 
-                </androidx.constraintlayout.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>>
 
 
 
