@@ -12,7 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -40,6 +40,7 @@ import com.regmode.RegLatestPresent;
 import com.regmode.adapter.CommonProgressDialog;
 import com.regmode.adapter.DialogAdapter;
 import com.regmode.bean.RegBean;
+import com.regmode.bean.RegCodeBean;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +76,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     public static boolean isForbidden = false;//是否禁用
     public static int REGSIZE = 0;
     public static String URL_Reg_Center = "http://zc.xun365.net";//注册码中心系统
-    public static String APP_MARK = "ZNZT";//软件标识
+    public static String APP_MARK = "YJZB";//软件标识
     private CommonProgressDialog mProgressDialog;
     private String nearestVersion;
     private Context context;
@@ -126,7 +127,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
         if (strreg == null || TextUtils.isEmpty(strreg)) {
             showRegDialog();
         } else {
-//            checkRegStatus();
+            checkRegStatus();
         }
     }
 
@@ -237,7 +238,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                     .show();
             return;
         }
-        present.checkRegStatus(strreg, this);
+        present.getRegInfo(strreg, this);
     }
 
     /**
@@ -546,8 +547,19 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                     e.printStackTrace();
                 }
                 break;
-            case RegLatestContact.CHECK_REG:
-                //如果注册码已经注册
+            case RegLatestContact.GET_REG_INFO:
+                //获取注册码信息  验证接口  每次进入软件的时候需要调用这个接口  检测注册码的状态
+                RegCodeBean regInfo = (RegCodeBean) o;
+                if (regInfo != null) {
+                    String resultTag = regInfo.getResult();
+                    if ("OK".equals(resultTag)) {
+                        if (regInfo.getModel() != null&&regInfo.getModel().size()>0) {
+                            RegCodeBean.ModelBean regInfoBean = regInfo.getModel().get(0);
+//                            regInfoBean.getIs
+                        }
+                    }
+                }
+
                 if (!TextUtils.isEmpty(str)) {
                     try {
                         JSONObject obj = new JSONObject(str);
@@ -749,35 +761,25 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                     et.commit();
                 }
                 break;
-            case RegLatestContact.REGIST_IMEI:
-                if (str != null && !TextUtils.isEmpty(str)) {
-                    try {
-                        JSONObject obj = new JSONObject(str);
-                        String result = obj.getString("Result");
-                        if ("OK".equals(result)) {
-                            SharedPreferences.Editor editor = sp.edit();
-                            if (input != null) {
-                                Toast.makeText(context, "注册码验证成功",
-                                        Toast.LENGTH_LONG).show();
-                                strreg = input;
-                                editor.putString("OBJREG", input);
-                                editor.commit();
-                            }
-                            if (dialog_Reg != null && dialog_Reg.isShowing()) {
-                                dialog_Reg.dismiss();
-                            }
-                        } else if (result.contains("未授权")) {
-                            Toast.makeText(context, "注册码未授权，请联系管理员",
+            case RegLatestContact.CHECK_REG:
+                //验证注册码
+                RegCodeBean regCodeBean = (RegCodeBean) o;
+                if (regCodeBean != null) {
+                    String resultTag = regCodeBean.getResult();
+                    if ("OK".equals(resultTag)) {
+                        SharedPreferences.Editor editor = sp.edit();
+                        if (input != null) {
+                            Toast.makeText(context, "注册码验证成功",
                                     Toast.LENGTH_LONG).show();
-                        } else if (result.contains("RegisCode不存在")) {
-                            Toast.makeText(context, "注册码不存在，请联系管理员",
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(context, "验证异常，请联系管理员",
-                                    Toast.LENGTH_LONG).show();
+                            strreg = input;
+                            editor.putString("OBJREG", input);
+                            editor.commit();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        if (dialog_Reg != null && dialog_Reg.isShowing()) {
+                            dialog_Reg.dismiss();
+                        }
+                    }else {
+                        Toast.makeText(context,resultTag,Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -998,7 +1000,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 progressDialog = ProgressDialog.show(context, "请稍候",
                         "注册码验证中请不要进行其他操作", true);
                 progressDialog.setCancelable(true);
-                present.registImei(input, getRegImeiIccid(), RegOperateUtil.this);
+                present.checkReg(input, getRegImeiIccid(), APP_MARK,RegLatestContact.CHECK_REG,RegOperateUtil.this);
 
             }
         };
