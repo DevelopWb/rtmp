@@ -103,7 +103,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
     int nativeWidth = 1920, nativeHeight = 1080;//原生camera的宽高
-    int uvcWidth = 1280, uvcHeight = 720;//uvcCamera的宽高
+    int uvcWidth = 1920, uvcHeight = 1080;//uvcCamera的宽高
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
@@ -349,7 +349,7 @@ public class MediaStream {
     }
 
     private void initConsumer(int width, int height) {
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
+        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, false);
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
             mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));

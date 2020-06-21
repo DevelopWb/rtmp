@@ -116,7 +116,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.openRecordLocalBt.setOnClickListener(this);
         // 使能摄像头后台采集
         onPushBackground();
-        onEncodeType();
+//        onEncodeType();
         // 推送内容
         onRadioGroupCheckedStatus();
         onAutoRun();
@@ -183,29 +183,29 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         });
     }
 
-    /**
-     *
-     */
-    private void onEncodeType() {
-        // 是否使用软编码
-        CheckBox x264enc = findViewById(R.id.use_x264_encode);
-        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, true));
-        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked));
-
-        //        // 使能H.265编码
-        //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
-        //        enable_hevc_cb.setChecked(SPUtil.getHevcCodec(this));
-        //        enable_hevc_cb.setOnCheckedChangeListener(
-        //                (buttonView, isChecked) -> SPUtil.setHevcCodec(this, isChecked)
-        //        );
-
-        //        // 叠加水印
-        //        CheckBox enable_video_overlay = findViewById(R.id.enable_video_overlay);
-        //        enable_video_overlay.setChecked(SPUtil.getEnableVideoOverlay(this));
-        //        enable_video_overlay.setOnCheckedChangeListener(
-        //                (buttonView, isChecked) -> SPUtil.setEnableVideoOverlay(this, isChecked)
-        //        );
-    }
+//    /**
+//     *
+//     */
+//    private void onEncodeType() {
+//        // 是否使用软编码
+//        CheckBox x264enc = findViewById(R.id.use_x264_encode);
+//        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, false));
+//        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked));
+//
+//        //        // 使能H.265编码
+//        //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
+//        //        enable_hevc_cb.setChecked(SPUtil.getHevcCodec(this));
+//        //        enable_hevc_cb.setOnCheckedChangeListener(
+//        //                (buttonView, isChecked) -> SPUtil.setHevcCodec(this, isChecked)
+//        //        );
+//
+//        //        // 叠加水印
+//        //        CheckBox enable_video_overlay = findViewById(R.id.enable_video_overlay);
+//        //        enable_video_overlay.setChecked(SPUtil.getEnableVideoOverlay(this));
+//        //        enable_video_overlay.setOnCheckedChangeListener(
+//        //                (buttonView, isChecked) -> SPUtil.setEnableVideoOverlay(this, isChecked)
+//        //        );
+//    }
 
     /**
      * 后台采集

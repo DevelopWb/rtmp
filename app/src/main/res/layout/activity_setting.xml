@@ -275,12 +275,12 @@
                     android:checked="true"
                     android:text="摄像头后台采集" />
 
-                <CheckBox
-                    android:id="@+id/use_x264_encode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="使用软编码" />
+<!--                <CheckBox-->
+<!--                    android:id="@+id/use_x264_encode"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:checked="true"-->
+<!--                    android:text="使用软编码" />-->
 
 
 

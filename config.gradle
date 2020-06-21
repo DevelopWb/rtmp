@@ -5,7 +5,7 @@ ext {
     android = [
             compileSdkVersion: 28,
             minSdkVersion    : 21,
-            targetSdkVersion : 28,
+            targetSdkVersion : 27,
             //otg可以推送到直播平台了   otg接入jiangdongguo库
             versionCode      : 3,
             versionName      : "1.2.0",

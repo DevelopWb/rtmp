@@ -21,6 +21,7 @@ import org.easydarwin.easypusher.R;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 public class UVCCameraService extends Service {
 
@@ -115,7 +116,7 @@ public class UVCCameraService extends Service {
                 Log.v(TAG, "onAttach:" + device);
 
                 uvcAttached = true;
-                mUSBMonitor.requestPermission(device);
+                requestPermission(0);
                 if (uvcConnectedCallBack != null) {
                     uvcConnectedCallBack.onUvcCameraAttached();
                 }
@@ -217,6 +218,28 @@ public class UVCCameraService extends Service {
 
         mUSBMonitor.setDeviceFilter(DeviceFilter.getDeviceFilters(this, R.xml.device_filter));
         mUSBMonitor.register();
+    }
+    public void requestPermission(int index) {
+        List<UsbDevice> devList = getUsbDeviceList();
+        if (devList == null || devList.size() == 0) {
+            return;
+        }
+        int count = devList.size();
+        if (index >= count)
+            new IllegalArgumentException("index illegal,should be < devList.size()");
+        if (mUSBMonitor != null) {
+            mUSBMonitor.requestPermission(getUsbDeviceList().get(index));
+        }
+    }
+
+    public List<UsbDevice> getUsbDeviceList() {
+        List<DeviceFilter> deviceFilters = DeviceFilter
+                .getDeviceFilters(getApplicationContext(), com.jiangdg.libusbcamera.R.xml.device_filter);
+        if (mUSBMonitor == null || deviceFilters == null)
+//            throw new NullPointerException("mUSBMonitor ="+mUSBMonitor+"deviceFilters=;"+deviceFilters);
+            return null;
+        // matching all of filter devices
+        return mUSBMonitor.getDeviceList(deviceFilters);
     }
 
     @Override
