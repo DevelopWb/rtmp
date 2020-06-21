@@ -23,4 +23,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     // 此处一定要注意使用RxJava2的版本
     implementation project(path: ':base_net_lib')
+    compile project(path: ':module_Base')
 }

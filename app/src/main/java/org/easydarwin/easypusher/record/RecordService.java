@@ -41,7 +41,8 @@ import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.push.PushCallback;
 import org.easydarwin.easypusher.push.StreamActivity;
-import org.easydarwin.easypusher.util.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
+import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.encode.AudioStream;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.Pusher;
@@ -57,7 +58,6 @@ import java.util.ArrayList;
 import static android.media.MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME;
 
 import static org.easydarwin.easypusher.push.MediaStream.listEncoders;
-import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class RecordService extends Service {
@@ -232,7 +232,7 @@ public class RecordService extends Service {
             public void run() {
                 String url = Config.getServerURL();
                 boolean mHevc = SPUtil.getHevcCodec(RecordService.this);
-                mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+                mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
 
                 try {
                     mEasyPusher.initPush(url,

@@ -9,6 +9,7 @@ package org.easydarwin.easypusher.util;
 
 import android.os.Environment;
 
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.File;

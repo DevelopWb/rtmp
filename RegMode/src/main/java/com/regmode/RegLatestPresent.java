@@ -3,6 +3,10 @@ package com.regmode;
 import com.basenetlib.RequestStatus;
 import com.basenetlib.networkProxy.HttpProxy;
 import com.basenetlib.okgo.NetResponseCallBack;
+import com.basenetlib.util.GsonManager;
+import com.regmode.Utils.RegOperateUtil;
+import com.regmode.bean.AppInfoBean;
+import com.regmode.bean.RegCodeBean;
 
 /**
  * Author:wang_sir
@@ -33,15 +37,16 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
     }
 
     @Override
-    public void checkRegStatus(String regisCode,  final RequestStatus requestStatus) {
+    public void getRegInfo(String regisCode, final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("softwareId", AppHttpUrl.APP_MARK)
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetRegisCodeInfo_NoPhoneMessage", new NetResponseCallBack() {
+                .params("softwareId", RegOperateUtil.APP_MARK)
+                .postToNetwork(AppHttpUrl.GET_REG_INFO, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
-                        requestStatus.onSuccess(content, RegLatestContact.CHECK_REG);
+                        RegCodeBean regCodeBean = GsonManager.getInstance().parseJsonToBean(content,RegCodeBean.class);
+                        requestStatus.onSuccess(regCodeBean,RegLatestContact.GET_REG_INFO );
                     }
 
                     @Override
@@ -71,14 +76,15 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
 
 
     @Override
-    public void getNearestVersionFromService(final RequestStatus requestStatus) {
+    public void getAppVersionInfoAndKeyFromService(final  String tag,final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
-                .params("softwareId", AppHttpUrl.APP_MARK)
+                .params("softwareId", RegOperateUtil.APP_MARK)
                 .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetAllSoftWareInfo", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
-                        requestStatus.onSuccess(content, RegLatestContact.GET_VERSION);
+                        AppInfoBean appInfoBean = GsonManager.getInstance().parseJsonToBean(content,AppInfoBean.class);
+                        requestStatus.onSuccess(appInfoBean, tag);
                     }
 
                     @Override
@@ -87,17 +93,38 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
                     }
                 });
     }
+//    @Override
+//    public void regist(String regisCode, String phoneMessage, final RequestStatus requestStatus) {
+//        HttpProxy.getInstance()
+//                .params("softType", "mb")
+//                .params("regisCode", regisCode)
+//                .params("softIdentification", AppHttpUrl.APP_MARK)
+//                .params("model","")
+//                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/RegisCode.asmx/GetRegisCodeInfo", new NetResponseCallBack() {
+//                    @Override
+//                    public void onSuccess(String content) {
+//                        requestStatus.onSuccess(content, RegLatestContact.REGIST);
+//                    }
+//
+//                    @Override
+//                    public void onError(String str) {
+//                        requestStatus.onError(str);
+//
+//                    }
+//                });
+//    }
+
     @Override
-    public void regist(String regisCode, String phoneMessage, final RequestStatus requestStatus) {
+    public void checkReg(String regisCode, String softwareId, final String tag, final RequestStatus requestStatus) {
         HttpProxy.getInstance()
-                .params("softType", "mb")
+                .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("softIdentification", AppHttpUrl.APP_MARK)
-                .params("model","")
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/RegisCode.asmx/GetRegisCodeInfo", new NetResponseCallBack() {
+                .params("softwareId",softwareId)
+                .postToNetwork(AppHttpUrl.CHECK_REGIST, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
-                        requestStatus.onSuccess(content, RegLatestContact.REGIST);
+                        RegCodeBean regCodeBean = GsonManager.getInstance().parseJsonToBean(content,RegCodeBean.class);
+                        requestStatus.onSuccess(regCodeBean,tag );
                     }
 
                     @Override
@@ -109,15 +136,15 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
     }
 
     @Override
-    public void registImei(String regisCode, String imei, final RequestStatus requestStatus) {
+    public void setImei(String regisCode,  String imei,final String tag, final  RequestStatus requestStatus) {
         HttpProxy.getInstance()
-                .params("softwareType", "mb")
+                .params("softType", "mb")
                 .params("regisCode", regisCode)
                 .params("imei",imei)
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/SoftWareRegister", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.SET_IMEI, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
-                        requestStatus.onSuccess(content, RegLatestContact.REGIST_IMEI);
+                        requestStatus.onSuccess(content,tag );
                     }
 
                     @Override
