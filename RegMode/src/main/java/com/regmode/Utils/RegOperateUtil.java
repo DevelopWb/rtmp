@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -28,6 +27,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -272,7 +273,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
      * @param text
      * @param status
      */
-    private void WarnRegStatus(final String text, final String status) {
+    private void warnRegStatus(final String text, final String status) {
 
         View v = LayoutInflater.from(context).inflate(R.layout.warn_reg_layout
                 , null);
@@ -780,21 +781,17 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                                 Hawk.put(HawkProperty.REG_CODE, input);
                                 //获取软件的key
                                 present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
-                                ToastUtils.toast(context, "注册码验证成功");
-                                if (dialog_Reg != null && dialog_Reg.isShowing()) {
-                                    dialog_Reg.dismiss();
-                                }
-                                String isImei = modelBean.getIsImei();
-                                if ("1".equals(isImei)) {
-                                    //将注册码用md5加密并保存本地
-                                    FileUtils.writeToTxtFile(input, "property.txt");
-                                    //将加密过的注册码上传到服务器
-                                    present.setImei(input, FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+                                if (!checkImei(modelBean)) {
+                                    return;
                                 }
                                 String mac = modelBean.getMAC();
                                 if (mac != null && !TextUtils.isEmpty(mac)) {
                                     //保存mac信息
                                     Hawk.put(HawkProperty.MAC_CODE, mac);
+                                }
+                                ToastUtils.toast(context, "注册码验证成功");
+                                if (dialog_Reg != null && dialog_Reg.isShowing()) {
+                                    dialog_Reg.dismiss();
                                 }
                             } else {
                                 ToastUtils.toast(context, regStatus);
@@ -822,7 +819,9 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                             if ("正常".equals(regStatus)) {
                                 //获取软件的key
                                 present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
-                                //todo  校验本地信息和服务器上的是否相同
+                                if (!checkImei(modelBean)) {
+                                    return;
+                                }
                             } else {
                                 ToastUtils.toast(context, regStatus);
                             }
@@ -841,6 +840,40 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 校验imei
+     * @param modelBean
+     */
+    private boolean checkImei(RegCodeBean.ModelBean modelBean) {
+        // 校验本地信息和服务器上的是否相同
+        String imei = modelBean.getImei();
+        if (imei!=null&&!TextUtils.isEmpty(imei)) {
+            //校验
+          String localImei  =   FileUtils.getFileContent("property.txt");
+            if (localImei != null&&!TextUtils.isEmpty(localImei)) {
+                if (localImei.equals(imei)) {
+                    return true;
+                }else {
+                    warnRegStatus("注册码绑定IMEI不匹配，请联系管理员","");
+                    return false;
+                }
+            }else {
+            //换手机登录了 或者本地配置文件丢失
+                warnRegStatus("注册码绑定IMEI不匹配，请联系管理员","");
+                return false;
+            }
+        }else {
+            String isImei = modelBean.getIsImei();
+            if ("1".equals(isImei)) {
+                //将注册码用md5加密并保存本地
+                FileUtils.writeToTxtFile(input, "property.txt");
+                //将加密过的注册码上传到服务器
+                present.setImei(input, FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+            }
+            return true;
         }
     }
 
