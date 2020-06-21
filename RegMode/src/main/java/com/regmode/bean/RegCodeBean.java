@@ -13,7 +13,7 @@ public class RegCodeBean {
 
     /**
      * Result : ok
-     * Model : [{"RegisCode":"xnGdEtf6","Imei":"","SoftType":"mb","Name":"一见直播","Identification":"YJZB","Version":"1.0","Customer":"测试王","isImei":"1","isValid":"1","ValidStart":"","ValidEnd":"","isNumber":"1","Number":"","NumberNow":"0","RegisCodeState":"正常","isDisabled":"1","RegisCodeAddDateTime":"2020/6/18 21:25:55","Id":"41","customerName":"测试王","customerPhoneNum":"15311810032","customerDirector":"王sir","customerDescription":"ceshi","customerAddDateTime":"1900/1/1 0:00:00"}]
+     * Model : [{"RegisCode":"DFQXJlwt","Imei":"","SoftwareId":"YJZB","SoftwareType":"mb","Name":"一见直播","Version":"1.1","Customer":"测试王","isImei":"1","isValid":"1","ValidStart":"","ValidEnd":"","isNumber":"1","Number":"","NumberNow":"0","RegisCodeState":"正常","isDisabled":"1","RegisCodeAddDateTime":"2020/6/20 21:53:08","isAutoUpdate":"0","isMAC":"0","MAC":"","isToolTip":"0","Id":"41","customerName":"测试王","customerPhoneNum":"15311810032","customerDirector":"王sir","customerDescription":"ceshi","customerAddDateTime":"1900/1/1 0:00:00"}]
      */
 
     private String Result;
@@ -37,12 +37,12 @@ public class RegCodeBean {
 
     public static class ModelBean {
         /**
-         * RegisCode : xnGdEtf6
+         * RegisCode : DFQXJlwt
          * Imei :
-         * SoftType : mb
+         * SoftwareId : YJZB
+         * SoftwareType : mb
          * Name : 一见直播
-         * Identification : YJZB
-         * Version : 1.0
+         * Version : 1.1
          * Customer : 测试王
          * isImei : 1
          * isValid : 1
@@ -53,7 +53,11 @@ public class RegCodeBean {
          * NumberNow : 0
          * RegisCodeState : 正常
          * isDisabled : 1
-         * RegisCodeAddDateTime : 2020/6/18 21:25:55
+         * RegisCodeAddDateTime : 2020/6/20 21:53:08
+         * isAutoUpdate : 0
+         * isMAC : 0
+         * MAC :
+         * isToolTip : 0
          * Id : 41
          * customerName : 测试王
          * customerPhoneNum : 15311810032
@@ -64,9 +68,9 @@ public class RegCodeBean {
 
         private String RegisCode;
         private String Imei;
-        private String SoftType;
+        private String SoftwareId;
+        private String SoftwareType;
         private String Name;
-        private String Identification;
         private String Version;
         private String Customer;
         private String isImei;
@@ -79,6 +83,10 @@ public class RegCodeBean {
         private String RegisCodeState;
         private String isDisabled;
         private String RegisCodeAddDateTime;
+        private String isAutoUpdate;
+        private String isMAC;
+        private String MAC;
+        private String isToolTip;
         private String Id;
         private String customerName;
         private String customerPhoneNum;
@@ -102,12 +110,20 @@ public class RegCodeBean {
             this.Imei = Imei;
         }
 
-        public String getSoftType() {
-            return SoftType;
+        public String getSoftwareId() {
+            return SoftwareId;
         }
 
-        public void setSoftType(String SoftType) {
-            this.SoftType = SoftType;
+        public void setSoftwareId(String SoftwareId) {
+            this.SoftwareId = SoftwareId;
+        }
+
+        public String getSoftwareType() {
+            return SoftwareType;
+        }
+
+        public void setSoftwareType(String SoftwareType) {
+            this.SoftwareType = SoftwareType;
         }
 
         public String getName() {
@@ -116,14 +132,6 @@ public class RegCodeBean {
 
         public void setName(String Name) {
             this.Name = Name;
-        }
-
-        public String getIdentification() {
-            return Identification;
-        }
-
-        public void setIdentification(String Identification) {
-            this.Identification = Identification;
         }
 
         public String getVersion() {
@@ -220,6 +228,38 @@ public class RegCodeBean {
 
         public void setRegisCodeAddDateTime(String RegisCodeAddDateTime) {
             this.RegisCodeAddDateTime = RegisCodeAddDateTime;
+        }
+
+        public String getIsAutoUpdate() {
+            return isAutoUpdate;
+        }
+
+        public void setIsAutoUpdate(String isAutoUpdate) {
+            this.isAutoUpdate = isAutoUpdate;
+        }
+
+        public String getIsMAC() {
+            return isMAC;
+        }
+
+        public void setIsMAC(String isMAC) {
+            this.isMAC = isMAC;
+        }
+
+        public String getMAC() {
+            return MAC;
+        }
+
+        public void setMAC(String MAC) {
+            this.MAC = MAC;
+        }
+
+        public String getIsToolTip() {
+            return isToolTip;
+        }
+
+        public void setIsToolTip(String isToolTip) {
+            this.isToolTip = isToolTip;
         }
 
         public String getId() {

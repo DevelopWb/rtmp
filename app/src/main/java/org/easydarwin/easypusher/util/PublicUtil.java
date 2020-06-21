@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
  */
 public class PublicUtil {
 
-
     public static boolean isIP(String addr) {
         if (addr.length() < 7 || addr.length() > 15 || "".equals(addr)) {
             return false;

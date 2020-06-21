@@ -32,7 +32,6 @@ import java.util.Calendar;
  */
 public class FileUtils {
 
-    private static String savedTxtDirName = "dwh";
 
     /**
      * 获取app文件地址
@@ -68,19 +67,13 @@ public class FileUtils {
      * 将字符串写入到文本文件中
      *
      * @param strcontent 要保存的字符串
-     * @param fileName   文件的名称
+     * @param fileName   文件的名称  a.txt
      */
     public static void writeToTxtFile(String strcontent, String fileName) {
-
-
-        String filePath =
-                Environment.getExternalStorageDirectory().getAbsolutePath() + String.format("%s%s" +
-                                "%s%s",
-                        "/", ".", savedTxtDirName, "/");
         //生成文件夹之后，再生成文件，不然会出错
-        makeFilePath(filePath, fileName);
+        makeFilePath(getSavedLocalPropertyFilePath(), fileName);
 
-        String strFilePath = filePath + fileName;
+        String strFilePath = getSavedLocalPropertyFilePath() + fileName;
         String writedContent = getFileContent(fileName);
         if (!TextUtils.isEmpty(writedContent)) {
             return;
@@ -138,12 +131,18 @@ public class FileUtils {
         }
     }
 
+    /**
+     * 获取保存本地配置文件的路径
+     * @return
+     */
+    private static String  getSavedLocalPropertyFilePath(){
+        return Environment.getExternalStorageDirectory().getAbsolutePath()+"/一见直播/.配置文件/";
+    }
+
     //读取指定目录下的所有TXT文件的文件内容
     public static String getFileContent(String fileName) {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + String.format("%s%s" + "%s%s",
-                "/", ".", savedTxtDirName, "/");
-        makeFilePath(path, fileName);
-        File file = new File(path + fileName);
+        makeFilePath(getSavedLocalPropertyFilePath(), fileName);
+        File file = new File(getSavedLocalPropertyFilePath() + fileName);
         if (!file.exists()) {
             file.mkdirs();
         }

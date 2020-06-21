@@ -7,10 +7,12 @@ import android.content.res.AssetManager;
 import android.os.Build;
 
 import com.basenetlib.util.NetWorkUtil;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.orhanobut.hawk.Hawk;
 import com.tencent.bugly.beta.Beta;
 
 import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.util.PublicUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,7 +63,7 @@ public class MyApp extends Application {
             }
         }
 
-        activeDays = getActiveDays(this,BuildConfig.RTMP_KEY);
+        activeDays = getActiveDays(this, Hawk.get(HawkProperty.APP_KEY));
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

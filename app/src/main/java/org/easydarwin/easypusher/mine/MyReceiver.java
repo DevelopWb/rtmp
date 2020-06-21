@@ -7,7 +7,7 @@ import android.content.Intent;
 import com.orhanobut.hawk.Hawk;
 
 import org.easydarwin.easypusher.SplashActivity;
-import org.easydarwin.easypusher.util.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
 
 /**

@@ -35,7 +35,7 @@ import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
-import org.easydarwin.easypusher.util.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.mainToolbar.setOnMenuItemClickListener(this);
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
-        binding.registCodeValue.setText(RegOperateUtil.strreg);
+        binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));

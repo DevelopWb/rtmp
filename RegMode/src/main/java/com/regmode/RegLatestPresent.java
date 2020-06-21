@@ -5,6 +5,7 @@ import com.basenetlib.networkProxy.HttpProxy;
 import com.basenetlib.okgo.NetResponseCallBack;
 import com.basenetlib.util.GsonManager;
 import com.regmode.Utils.RegOperateUtil;
+import com.regmode.bean.AppInfoBean;
 import com.regmode.bean.RegCodeBean;
 
 /**
@@ -75,14 +76,15 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
 
 
     @Override
-    public void getNearestVersionFromService(final RequestStatus requestStatus) {
+    public void getAppVersionInfoAndKeyFromService(final  String tag,final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("softwareId", RegOperateUtil.APP_MARK)
                 .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetAllSoftWareInfo", new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
-                        requestStatus.onSuccess(content, RegLatestContact.GET_VERSION);
+                        AppInfoBean appInfoBean = GsonManager.getInstance().parseJsonToBean(content,AppInfoBean.class);
+                        requestStatus.onSuccess(appInfoBean, tag);
                     }
 
                     @Override
@@ -113,17 +115,36 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
 //    }
 
     @Override
-    public void checkReg(String regisCode, String imei, String softwareId, final String tag, final RequestStatus requestStatus) {
+    public void checkReg(String regisCode, String softwareId, final String tag, final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("imei",imei)
                 .params("softwareId",softwareId)
                 .postToNetwork(AppHttpUrl.CHECK_REGIST, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         RegCodeBean regCodeBean = GsonManager.getInstance().parseJsonToBean(content,RegCodeBean.class);
                         requestStatus.onSuccess(regCodeBean,tag );
+                    }
+
+                    @Override
+                    public void onError(String str) {
+                        requestStatus.onError(str);
+
+                    }
+                });
+    }
+
+    @Override
+    public void setImei(String regisCode,  String imei,final String tag, final  RequestStatus requestStatus) {
+        HttpProxy.getInstance()
+                .params("softType", "mb")
+                .params("regisCode", regisCode)
+                .params("imei",imei)
+                .postToNetwork(AppHttpUrl.SET_IMEI, new NetResponseCallBack() {
+                    @Override
+                    public void onSuccess(String content) {
+                        requestStatus.onSuccess(content,tag );
                     }
 
                     @Override

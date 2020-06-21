@@ -50,7 +50,7 @@ import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.DoubleClickListener;
-import org.easydarwin.easypusher.util.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.update.UpdateMgr;
@@ -182,7 +182,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-//        RegOperateUtil.getInstance(this);
+        RegOperateUtil.getInstance(this);
 
 
     }

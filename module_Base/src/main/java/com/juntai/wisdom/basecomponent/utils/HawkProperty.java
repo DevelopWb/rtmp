@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher.util;
+package com.juntai.wisdom.basecomponent.utils;
 
 /**
  * Author:wang_sir
@@ -105,6 +105,21 @@ public class HawkProperty {
     public static final String FOURTH_LIVE = "fourth_live";
 
 
+
+
+
+    /**
+     * 注册码
+     */
+    public static final String REG_CODE = "reg_code";
+    /**
+     * mac
+     */
+    public static final String MAC_CODE = "mac_code";
+    /**
+     * mac
+     */
+    public static final String APP_KEY = "app_key";
 
 
 
