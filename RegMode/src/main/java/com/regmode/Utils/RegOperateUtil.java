@@ -122,6 +122,8 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
      */
     private void initReg(Context context) {
         String strreg = Hawk.get(HawkProperty.REG_CODE);
+        //获取软件的key
+        present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
         initLocation();
         if (strreg == null || TextUtils.isEmpty(strreg)) {
             showRegDialog();
@@ -778,8 +780,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                             if ("正常".equals(regStatus)) {
                                 //注册码正常
                                 Hawk.put(HawkProperty.REG_CODE, input);
-                                //获取软件的key
-                                present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
+
                                 if (!checkImei(modelBean)) {
                                     return;
                                 }
@@ -816,8 +817,6 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                             String regStatus = modelBean.getRegisCodeState();
 
                             if ("正常".equals(regStatus)) {
-                                //获取软件的key
-                                present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
                                 if (!checkImei(modelBean)) {
                                     return;
                                 }

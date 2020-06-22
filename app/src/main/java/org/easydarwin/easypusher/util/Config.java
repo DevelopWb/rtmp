@@ -11,6 +11,7 @@ import android.os.Environment;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.orhanobut.hawk.Hawk;
+import com.regmode.Utils.RegOperateUtil;
 
 import java.io.File;
 
@@ -25,12 +26,11 @@ public class Config {
     public static String getServerURL() {
 
         String url_head = "rtmp://";
-        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "fuwu.ttcolour.com");
+        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
         String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
-        String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls");
-//        String regCode = RegOperateUtil.strreg;
-        String regCode = "1";
-        return String.format("%s%s%s%s%s%s%s%s", url_head, ip, ":", port, "/", tag, "/", regCode);
+        String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+        String regCode =Hawk.get(HawkProperty.REG_CODE);
+        return String.format("%s%s%s%s%s%s%s%s", url_head, ip, ":", port, "/hls/", regCode, "?sign=", tag);
     }
 
     public static String recordPath() {

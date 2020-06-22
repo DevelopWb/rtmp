@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                         mediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Toast.makeText(MainActivity.this, "激活失败，无效Key", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "参数初始化中，请稍候！", Toast.LENGTH_LONG).show();
                     }
                 }
             }

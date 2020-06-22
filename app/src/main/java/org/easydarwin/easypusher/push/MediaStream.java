@@ -325,8 +325,7 @@ public class MediaStream {
 
 
     /// 第二步 开启预览
-    public synchronized void startPreview() {
-        if (Thread.currentThread() != mCameraThread) {
+    public synchronized void startPreview() { if (Thread.currentThread() != mCameraThread) {
             mCameraHandler.post(() -> startPreview());
             return;
         }
@@ -348,7 +347,8 @@ public class MediaStream {
     }
 
     private void initConsumer(int width, int height) {
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, false);
+//        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, false);
+        mSWCodec = false;
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
             mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
