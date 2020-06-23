@@ -59,7 +59,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_ZHANQI = "战旗TV";
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
 //    public static final String LIVE_TYPE_YINGKE = "映客直播";
-    public static final String LIVE_TYPE_CC = "cc直播";
+    public static final String LIVE_TYPE_CC = "自定义";
     private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_CC};
     private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
@@ -92,18 +92,18 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
         binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "rtmp://ttcolour.com"));
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
         binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
         binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
         binding.fourthLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FOURTH_URL, ""));
-        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "hls"));
+        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, ""));
         binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
         binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
 
-        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
+        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CC));
         binding.firstLiveScanIv.setOnClickListener(this);
         binding.quitAppBt.setOnClickListener(this);
         binding.secendLiveScanIv.setOnClickListener(this);
@@ -513,7 +513,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         arrays.add(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
         arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
-        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
+        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CC));
         return arrays;
     }
 

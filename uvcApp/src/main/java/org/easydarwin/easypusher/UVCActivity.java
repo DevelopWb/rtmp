@@ -153,7 +153,7 @@ public class UVCActivity extends AppCompatActivity {
                                 mediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Toast.makeText(UVCActivity.this, "激活失败，无效Key", Toast.LENGTH_LONG).show();
+                                Toast.makeText(UVCActivity.this, "参数初始化中，请稍候！", Toast.LENGTH_LONG).show();
                             }
                         }
                     }, new Consumer<Throwable>() {

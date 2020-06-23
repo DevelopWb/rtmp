@@ -6,9 +6,9 @@ ext {
             compileSdkVersion: 28,
             minSdkVersion    : 21,
             targetSdkVersion : 27,
-            //otg可以推送到直播平台了   otg接入jiangdongguo库
-            versionCode      : 3,
-            versionName      : "1.2.0",
+            //otg在android10上运行
+            versionCode      : 5,
+            versionName      : "1.2.2",
     ]
     libsVersion = [
             // App dependencies version

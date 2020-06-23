@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
@@ -182,7 +183,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-        RegOperateUtil.getInstance(this);
+        RegOperateUtil.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }
@@ -312,7 +323,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         String firstLiveName = Hawk.get(HawkProperty.FIRST_LIVE, SettingActivity.LIVE_TYPE_BILI);
         String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
         String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_DOUYU);
-        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_XIGUA);
+        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_CC);
         initLiveImage(firstLiveName, 1);
         initLiveImage(secendLiveName, 2);
         initLiveImage(thirdLiveName, 3);
@@ -1099,7 +1110,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化中，请稍候！");
             }
         } else {
             isPushingStream = false;
@@ -1126,7 +1137,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化中，请稍候！");
             }
         } else {
             isPushingFirstStream = false;
@@ -1153,7 +1164,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化中，请稍候！");
             }
         } else {
             isPushingThirdStream = false;
@@ -1179,7 +1190,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化中，请稍候！");
             }
         } else {
             isPushingFourthStream = false;
@@ -1206,7 +1217,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化中，请稍候！");
             }
         } else {
             isPushingSecendStream = false;

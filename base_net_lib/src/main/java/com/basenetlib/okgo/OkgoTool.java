@@ -113,7 +113,7 @@ public class OkgoTool<T> implements HttpStaticProxyInterface {
             if (response.body() != null) {
                 netCallBackInterface.onError(response.body());
             } else {
-                netCallBackInterface.onError("服务器错误");
+//                netCallBackInterface.onError("服务器错误");
 
             }
         }

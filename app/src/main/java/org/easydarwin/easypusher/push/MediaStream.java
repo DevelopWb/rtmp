@@ -325,8 +325,7 @@ public class MediaStream {
 
 
     /// 第二步 开启预览
-    public synchronized void startPreview() {
-        if (Thread.currentThread() != mCameraThread) {
+    public synchronized void startPreview() { if (Thread.currentThread() != mCameraThread) {
             mCameraHandler.post(() -> startPreview());
             return;
         }
