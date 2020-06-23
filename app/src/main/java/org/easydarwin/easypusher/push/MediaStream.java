@@ -349,6 +349,7 @@ public class MediaStream {
 
     private void initConsumer(int width, int height) {
         mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
+        mSWCodec = false;
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
             mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
