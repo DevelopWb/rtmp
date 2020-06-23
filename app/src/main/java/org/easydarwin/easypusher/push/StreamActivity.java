@@ -36,7 +36,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
@@ -182,7 +184,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-        RegOperateUtil.getInstance(this);
+        RegOperateUtil.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }
@@ -946,22 +958,25 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 录像
      * */
     public void onRecord(View view) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-            return;
-        }
+        ToastUtils.toast(this,"暂未开放，敬请期待");
+        return;
 
-        ImageView ib = findViewById(R.id.streaming_activity_record);
-
-        if (mMediaStream != null) {
-            if (mMediaStream.isRecording()) {
-                mMediaStream.stopRecord();
-                ib.setImageResource(R.drawable.record_pressed);
-            } else {
-                mMediaStream.startRecord();
-                ib.setImageResource(R.drawable.record);
-            }
-        }
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+//            return;
+//        }
+//
+//        ImageView ib = findViewById(R.id.streaming_activity_record);
+//
+//        if (mMediaStream != null) {
+//            if (mMediaStream.isRecording()) {
+//                mMediaStream.stopRecord();
+//                ib.setImageResource(R.drawable.record_pressed);
+//            } else {
+//                mMediaStream.startRecord();
+//                ib.setImageResource(R.drawable.record);
+//            }
+//        }
     }
 
     /*
@@ -1094,13 +1109,31 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null && !mMediaStream.isPushStream) {
             isPushingStream = true;
             try {
+                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
+                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
+                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+                if (TextUtils.isEmpty(ip)) {
+                    ToastUtils.toast(this,"请在设置中输入IP地址");
+                    return;
+                }
+                if (TextUtils.isEmpty(port)) {
+                    ToastUtils.toast(this,"请在设置中输入端口号");
+                    return;
+                }
+                if (TextUtils.isEmpty(tag)) {
+                    ToastUtils.toast(this,"请在设置中输入标识");
+                    return;
+                }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                isPushingStream = false;
+                mMediaStream.stopPusherStream(0);
+                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+                sendMessage("断开连接");
             }
         } else {
             isPushingStream = false;
@@ -1127,7 +1160,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化失败");
             }
         } else {
             isPushingFirstStream = false;
@@ -1207,7 +1240,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                sendMessage("激活失败，无效Key");
+                sendMessage("参数初始化失败");
             }
         } else {
             isPushingSecendStream = false;

@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -55,7 +56,6 @@ import java.net.HttpURLConnection;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
-import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -122,6 +122,8 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
      */
     private void initReg(Context context) {
         String strreg = Hawk.get(HawkProperty.REG_CODE);
+        //获取软件的key
+        present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
         initLocation();
         if (strreg == null || TextUtils.isEmpty(strreg)) {
             showRegDialog();
@@ -272,7 +274,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
      * @param text
      * @param status
      */
-    private void WarnRegStatus(final String text, final String status) {
+    private void warnRegStatus(final String text, final String status) {
 
         View v = LayoutInflater.from(context).inflate(R.layout.warn_reg_layout
                 , null);
@@ -699,11 +701,11 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 //获取key
                 AppInfoBean appInfoBean = (AppInfoBean) o;
                 if (appInfoBean != null) {
-                    if (appInfoBean.getModel() != null&&appInfoBean.getModel().size()>0) {
+                    if (appInfoBean.getModel() != null && appInfoBean.getModel().size() > 0) {
                         AppInfoBean.ModelBean dataBean = appInfoBean.getModel().get(0);
                         String key = dataBean.getSoftDescription();
                         if (key != null) {
-                            Hawk.put(HawkProperty.APP_KEY,key);
+                            Hawk.put(HawkProperty.APP_KEY, key);
                         }
                     }
                 }
@@ -778,23 +780,18 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                             if ("正常".equals(regStatus)) {
                                 //注册码正常
                                 Hawk.put(HawkProperty.REG_CODE, input);
-                                //获取软件的key
-                                present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
-                                ToastUtils.toast(context, "注册码验证成功");
-                                if (dialog_Reg != null && dialog_Reg.isShowing()) {
-                                    dialog_Reg.dismiss();
-                                }
-                                String isImei = modelBean.getIsImei();
-                                if ("1".equals(isImei)) {
-                                    //将注册码用md5加密并保存本地
-                                    FileUtils.writeToTxtFile(input, "property.txt");
-                                    //将加密过的注册码上传到服务器
-                                    present.setImei(input, FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+
+                                if (!checkImei(modelBean)) {
+                                    return;
                                 }
                                 String mac = modelBean.getMAC();
                                 if (mac != null && !TextUtils.isEmpty(mac)) {
                                     //保存mac信息
                                     Hawk.put(HawkProperty.MAC_CODE, mac);
+                                }
+                                ToastUtils.toast(context, "注册码验证成功");
+                                if (dialog_Reg != null && dialog_Reg.isShowing()) {
+                                    dialog_Reg.dismiss();
                                 }
                             } else {
                                 ToastUtils.toast(context, regStatus);
@@ -820,9 +817,41 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                             String regStatus = modelBean.getRegisCodeState();
 
                             if ("正常".equals(regStatus)) {
-                                //获取软件的key
-                                present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, this);
-                                //todo  校验本地信息和服务器上的是否相同
+                                if (!checkImei(modelBean)) {
+                                    return;
+                                }
+                                String isValid = modelBean.getIsValid();
+                                if (isValid != null && !TextUtils.isEmpty(isValid)) {
+                                    if (isValid.equals("0")) {//注册码限制时间
+                                        String ValidEnd = modelBean.getValidEnd();
+                                        String time = ValidEnd.split(" ")[0];
+                                        if (RegPubUtils.TheDayToNextDay(time) > 0 && RegPubUtils.TheDayToNextDay(time) < 8) {
+
+                                            if (IsTheRegStatusTime("isValid")) {
+                                                warnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) + "天，请联系管理员", "isValid");
+                                            }
+
+                                        } else {//重置下次提醒的时间
+                                            resetNextWarnTime("isValid");
+                                        }
+                                    }
+                                }
+                                String isNumber = modelBean.getIsNumber();
+                                if (isNumber != null && !TextUtils.isEmpty(isNumber)) {
+                                    if (isNumber.equals("0")) {//注册码有次数限制
+                                        String NumberTotal = modelBean.getNumber();
+                                        String NumberUsed = modelBean.getNumberNow();
+                                        int NumberNow = Integer.parseInt(NumberTotal) - Integer.parseInt(NumberUsed);
+                                        if (NumberNow < 100) {
+                                            if (IsTheRegStatusTime("isNumber")) {
+                                                warnRegStatus("注册码次数还剩" + NumberNow + "次，请联系管理员", "isNumber");
+                                            }
+
+                                        } else {//重置下次提醒的日期
+                                            resetNextWarnTime("isNumber");
+                                        }
+                                    }
+                                }
                             } else {
                                 ToastUtils.toast(context, regStatus);
                             }
@@ -841,6 +870,41 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 校验imei
+     *
+     * @param modelBean
+     */
+    private boolean checkImei(RegCodeBean.ModelBean modelBean) {
+        // 校验本地信息和服务器上的是否相同
+        String imei = modelBean.getImei();
+        if (imei != null && !TextUtils.isEmpty(imei)) {
+            //校验
+            String localImei = FileUtils.getFileContent("property.txt");
+            if (localImei != null && !TextUtils.isEmpty(localImei)) {
+                if (localImei.equals(imei)) {
+                    return true;
+                } else {
+                    warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                    return false;
+                }
+            } else {
+                //换手机登录了 或者本地配置文件丢失
+                warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                return false;
+            }
+        } else {
+            String isImei = modelBean.getIsImei();
+            if ("1".equals(isImei)) {
+                //将注册码用md5加密并保存本地
+                FileUtils.writeToTxtFile(input, "property.txt");
+                //将加密过的注册码上传到服务器
+                present.setImei(input, FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+            }
+            return true;
         }
     }
 
@@ -1155,7 +1219,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 Lat = loc.getLatitude() + "";
                 Lng = loc.getLongitude() + "";
                 Addr = loc.getAddress();
-                CheckSavedVersion();
+                checkSavedVersion();
             }
         }
     };
@@ -1328,7 +1392,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     /**
      * 检测保存本地的版本号
      */
-    private void CheckSavedVersion() {
+    private void checkSavedVersion() {
         String savedVersion = sp.getString("SavedVersion", "");
 //        String savedVersion = "1.0";
         String nowVersion = getAPPVersion();
