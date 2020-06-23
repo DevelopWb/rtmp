@@ -14,7 +14,7 @@ public class SPUtil {
 
     public static boolean getHevcCodec(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(KEY_HEVC_CODEC, false);
+                .getBoolean(KEY_HEVC_CODEC, true);
     }
 
     public static void setHevcCodec(Context context, boolean isChecked) {

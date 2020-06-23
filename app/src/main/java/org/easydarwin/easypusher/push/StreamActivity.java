@@ -182,7 +182,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-//        RegOperateUtil.getInstance(this);
+        RegOperateUtil.getInstance(this);
 
 
     }
