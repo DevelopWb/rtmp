@@ -116,7 +116,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.openRecordLocalBt.setOnClickListener(this);
         // 使能摄像头后台采集
         onPushBackground();
-        onEncodeType();
+//        onEncodeType();
         // 推送内容
         onRadioGroupCheckedStatus();
         onAutoRun();
@@ -512,8 +512,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         List<String> arrays = new ArrayList<>();
         arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         arrays.add(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
-        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
+//        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
+//        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_XIGUA));
         return arrays;
     }
 

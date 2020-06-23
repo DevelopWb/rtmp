@@ -280,7 +280,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
+//        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
+        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream );
     }
 
 
@@ -726,12 +727,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private String getPushStatusMsg() {
         if (mMediaStream.isPushStream) {
-            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream ) {
                 return "直播中";
             }
             return "直播中";
         } else {
-            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream ) {
                 return "直播中";
             }
         }
@@ -1143,24 +1144,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopThirdPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
-            isPushingThirdStream = true;
-            try {
-//                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-//                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("激活失败，无效Key");
-            }
-        } else {
-            isPushingThirdStream = false;
-            mMediaStream.stopPusherStream(3);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
+//        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
+//            isPushingThirdStream = true;
+//            try {
+////                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+//                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
+//                setPushLiveIv();
+//                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+////                txtStreamAddress.setText(url);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                sendMessage("激活失败，无效Key");
+//            }
+//        } else {
+//            isPushingThirdStream = false;
+//            mMediaStream.stopPusherStream(3);
+//            setPushLiveIv();
+//            sendMessage("断开连接");
+//        }
     }
 
     /*
@@ -1170,24 +1171,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFourthPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
-            isPushingFourthStream = true;
-            try {
-                mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-//                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("激活失败，无效Key");
-            }
-        } else {
-            isPushingFourthStream = false;
-            mMediaStream.stopPusherStream(4);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
+//        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
+//            isPushingFourthStream = true;
+//            try {
+//                mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
+//                setPushLiveIv();
+//                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+////                txtStreamAddress.setText(url);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                sendMessage("激活失败，无效Key");
+//            }
+//        } else {
+//            isPushingFourthStream = false;
+//            mMediaStream.stopPusherStream(4);
+//            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+//            setPushLiveIv();
+//            sendMessage("断开连接");
+//        }
     }
 
     /*
