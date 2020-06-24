@@ -17,14 +17,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.orhanobut.hawk.Hawk;
+
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
-
 import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.util.Config;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
-import org.easydarwin.easypusher.util.PublicUtil;
+
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.encode.AudioStream;

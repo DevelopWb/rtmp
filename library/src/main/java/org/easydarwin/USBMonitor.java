@@ -42,6 +42,11 @@ import android.util.Log;
 import android.util.SparseArray;
 
 
+import com.serenegiant.usb.BuildCheck;
+import com.serenegiant.usb.DeviceFilter;
+import com.serenegiant.usb.HandlerThreadHandler;
+import com.serenegiant.usb.USBVendorId;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

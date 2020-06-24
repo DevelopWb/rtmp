@@ -21,7 +21,7 @@
  *  may have a different license, see the respective files.
  */
 
-package org.easydarwin;
+package com.serenegiant.usb;
 
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;

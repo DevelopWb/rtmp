@@ -10,12 +10,12 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.IButtonCallback;
 import com.serenegiant.usb.IStatusCallback;
-import com.serenegiant.usb.USBMonitor;
+import org.easydarwin.USBMonitor;
 import com.serenegiant.usb.UVCCamera;
-
 import org.easydarwin.easypusher.R;
 import org.greenrobot.eventbus.EventBus;
 
