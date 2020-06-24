@@ -29,12 +29,12 @@ public class SplashActivity extends BaseProjectActivity {
 
     @Override
     public void onUvcCameraConnected() {
-        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUvcCameraAttached() {
-        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
     }
 
     @Override

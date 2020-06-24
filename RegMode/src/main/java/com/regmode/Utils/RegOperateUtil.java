@@ -900,9 +900,9 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
             String isImei = modelBean.getIsImei();
             if ("1".equals(isImei)) {
                 //将注册码用md5加密并保存本地
-                FileUtils.writeToTxtFile(input, "property.txt");
+                FileUtils.writeToTxtFile((String) Hawk.get(HawkProperty.REG_CODE), "property.txt");
                 //将加密过的注册码上传到服务器
-                present.setImei(input, FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+                present.setImei((String) Hawk.get(HawkProperty.REG_CODE), FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
             }
             return true;
         }

@@ -1305,6 +1305,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
         mScreenResTv.setVisibility(View.INVISIBLE);
+        mSwitchOritation.setVisibility(View.INVISIBLE);
 //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
 //        mScreenResTv.setText(String.format("分辨率:%s", title));
     }
