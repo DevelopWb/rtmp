@@ -17,6 +17,7 @@ import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.push.UVCCameraService;
+import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +53,7 @@ public class SplashActivity extends BaseProjectActivity {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.CAMERA,
               };
+
         setContentView(R.layout.splash_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
 

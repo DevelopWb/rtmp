@@ -119,25 +119,25 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                     break;
                 case UVC_DISCONNECT:
-//                    mScreenResTv.setVisibility(View.VISIBLE);
-//                    mSelectCameraTv.setText("摄像头:后置");
-//                    if (mMediaStream != null) {
-//                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-//                    }
-
-//                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
-//                    switch (position) {
-//                        case 0:
-//                            mSelectCameraTv.setText("摄像头:后置");
-//                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-//                            break;
-//                        case 1:
-//                            mSelectCameraTv.setText("摄像头:前置");
-//                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
-//                            break;
-//                        default:
-//                            break;
-//                    }
+                    mScreenResTv.setVisibility(View.VISIBLE);
+                    mSwitchOritation.setVisibility(View.VISIBLE);
+                    int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
+                    if (2==position) {
+                        position = 0;
+                        SPUtil.setScreenPushingCameraIndex(StreamActivity.this,position);
+                    }
+                    switch (position) {
+                        case 0:
+                            mSelectCameraTv.setText("摄像头:后置");
+                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
+                            break;
+                        case 1:
+                            mSelectCameraTv.setText("摄像头:前置");
+                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
@@ -1318,8 +1318,25 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraDisConnected() {
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+        int W = mDisplay.getWidth();
+        int H = mDisplay.getHeight();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        params.height = H;
+        params.width = W;
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
 //        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
         handler.sendEmptyMessage(UVC_DISCONNECT);
-
+        if (mMediaStream != null){
+            if (mMediaStream.isPushStream) {
+                startOrStopPush();
+            }
+            if (mMediaStream.isFirstPushStream) {
+                startOrStopFirstPush();
+            }
+            if (mMediaStream.isSecendPushStream) {
+                startOrStopSecendPush();
+            }
+        }
     }
 }

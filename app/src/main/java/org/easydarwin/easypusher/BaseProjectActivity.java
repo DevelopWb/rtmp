@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
+import org.easydarwin.easypusher.util.SPUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -63,9 +64,11 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
                 break;
             case "onConnect":
 //                Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
+                SPUtil.setBitrateKbps(this,5000000);
                 onUvcCameraConnected();
                 break;
             case "onDisconnect":
+                SPUtil.setBitrateKbps(this,1500000);
 //                Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
 
                 onUvcCameraDisConnected();

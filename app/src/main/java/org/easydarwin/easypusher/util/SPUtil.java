@@ -64,7 +64,7 @@ public class SPUtil {
 
     public static boolean getEnableBackgroundCamera(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(KEY_ENABLE_BACKGROUND_CAMERA, true);
+                .getBoolean(KEY_ENABLE_BACKGROUND_CAMERA, false);
     }
 
     public static void setEnableBackgroundCamera(Context context, boolean value) {

@@ -283,7 +283,7 @@
                     android:id="@+id/enable_background_camera_pushing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
+                    android:checked="false"
                     android:text="摄像头后台采集" />
 
                 <CheckBox
