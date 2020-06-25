@@ -119,6 +119,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                     break;
                 case UVC_DISCONNECT:
+                    Display mDisplay = getWindowManager().getDefaultDisplay();
+                    int W = mDisplay.getWidth();
+                    int H = mDisplay.getHeight();
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                    params.height = H;
+                    params.width = W;
+                    surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+                    if (mMediaStream != null){
+                        if (mMediaStream.isPushStream) {
+                            startOrStopPush();
+                        }
+                        if (mMediaStream.isFirstPushStream) {
+                            startOrStopFirstPush();
+                        }
+                        if (mMediaStream.isSecendPushStream) {
+                            startOrStopSecendPush();
+                        }
+                    }
                     mScreenResTv.setVisibility(View.VISIBLE);
                     mSwitchOritation.setVisibility(View.VISIBLE);
                     int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
@@ -1318,25 +1336,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraDisConnected() {
-        Display mDisplay = getWindowManager().getDefaultDisplay();
-        int W = mDisplay.getWidth();
-        int H = mDisplay.getHeight();
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-        params.height = H;
-        params.width = W;
-        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
 //        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
         handler.sendEmptyMessage(UVC_DISCONNECT);
-        if (mMediaStream != null){
-            if (mMediaStream.isPushStream) {
-                startOrStopPush();
-            }
-            if (mMediaStream.isFirstPushStream) {
-                startOrStopFirstPush();
-            }
-            if (mMediaStream.isSecendPushStream) {
-                startOrStopSecendPush();
-            }
-        }
+
     }
 }

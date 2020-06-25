@@ -6,9 +6,9 @@ ext {
             compileSdkVersion: 28,
             minSdkVersion    : 21,
             targetSdkVersion : 27,
-            versionCode      : 7,
-            //解决otg推流到直播平台绿屏的问题
-            versionName      : "1.2.4",
+            versionCode      : 10,
+            //解决otg插拔闪退不能切换的问题
+            versionName      : "1.2.7",
     ]
     libsVersion = [
             // App dependencies version
