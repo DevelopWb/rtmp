@@ -11,6 +11,7 @@ public class SPUtil {
 
     /* ============================ 使能H.265编码 ============================ */
     private static final String KEY_HEVC_CODEC = "key-hevc-codec";
+    public static final int   BITRATEKBPS = 2000000;
 
     public static boolean getHevcCodec(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
@@ -44,7 +45,7 @@ public class SPUtil {
 
     public static int getBitrateKbps(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(KEY_BITRATE_ADDED_KBPS, 1500000);
+                .getInt(KEY_BITRATE_ADDED_KBPS, BITRATEKBPS);
     }
 
     public static void setBitrateKbps(Context context, int value) {

@@ -68,7 +68,7 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
                 onUvcCameraConnected();
                 break;
             case "onDisconnect":
-                SPUtil.setBitrateKbps(this,1500000);
+                SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
 //                Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
 
                 onUvcCameraDisConnected();

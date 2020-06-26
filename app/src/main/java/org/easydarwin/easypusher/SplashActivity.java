@@ -53,7 +53,7 @@ public class SplashActivity extends BaseProjectActivity {
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.CAMERA,
               };
-
+        SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
 
