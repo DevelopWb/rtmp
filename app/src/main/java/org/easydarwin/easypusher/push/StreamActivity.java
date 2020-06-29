@@ -43,7 +43,10 @@ import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
+import org.easydarwin.bus.StartRecord;
+import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
+import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
@@ -637,48 +640,48 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
-    //    /*
-    //     * 开始录像的通知
-    //     * */
-    //    @Subscribe
-    //    public void onStartRecord(StartRecord sr) {
-    //        // 开始录像的通知，记下当前时间
-    //        mRecording = true;
-    //        mRecordingBegin = System.currentTimeMillis();
-    //
-    //        runOnUiThread(new Runnable() {
-    //            @Override
-    //            public void run() {
-    //                textRecordTick.setVisibility(View.VISIBLE);
-    //                textRecordTick.removeCallbacks(mRecordTickRunnable);
-    //                textRecordTick.post(mRecordTickRunnable);
-    //
-    //                ImageView ib = findViewById(R.id.streaming_activity_record);
-    //                ib.setImageResource(R.drawable.record_pressed);
-    //            }
-    //        });
-    //    }
-    //
-    //    /*
-    //     * 得知停止录像
-    //     * */
-    //    @Subscribe
-    //    public void onStopRecord(StopRecord sr) {
-    //        // 停止录像的通知，更新状态
-    //        mRecording = false;
-    //        mRecordingBegin = 0;
-    //
-    //        runOnUiThread(new Runnable() {
-    //            @Override
-    //            public void run() {
-    //                textRecordTick.setVisibility(View.INVISIBLE);
-    //                textRecordTick.removeCallbacks(mRecordTickRunnable);
-    //
-    //                ImageView ib = findViewById(R.id.streaming_activity_record);
-    //                ib.setImageResource(R.drawable.record);
-    //            }
-    //        });
-    //    }
+        /*
+         * 开始录像的通知
+         * */
+        @Subscribe
+        public void onStartRecord(StartRecord sr) {
+            // 开始录像的通知，记下当前时间
+            mRecording = true;
+            mRecordingBegin = System.currentTimeMillis();
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textRecordTick.setVisibility(View.VISIBLE);
+                    textRecordTick.removeCallbacks(mRecordTickRunnable);
+                    textRecordTick.post(mRecordTickRunnable);
+
+                    ImageView ib = findViewById(R.id.streaming_activity_record);
+                    ib.setImageResource(R.drawable.record_pressed);
+                }
+            });
+        }
+
+        /*
+         * 得知停止录像
+         * */
+        @Subscribe
+        public void onStopRecord(StopRecord sr) {
+            // 停止录像的通知，更新状态
+            mRecording = false;
+            mRecordingBegin = 0;
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textRecordTick.setVisibility(View.INVISIBLE);
+                    textRecordTick.removeCallbacks(mRecordTickRunnable);
+
+                    ImageView ib = findViewById(R.id.streaming_activity_record);
+                    ib.setImageResource(R.drawable.record);
+                }
+            });
+        }
 
     /*
      * 开始推流，获取fps、bps
@@ -689,26 +692,26 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 stat.bytesPerSecond * 8 / 1024)));
     }
 
-    //    /*
-    //     * 获取可以支持的分辨率
-    //     * */
-    //    @Subscribe
-    //    public void onSupportResolution(SupportResolution res) {
-    //        runOnUiThread(() -> {
-    //            listResolution = Util.getSupportResolution(getApplicationContext());
-    //            boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
-    //
-    //            if (!supportdefault) {
-    //                String r = listResolution.get(0);
-    //                String[] splitR = r.split("x");
-    //
-    //                width = Integer.parseInt(splitR[0]);
-    //                height = Integer.parseInt(splitR[1]);
-    //            }
-    //
-    //            initSpinner();
-    //        });
-    //    }
+//        /*
+//         * 获取可以支持的分辨率
+//         * */
+//        @Subscribe
+//        public void onSupportResolution(SupportResolution res) {
+//            runOnUiThread(() -> {
+//                listResolution = Util.getSupportResolution(getApplicationContext());
+//                boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
+//
+//                if (!supportdefault) {
+//                    String r = listResolution.get(0);
+//                    String[] splitR = r.split("x");
+//
+//                    width = Integer.parseInt(splitR[0]);
+//                    height = Integer.parseInt(splitR[1]);
+//                }
+//
+//                initSpinner();
+//            });
+//        }
 
     /*
      * 得知推流的状态
