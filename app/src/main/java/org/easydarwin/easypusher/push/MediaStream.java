@@ -70,7 +70,7 @@ public class MediaStream {
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
 
     private String recordPath;          // 录像地址
-    protected boolean isPushStream = false;       // 是否要推送数据
+    protected boolean isZeroPushStream = false;       // 是否要推送数据
     protected boolean isFirstPushStream = false;       // 是否要推送bili数据
     protected boolean isSecendPushStream = false;       // 是否要推送huya数据
     protected boolean isThirdPushStream = false;       // 是否要推送huya数据
@@ -80,10 +80,10 @@ public class MediaStream {
     private Context context;
     WeakReference<SurfaceTexture> mSurfaceHolderRef;
 
-    private VideoConsumer mVC, mRecordVC, mFirstVC, mSecendVC, mThirdVC, mFourthVC;
+    private VideoConsumer mZeroVC, mFirstVC, mSecendVC, mThirdVC, mFourthVC, mRecordVC;
     private AudioStream audioStream;
     private EasyMuxer mMuxer;
-    private Pusher mEasyPusher;
+    private Pusher mZeroEasyPusher;
     private Pusher mFirstEasyPusher;//第一个
     private Pusher mSecendEasyPusher;//第二个
     private Pusher mThirdEasyPusher;//yi
@@ -163,8 +163,8 @@ public class MediaStream {
         }
 
         mHevc = SPUtil.getHevcCodec(context);
-        if (mEasyPusher == null) {
-            mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+        if (mZeroEasyPusher == null) {
+            mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
         if (mFirstEasyPusher == null) {
             mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
@@ -340,7 +340,7 @@ public class MediaStream {
             initConsumer(frameWidth, frameHeight);
         }
         audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
-        audioStream.addPusher(mEasyPusher);
+        audioStream.addPusher(mZeroEasyPusher);
         audioStream.addPusher(mFirstEasyPusher);
         audioStream.addPusher(mSecendEasyPusher);
         audioStream.addPusher(mThirdEasyPusher);
@@ -351,8 +351,8 @@ public class MediaStream {
 //        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         mSWCodec = false;
         if (mSWCodec) {
-            SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
-            mVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
+            SWConsumer sw = new SWConsumer(context, mZeroEasyPusher, SPUtil.getBitrateKbps(context));
+            mZeroVC = new ClippableVideoConsumer(context, sw, width, height, SPUtil.getEnableVideoOverlay(context));
             SWConsumer swBili = new SWConsumer(context, mFirstEasyPusher, SPUtil.getBitrateKbps(context));
             mFirstVC = new ClippableVideoConsumer(context, swBili, width, height, SPUtil.getEnableVideoOverlay(context));
             SWConsumer swHuya = new SWConsumer(context, mSecendEasyPusher, SPUtil.getBitrateKbps(context));
@@ -364,11 +364,11 @@ public class MediaStream {
 
         } else {
             HWConsumer hw = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mEasyPusher,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mZeroEasyPusher,
                     SPUtil.getBitrateKbps(context),
                     info.mName,
                     info.mColorFormat);
-            mVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
+            mZeroVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
             HWConsumer hwBili = new HWConsumer(context,
                     mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFirstEasyPusher,
                     SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
@@ -388,7 +388,7 @@ public class MediaStream {
                     SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
             mFourthVC = new ClippableVideoConsumer(context, hwNow, width, height, SPUtil.getEnableVideoOverlay(context));
         }
-        mVC.onVideoStart(width, height);
+        mZeroVC.onVideoStart(width, height);
         mFirstVC.onVideoStart(width, height);
         mSecendVC.onVideoStart(width, height);
         mThirdVC.onVideoStart(width, height);
@@ -474,7 +474,7 @@ public class MediaStream {
 
         // 关闭音频采集和音频编码器
         if (audioStream != null) {
-            audioStream.removePusher(mEasyPusher);
+            audioStream.removePusher(mZeroEasyPusher);
             audioStream.removePusher(mFirstEasyPusher);
             audioStream.removePusher(mSecendEasyPusher);
             audioStream.removePusher(mThirdEasyPusher);
@@ -509,7 +509,7 @@ public class MediaStream {
         VideoConsumer videoConsumer = null;
         switch (type) {
             case 0:
-                videoConsumer = mVC;
+                videoConsumer = mZeroVC;
                 break;
             case 1:
                 videoConsumer = mFirstVC;
@@ -541,9 +541,9 @@ public class MediaStream {
         String url = null;
         switch (pushType) {
             case 0:
-                pusher = mEasyPusher;
+                pusher = mZeroEasyPusher;
                 url = Config.getServerURL();
-                isPushStream = true;
+                isZeroPushStream = true;
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
@@ -591,8 +591,8 @@ public class MediaStream {
         Pusher pusher = null;
         switch (pushType) {
             case 0:
-                pusher = mEasyPusher;
-                isPushStream = false;
+                pusher = mZeroEasyPusher;
+                isZeroPushStream = false;
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
@@ -765,7 +765,7 @@ public class MediaStream {
             mRecordVC.onVideo(i420_buffer, 0);
         }
 
-        mVC.onVideo(data, 0);
+        mZeroVC.onVideo(data, 0);
         mFirstVC.onVideo(data, 0);
         mSecendVC.onVideo(data, 0);
         mThirdVC.onVideo(data, 0);
@@ -817,7 +817,7 @@ public class MediaStream {
             mRecordVC.onVideo(i420_buffer, 0);
         }
 
-        mVC.onVideo(data, 0);
+        mZeroVC.onVideo(data, 0);
         mFirstVC.onVideo(data, 0);
         mSecendVC.onVideo(data, 0);
         mThirdVC.onVideo(data, 0);

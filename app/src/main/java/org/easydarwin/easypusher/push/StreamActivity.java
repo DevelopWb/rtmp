@@ -42,8 +42,6 @@ import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateUtil;
 import com.squareup.otto.Subscribe;
 
-import org.easydarwin.bus.StartRecord;
-import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
@@ -127,7 +125,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     params.width = W;
                     surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
                     if (mMediaStream != null){
-                        if (mMediaStream.isPushStream) {
+                        if (mMediaStream.isZeroPushStream) {
                             startOrStopPush();
                         }
                         if (mMediaStream.isFirstPushStream) {
@@ -311,7 +309,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private boolean isStreaming() {
 //        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
-        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream );
+        return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream );
     }
 
 
@@ -756,7 +754,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getPushStatusMsg() {
-        if (mMediaStream.isPushStream) {
+        if (mMediaStream.isZeroPushStream) {
             if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream ) {
                 return "直播中";
             }
@@ -1100,7 +1098,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopPush() {
 
-        if (mMediaStream != null && !mMediaStream.isPushStream) {
+        if (mMediaStream != null && !mMediaStream.isZeroPushStream) {
             isPushingStream = true;
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
