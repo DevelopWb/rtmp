@@ -27,7 +27,6 @@ import android.widget.RadioGroup;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
-import com.regmode.Utils.RegOperateUtil;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
@@ -59,8 +58,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_ZHANQI = "战旗TV";
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
     //    public static final String LIVE_TYPE_YINGKE = "映客直播";
-    public static final String LIVE_TYPE_CC = "自定义";
-    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_CC};
+    public static final String LIVE_TYPE_CUSTOM = "自定义";
+    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_CUSTOM};
     private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
@@ -103,7 +102,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
         binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
 
-        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CC));
+        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CUSTOM));
         binding.firstLiveScanIv.setOnClickListener(this);
         binding.quitAppBt.setOnClickListener(this);
         binding.secendLiveScanIv.setOnClickListener(this);

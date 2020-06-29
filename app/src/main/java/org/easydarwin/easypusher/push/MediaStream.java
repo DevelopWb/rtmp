@@ -73,22 +73,21 @@ public class MediaStream {
     protected boolean isPushStream = false;       // 是否要推送数据
     protected boolean isFirstPushStream = false;       // 是否要推送bili数据
     protected boolean isSecendPushStream = false;       // 是否要推送huya数据
-//    protected boolean isThirdPushStream = false;       // 是否要推送huya数据
-//    protected boolean isFourthPushStream = false;       // 是否要推送huya数据
+    protected boolean isThirdPushStream = false;       // 是否要推送huya数据
+    protected boolean isFourthPushStream = false;       // 是否要推送huya数据
     private int displayRotationDegree;  // 旋转角度
 
     private Context context;
     WeakReference<SurfaceTexture> mSurfaceHolderRef;
 
-    private VideoConsumer mVC, mRecordVC, mFirstVC, mSecendVC;
-//    private VideoConsumer mVC, mRecordVC, mFirstVC, mSecendVC, mThirdVC, mFourthVC;
+    private VideoConsumer mVC, mRecordVC, mFirstVC, mSecendVC, mThirdVC, mFourthVC;
     private AudioStream audioStream;
     private EasyMuxer mMuxer;
     private Pusher mEasyPusher;
     private Pusher mFirstEasyPusher;//第一个
     private Pusher mSecendEasyPusher;//第二个
-//    private Pusher mThirdEasyPusher;//yi
-//    private Pusher mFourthEasyPusher;//now
+    private Pusher mThirdEasyPusher;//yi
+    private Pusher mFourthEasyPusher;//now
 
     private final HandlerThread mCameraThread;
     private final Handler mCameraHandler;
@@ -173,12 +172,12 @@ public class MediaStream {
         if (mSecendEasyPusher == null) {
             mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
-//        if (mThirdEasyPusher == null) {
-//            mThirdEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
-//        }
-//        if (mFourthEasyPusher == null) {
-//            mFourthEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
-//        }
+        if (mThirdEasyPusher == null) {
+            mThirdEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+        }
+        if (mFourthEasyPusher == null) {
+            mFourthEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+        }
 
         if (!enableVideo) {
             return;
@@ -344,12 +343,12 @@ public class MediaStream {
         audioStream.addPusher(mEasyPusher);
         audioStream.addPusher(mFirstEasyPusher);
         audioStream.addPusher(mSecendEasyPusher);
-//        audioStream.addPusher(mThirdEasyPusher);
-//        audioStream.addPusher(mFourthEasyPusher);
+        audioStream.addPusher(mThirdEasyPusher);
+        audioStream.addPusher(mFourthEasyPusher);
     }
 
     private void initConsumer(int width, int height) {
-        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
+//        mSWCodec = Hawk.get(HawkProperty.KEY_SW_CODEC, true);
         mSWCodec = false;
         if (mSWCodec) {
             SWConsumer sw = new SWConsumer(context, mEasyPusher, SPUtil.getBitrateKbps(context));
@@ -358,10 +357,10 @@ public class MediaStream {
             mFirstVC = new ClippableVideoConsumer(context, swBili, width, height, SPUtil.getEnableVideoOverlay(context));
             SWConsumer swHuya = new SWConsumer(context, mSecendEasyPusher, SPUtil.getBitrateKbps(context));
             mSecendVC = new ClippableVideoConsumer(context, swHuya, width, height, SPUtil.getEnableVideoOverlay(context));
-//            SWConsumer swYi = new SWConsumer(context, mThirdEasyPusher, SPUtil.getBitrateKbps(context));
-//            mThirdVC = new ClippableVideoConsumer(context, swYi, width, height, SPUtil.getEnableVideoOverlay(context));
-//            SWConsumer swNow = new SWConsumer(context, mFourthEasyPusher, SPUtil.getBitrateKbps(context));
-//            mFourthVC = new ClippableVideoConsumer(context, swNow, width, height, SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swYi = new SWConsumer(context, mThirdEasyPusher, SPUtil.getBitrateKbps(context));
+            mThirdVC = new ClippableVideoConsumer(context, swYi, width, height, SPUtil.getEnableVideoOverlay(context));
+            SWConsumer swNow = new SWConsumer(context, mFourthEasyPusher, SPUtil.getBitrateKbps(context));
+            mFourthVC = new ClippableVideoConsumer(context, swNow, width, height, SPUtil.getEnableVideoOverlay(context));
 
         } else {
             HWConsumer hw = new HWConsumer(context,
@@ -379,21 +378,21 @@ public class MediaStream {
                     SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
             mSecendVC = new ClippableVideoConsumer(context, hwHuya, width, height, SPUtil.getEnableVideoOverlay(context));
 
-//            HWConsumer hwYi = new HWConsumer(context,
-//                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mThirdEasyPusher,
-//                    SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-//            mThirdVC = new ClippableVideoConsumer(context, hwYi, width, height, SPUtil.getEnableVideoOverlay(context));
-//
-//            HWConsumer hwNow = new HWConsumer(context,
-//                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFourthEasyPusher,
-//                    SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-//            mFourthVC = new ClippableVideoConsumer(context, hwNow, width, height, SPUtil.getEnableVideoOverlay(context));
+            HWConsumer hwYi = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mThirdEasyPusher,
+                    SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            mThirdVC = new ClippableVideoConsumer(context, hwYi, width, height, SPUtil.getEnableVideoOverlay(context));
+
+            HWConsumer hwNow = new HWConsumer(context,
+                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFourthEasyPusher,
+                    SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+            mFourthVC = new ClippableVideoConsumer(context, hwNow, width, height, SPUtil.getEnableVideoOverlay(context));
         }
         mVC.onVideoStart(width, height);
         mFirstVC.onVideoStart(width, height);
         mSecendVC.onVideoStart(width, height);
-//        mThirdVC.onVideoStart(width, height);
-//        mFourthVC.onVideoStart(width, height);
+        mThirdVC.onVideoStart(width, height);
+        mFourthVC.onVideoStart(width, height);
     }
 
     /**
@@ -478,8 +477,8 @@ public class MediaStream {
             audioStream.removePusher(mEasyPusher);
             audioStream.removePusher(mFirstEasyPusher);
             audioStream.removePusher(mSecendEasyPusher);
-//            audioStream.removePusher(mThirdEasyPusher);
-//            audioStream.removePusher(mFourthEasyPusher);
+            audioStream.removePusher(mThirdEasyPusher);
+            audioStream.removePusher(mFourthEasyPusher);
             audioStream.setMuxer(null);
             Log.i(TAG, "Stop AudioStream");
         }
@@ -518,12 +517,12 @@ public class MediaStream {
             case 2:
                 videoConsumer = mSecendVC;
                 break;
-//            case 3:
-//                videoConsumer = mThirdVC;
-//                break;
-//            case 4:
-//                videoConsumer = mFourthVC;
-//                break;
+            case 3:
+                videoConsumer = mThirdVC;
+                break;
+            case 4:
+                videoConsumer = mFourthVC;
+                break;
             default:
                 break;
         }
@@ -556,16 +555,16 @@ public class MediaStream {
                 url = Hawk.get(HawkProperty.KEY_SECEND_URL);
                 isSecendPushStream = true;
                 break;
-//            case 3:
-//                pusher = mThirdEasyPusher;
-//                url = Hawk.get(HawkProperty.KEY_THIRD_URL);
-//                isThirdPushStream = true;
-//                break;
-//            case 4:
-//                pusher = mFourthEasyPusher;
-//                url = Hawk.get(HawkProperty.KEY_FOURTH_URL);
-//                isFourthPushStream = true;
-//                break;
+            case 3:
+                pusher = mThirdEasyPusher;
+                url = Hawk.get(HawkProperty.KEY_THIRD_URL);
+                isThirdPushStream = true;
+                break;
+            case 4:
+                pusher = mFourthEasyPusher;
+                url = Hawk.get(HawkProperty.KEY_FOURTH_URL);
+                isFourthPushStream = true;
+                break;
             default:
                 break;
         }
@@ -603,14 +602,14 @@ public class MediaStream {
                 pusher = mSecendEasyPusher;
                 isSecendPushStream = false;
                 break;
-//            case 3:
-//                pusher = mThirdEasyPusher;
-//                isThirdPushStream = false;
-//                break;
-//            case 4:
-//                pusher = mFourthEasyPusher;
-//                isFourthPushStream = false;
-//                break;
+            case 3:
+                pusher = mThirdEasyPusher;
+                isThirdPushStream = false;
+                break;
+            case 4:
+                pusher = mFourthEasyPusher;
+                isFourthPushStream = false;
+                break;
             default:
                 break;
         }
@@ -639,7 +638,6 @@ public class MediaStream {
         } else {
             boolean frameRotate;
             int result;
-
             if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 result = (camInfo.orientation + displayRotationDegree) % 360;
             } else {  // back-facing
@@ -770,8 +768,8 @@ public class MediaStream {
         mVC.onVideo(data, 0);
         mFirstVC.onVideo(data, 0);
         mSecendVC.onVideo(data, 0);
-//        mThirdVC.onVideo(data, 0);
-//        mFourthVC.onVideo(data, 0);
+        mThirdVC.onVideo(data, 0);
+        mFourthVC.onVideo(data, 0);
         mCamera.addCallbackBuffer(data);
     };
 
@@ -822,8 +820,8 @@ public class MediaStream {
         mVC.onVideo(data, 0);
         mFirstVC.onVideo(data, 0);
         mSecendVC.onVideo(data, 0);
-//        mThirdVC.onVideo(data, 0);
-//        mFourthVC.onVideo(data, 0);
+        mThirdVC.onVideo(data, 0);
+        mFourthVC.onVideo(data, 0);
     }
 
     /* ============================== CodecInfo ============================== */

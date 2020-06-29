@@ -1,5 +1,7 @@
 package org.easydarwin.easypusher.util;
 
+import android.os.Build;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,4 +54,11 @@ public class PublicUtil {
         return ipAddress;
     }
 
+    /**
+     * 系统10.0以上
+     * @return
+     */
+    public static  boolean isMoreThanTheAndroid10(){
+      return   Build.VERSION.SDK_INT>28;
+    }
 }

@@ -65,7 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
 import static org.easydarwin.easyrtmp.push.EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_VALIDITY_PERIOD_ERR;
 
 /**
@@ -442,7 +442,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                    imageView.setImageResource(R.mipmap.yingke_live_off);
 //                }
 //                break;
-            case SettingActivity.LIVE_TYPE_CC:
+            case SettingActivity.LIVE_TYPE_CUSTOM:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.cc_live_on);
                 } else {
@@ -633,48 +633,48 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
-    /*
-     * 开始录像的通知
-     * */
-    @Subscribe
-    public void onStartRecord(StartRecord sr) {
-        // 开始录像的通知，记下当前时间
-        mRecording = true;
-        mRecordingBegin = System.currentTimeMillis();
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textRecordTick.setVisibility(View.VISIBLE);
-                textRecordTick.removeCallbacks(mRecordTickRunnable);
-                textRecordTick.post(mRecordTickRunnable);
-
-                ImageView ib = findViewById(R.id.streaming_activity_record);
-                ib.setImageResource(R.drawable.record_pressed);
-            }
-        });
-    }
-
-    /*
-     * 得知停止录像
-     * */
-    @Subscribe
-    public void onStopRecord(StopRecord sr) {
-        // 停止录像的通知，更新状态
-        mRecording = false;
-        mRecordingBegin = 0;
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textRecordTick.setVisibility(View.INVISIBLE);
-                textRecordTick.removeCallbacks(mRecordTickRunnable);
-
-                ImageView ib = findViewById(R.id.streaming_activity_record);
-                ib.setImageResource(R.drawable.record);
-            }
-        });
-    }
+//    /*
+//     * 开始录像的通知
+//     * */
+//    @Subscribe
+//    public void onStartRecord(StartRecord sr) {
+//        // 开始录像的通知，记下当前时间
+//        mRecording = true;
+//        mRecordingBegin = System.currentTimeMillis();
+//
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                textRecordTick.setVisibility(View.VISIBLE);
+//                textRecordTick.removeCallbacks(mRecordTickRunnable);
+//                textRecordTick.post(mRecordTickRunnable);
+//
+//                ImageView ib = findViewById(R.id.streaming_activity_record);
+//                ib.setImageResource(R.drawable.record_pressed);
+//            }
+//        });
+//    }
+//
+//    /*
+//     * 得知停止录像
+//     * */
+//    @Subscribe
+//    public void onStopRecord(StopRecord sr) {
+//        // 停止录像的通知，更新状态
+//        mRecording = false;
+//        mRecordingBegin = 0;
+//
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                textRecordTick.setVisibility(View.INVISIBLE);
+//                textRecordTick.removeCallbacks(mRecordTickRunnable);
+//
+//                ImageView ib = findViewById(R.id.streaming_activity_record);
+//                ib.setImageResource(R.drawable.record);
+//            }
+//        });
+//    }
 
     /*
      * 开始推流，获取fps、bps
@@ -790,27 +790,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     @Override
     public void onBackPressed() {
-        //        boolean isStreaming = mMediaStream != null && mMediaStream.isStreaming();
-        //
-        //        if (isStreaming && SPUtil.getEnableBackgroundCamera(this)) {
-        //            new AlertDialog.Builder(this).setTitle("是否允许后台上传？")
-        //                    .setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。")
-        //                    .setNeutralButton("后台采集", (dialogInterface, i) -> {
-        //                        StreamActivity.super.onBackPressed();
-        //                    })
-        //                    .setPositiveButton("退出程序", (dialogInterface, i) -> {
-        //                        mMediaStream.stopStream();
-        //                        StreamActivity.super.onBackPressed();
-        //                        Toast.makeText(StreamActivity.this, "程序已退出。", Toast.LENGTH_SHORT).show();
-        //                    })
-        //                    .setNegativeButton(android.R.string.cancel, null)
-        //                    .show();
-        //            return;
-        //        } else {
-        //            super.onBackPressed();
-        //        }
-
-
         if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
             new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后,再回来这里关闭直播。").setNeutralButton("后台采集", (dialogInterface, i) -> {
                 StreamActivity.super.onBackPressed();
@@ -976,25 +955,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 录像
      * */
     public void onRecord(View view) {
-        ToastUtils.toast(this,"暂未开放，敬请期待");
-        return;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+            return;
+        }
 
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-//            return;
-//        }
-//
-//        ImageView ib = findViewById(R.id.streaming_activity_record);
-//
-//        if (mMediaStream != null) {
-//            if (mMediaStream.isRecording()) {
-//                mMediaStream.stopRecord();
-//                ib.setImageResource(R.drawable.record_pressed);
-//            } else {
-//                mMediaStream.startRecord();
-//                ib.setImageResource(R.drawable.record);
-//            }
-//        }
+        ImageView ib = findViewById(R.id.streaming_activity_record);
+
+        if (mMediaStream != null) {
+            if (mMediaStream.isRecording()) {
+                mMediaStream.stopRecord();
+                ib.setImageResource(R.drawable.record_pressed);
+            } else {
+                mMediaStream.startRecord();
+                ib.setImageResource(R.drawable.record);
+            }
+        }
     }
 
     /*
@@ -1195,24 +1171,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopThirdPush() {
 
 
-//        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
-//            isPushingThirdStream = true;
-//            try {
-////                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-//                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
-//                setPushLiveIv();
-//                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-////                txtStreamAddress.setText(url);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                sendMessage("激活失败，无效Key");
-//            }
-//        } else {
-//            isPushingThirdStream = false;
-//            mMediaStream.stopPusherStream(3);
-//            setPushLiveIv();
-//            sendMessage("断开连接");
-//        }
+        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
+            isPushingThirdStream = true;
+            try {
+//                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                setPushLiveIv();
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+//                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("激活失败，无效Key");
+            }
+        } else {
+            isPushingThirdStream = false;
+            mMediaStream.stopPusherStream(3);
+            setPushLiveIv();
+            sendMessage("断开连接");
+        }
     }
 
     /*
@@ -1222,24 +1198,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFourthPush() {
 
 
-//        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
-//            isPushingFourthStream = true;
-//            try {
-//                mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
-//                setPushLiveIv();
-//                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-////                txtStreamAddress.setText(url);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                sendMessage("激活失败，无效Key");
-//            }
-//        } else {
-//            isPushingFourthStream = false;
-//            mMediaStream.stopPusherStream(4);
-//            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-//            setPushLiveIv();
-//            sendMessage("断开连接");
-//        }
+        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
+            isPushingFourthStream = true;
+            try {
+                mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                setPushLiveIv();
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+//                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("激活失败，无效Key");
+            }
+        } else {
+            isPushingFourthStream = false;
+            mMediaStream.stopPusherStream(4);
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            setPushLiveIv();
+            sendMessage("断开连接");
+        }
     }
 
     /*

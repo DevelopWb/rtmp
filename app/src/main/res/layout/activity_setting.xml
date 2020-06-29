@@ -204,7 +204,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:gravity="center"
-                        android:visibility="gone"
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
                         android:layout_marginRight="15dp"
@@ -218,16 +217,12 @@
                         app:layout_constraintRight_toRightOf="@+id/third_live_key"
                         app:layout_constraintTop_toBottomOf="@+id/third_live_key"
                         android:layout_width="30dp"
-                        android:visibility="gone"
-
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
                         android:layout_height="35dp"></ImageView>
                     <EditText
                         android:id="@+id/third_live_value_et"
-                        android:visibility="gone"
-
                         app:layout_constraintLeft_toLeftOf="@+id/secend_live_value_et"
                         app:layout_constraintTop_toBottomOf="@+id/secend_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
@@ -237,8 +232,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:gravity="center"
-                        android:visibility="gone"
-
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
                         android:layout_marginRight="15dp"
@@ -253,21 +246,15 @@
                         app:layout_constraintTop_toBottomOf="@+id/fourth_live_key"
                         android:layout_width="30dp"
                         android:padding="5dp"
-                        android:visibility="gone"
-
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
                         android:layout_height="35dp"></ImageView>
                     <EditText
                         android:id="@+id/fourth_live_value_et"
-                        android:visibility="gone"
-
                         app:layout_constraintLeft_toLeftOf="@+id/third_live_value_et"
                         app:layout_constraintTop_toBottomOf="@+id/third_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
                         style="@style/set_url_editText" />
-
-
                 </android.support.constraint.ConstraintLayout>
 
 
