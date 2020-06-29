@@ -425,4 +425,40 @@ public abstract class BaseActivity extends RxAppCompatActivity implements Toolba
 //            LogUtil.e(test);
 //        }
     }
+
+    /**
+     * 隐藏控件  Invisible  gone
+     *
+     * @param isGone gone
+     * @param views
+     */
+    protected void setViewsInvisible(boolean isGone, View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
+                    if (isGone) {
+                        view.setVisibility(View.GONE);
+                    } else {
+                        view.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 显示控件  Invisible  gone
+     *
+     * @param views
+     */
+    protected void setViewsVisible(View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
+                    view.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
 }

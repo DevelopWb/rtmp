@@ -213,16 +213,18 @@
 <!--                </LinearLayout>-->
 
         <LinearLayout
+            android:id="@+id/record_ll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:onClick="onRecord"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/streaming_activity_record"
                 android:layout_width="20dp"
+                android:clickable="false"
+                android:focusable="false"
                 android:layout_height="20dp"
                 android:src="@drawable/record" />
 
@@ -235,11 +237,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/set_ll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:onClick="onSetting"
             android:orientation="vertical">
 
             <ImageView

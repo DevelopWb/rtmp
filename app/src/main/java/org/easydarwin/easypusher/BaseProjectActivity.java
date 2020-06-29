@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
@@ -78,5 +79,38 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
         }
     }
 
+    /**
+     * 隐藏控件  Invisible  gone
+     *
+     * @param isGone gone
+     * @param views
+     */
+    protected void setViewsInvisible(boolean isGone, View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
+                    if (isGone) {
+                        view.setVisibility(View.GONE);
+                    } else {
+                        view.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
+    }
 
+    /**
+     * 显示控件  Invisible  gone
+     *
+     * @param views
+     */
+    protected void setViewsVisible(View... views) {
+        if (views != null && views.length > 0) {
+            for (View view : views) {
+                if (view != null) {
+                    view.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
 }

@@ -35,6 +35,8 @@ import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
+
+import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.ArrayList;
@@ -113,6 +115,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.thirdLiveKey.setOnClickListener(this);
         binding.fourthLiveKey.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
+        if (PublicUtil.isMoreThanTheAndroid10()) {
+            binding.leftLiveGp.setVisibility(View.VISIBLE);
+        }else {
+            binding.leftLiveGp.setVisibility(View.GONE);
+        }
         // 使能摄像头后台采集
         onPushBackground();
 //        onEncodeType();
