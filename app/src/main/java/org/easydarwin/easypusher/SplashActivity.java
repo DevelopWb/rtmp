@@ -12,6 +12,13 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.basenetlib.RequestStatus;
+import com.juntai.wisdom.basecomponent.utils.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.ToastUtils;
+import com.orhanobut.hawk.Hawk;
+import com.regmode.RegLatestContact;
+import com.regmode.RegLatestPresent;
+import com.regmode.bean.AppInfoBean;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -26,7 +33,8 @@ import io.reactivex.functions.Consumer;
 /**
  * 启动页
  */
-public class SplashActivity extends BaseProjectActivity {
+public class SplashActivity extends BaseProjectActivity implements RequestStatus {
+    private RegLatestPresent present;
 
     @Override
     public void onUvcCameraConnected() {
@@ -46,6 +54,7 @@ public class SplashActivity extends BaseProjectActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        present = new RegLatestPresent();
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -65,11 +74,9 @@ public class SplashActivity extends BaseProjectActivity {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            startService(new Intent(SplashActivity.this, UVCCameraService.class));
-                            //所有权限通过
-                            Thread.sleep(600);
-                            startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                            finish();
+                            //获取软件的key
+                            present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, SplashActivity.this);
+
                         } else {
                             //有一个权限没通过
                             finish();
@@ -85,4 +92,39 @@ public class SplashActivity extends BaseProjectActivity {
 
     }
 
+    @Override
+    public void onStart(String tag) {
+
+    }
+
+    @Override
+    public void onSuccess(Object o, String tag) {
+        //获取key
+        AppInfoBean appInfoBean = (AppInfoBean) o;
+        if (appInfoBean != null) {
+            if (appInfoBean.getModel() != null && appInfoBean.getModel().size() > 0) {
+                AppInfoBean.ModelBean dataBean = appInfoBean.getModel().get(0);
+                String key = dataBean.getSoftDescription();
+                if (key != null) {
+                    Hawk.put(HawkProperty.APP_KEY, key);
+                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
+                    //所有权限通过
+                    try {
+                        Thread.sleep(600);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                    finish();
+                }else {
+                    ToastUtils.toast(this,"参数初始化失败");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onError(String tag) {
+
+    }
 }
