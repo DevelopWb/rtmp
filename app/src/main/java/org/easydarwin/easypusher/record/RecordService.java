@@ -49,7 +49,7 @@ import org.easydarwin.easypusher.push.MediaStream;
 import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.util.BUSUtil;
-
+import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -231,7 +231,7 @@ public class RecordService extends Service {
             public void run() {
                 String url = Config.getServerURL();
                 boolean mHevc = SPUtil.getHevcCodec(RecordService.this);
-                mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+                mEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
 
                 try {
                     mEasyPusher.initPush(url,

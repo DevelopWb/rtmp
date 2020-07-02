@@ -13,12 +13,14 @@ import com.tencent.bugly.beta.Beta;
 
 import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.util.PublicUtil;
+import org.easydarwin.easyrtmp.push.EasyRTMP;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
 import static org.easydarwin.easyrtmp.push.EasyRTMP.getActiveDays;
 
 public class MyApp extends Application {
@@ -31,7 +33,6 @@ public class MyApp extends Application {
     public static MyApp getEasyApplication() {
         return mApplication;
     }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -63,7 +64,7 @@ public class MyApp extends Application {
             }
         }
 
-        activeDays = getActiveDays(this, Hawk.get(HawkProperty.APP_KEY));
+        activeDays = getActiveDays(this, RTMP_KEY);
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
