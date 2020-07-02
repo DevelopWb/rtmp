@@ -289,11 +289,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     protected void onPause() {
-        if (mMediaStream != null) {
-            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-                mService.activePreview();
-            }
-        }
+//        if (mMediaStream != null) {
+//            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+//                mService.activePreview();
+//            }
+//        }
 
         super.onPause();
     }
@@ -517,9 +517,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
             };
         }else {
-            if (!UVCCameraService.uvcConnected) {
-                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
-            }
+//            if (!UVCCameraService.uvcConnected) {
+//                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+//            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
 
