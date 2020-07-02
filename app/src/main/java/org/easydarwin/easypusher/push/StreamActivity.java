@@ -289,6 +289,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     protected void onPause() {
+        if (mMediaStream != null) {
+            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+                mService.activePreview();
+            }
+        }
 
         super.onPause();
     }
@@ -329,9 +334,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        //        return mMediaStream != null && (mMediaStream.isPushStream || mMediaStream.isFirstPushStream ||
-        //        mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
-        return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream);
+                return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream ||
+                mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
     }
 
 
@@ -512,6 +516,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 }
             };
+        }else {
+            if (!UVCCameraService.uvcConnected) {
+                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
 
