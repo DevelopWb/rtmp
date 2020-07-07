@@ -17,4 +17,6 @@ public abstract class BaseReg {
      * 检测注册码的状态
      */
     public abstract void checkRegStatus();
+
+
 }

@@ -14,6 +14,7 @@ public interface RegLatestContact {
     String GET_REG_INFO = "get_reg_info";
     String GET_VERSION = "get_version";
     String GET_KEY = "get_key";
+    String GET_APP_VERSION_INFO= "GET_APP_VERSION_INFO";//获取App 版本信息
     String  REGIST = "regist";
     String CHECK_REG = "check_reg";//第一次注册码验证
     String CHECK_REG_EVERYTIME = "check_reg_everytime";//每次进入软件的时候校验

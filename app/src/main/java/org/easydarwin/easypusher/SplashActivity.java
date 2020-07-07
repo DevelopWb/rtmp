@@ -61,6 +61,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION
               };
         SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);

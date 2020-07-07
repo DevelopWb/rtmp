@@ -4,7 +4,7 @@ import com.basenetlib.RequestStatus;
 import com.basenetlib.networkProxy.HttpProxy;
 import com.basenetlib.okgo.NetResponseCallBack;
 import com.basenetlib.util.GsonManager;
-import com.regmode.Utils.RegOperateUtil;
+import com.regmode.Utils.RegOperateManager;
 import com.regmode.bean.AppInfoBean;
 import com.regmode.bean.RegCodeBean;
 
@@ -22,7 +22,7 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
                 .params("softType", "mb")
                 .params("regisCode", regisCode)
                 .params("number", size)
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/RegisCode.asmx/setRegisCodeNumber",
+                .postToNetwork(AppHttpUrl.SET_REG_NUM,
                         new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
@@ -41,7 +41,7 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
                 .params("regisCode", regisCode)
-                .params("softwareId", RegOperateUtil.APP_MARK)
+                .params("softwareId", RegOperateManager.APP_MARK)
                 .postToNetwork(AppHttpUrl.GET_REG_INFO, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
@@ -61,7 +61,7 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
         HttpProxy.getInstance()
                 .params("regisCode", regisCode)
                 .params("versionMsg", versionMsg)
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/SetVersionInfo", new NetResponseCallBack() {
+                .postToNetwork(AppHttpUrl.SET_VERSION_INFO, new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         requestStatus.onSuccess(content, RegLatestContact.UPLOAD_V_INFO);
@@ -79,8 +79,8 @@ public class RegLatestPresent implements RegLatestContact.IRegLatestPresent {
     public void getAppVersionInfoAndKeyFromService(final  String tag,final RequestStatus requestStatus) {
         HttpProxy.getInstance()
                 .params("softwareType", "mb")
-                .params("softwareId", RegOperateUtil.APP_MARK)
-                .postToNetwork(AppHttpUrl.BASE_URL + "/WebService/SoftWare.asmx/GetAllSoftWareInfo", new NetResponseCallBack() {
+                .params("softwareId", RegOperateManager.APP_MARK)
+                .postToNetwork(AppHttpUrl.GET_REG_DETAIL , new NetResponseCallBack() {
                     @Override
                     public void onSuccess(String content) {
                         AppInfoBean appInfoBean = GsonManager.getInstance().parseJsonToBean(content,AppInfoBean.class);

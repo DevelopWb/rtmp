@@ -18,10 +18,10 @@ import android.util.Log;
 
 import com.orhanobut.hawk.Hawk;
 
+import com.regmode.Utils.RegOperateManager;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 import org.easydarwin.bus.SupportResolution;
-import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.util.Config;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
@@ -55,7 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
+//import static org.easydarwin.easypusher.BuildConfig.RTMP_KEY;
 import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar;
 import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
 import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
@@ -166,21 +166,21 @@ public class MediaStream {
 
         mHevc = SPUtil.getHevcCodec(context);
         if (mZeroEasyPusher == null) {
-            mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+            mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
         //Hawk.get(HawkProperty.APP_KEY)
         if (mFirstEasyPusher == null) {
-            mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+            mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
         if (PublicUtil.isMoreThanTheAndroid10()) {
             if (mSecendEasyPusher == null) {
-                mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+                mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
             }
             if (mThirdEasyPusher == null) {
-                mThirdEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+                mThirdEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
             }
             if (mFourthEasyPusher == null) {
-                mFourthEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, RTMP_KEY);
+                mFourthEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
             }
         }
 
@@ -555,6 +555,7 @@ public class MediaStream {
     // private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
     public void startPushStream(int pushType, InitCallback callback) throws IOException {
         Pusher pusher = null;
+        RegOperateManager.getInstance(context).setRegistCodeNumber(1);
         String url = null;
         switch (pushType) {
             case 0:

@@ -44,7 +44,7 @@
        >
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="81f9b6f76789ccce33199b343618fc95" />
+            android:value="556913ad3a6f50d9200caad84cd97f98" />
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService" />
 

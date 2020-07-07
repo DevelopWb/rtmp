@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/regdialog"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/warn_bg_shape"
     android:orientation="vertical"
     android:weightSum="1">
@@ -16,6 +16,7 @@
         android:lineSpacingExtra="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:paddingBottom="15dp"
         android:paddingTop="15dp"
         android:gravity="center"
         android:text="检测到软件有新版本，是否更新？"
@@ -27,6 +28,7 @@
         android:layout_marginTop="5dp"
         android:lineSpacingExtra="10dp"
         android:paddingLeft="10dp"
+        android:visibility="gone"
         android:paddingRight="10dp"
         android:text="新版本特性："
         android:textColor="#000000"
@@ -34,6 +36,7 @@
 
     <ListView
         android:id="@+id/feature_lv"
+        android:visibility="gone"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_width="match_parent"

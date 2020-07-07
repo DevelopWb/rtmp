@@ -10,10 +10,13 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -35,10 +38,12 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.basenetlib.RequestStatus;
+import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.juntai.wisdom.basecomponent.utils.FileUtils;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
+import com.regmode.AppHttpUrl;
 import com.regmode.R;
 import com.regmode.RegLatestContact;
 import com.regmode.RegLatestPresent;
@@ -56,6 +61,7 @@ import java.net.HttpURLConnection;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,9 +74,8 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by Administrator on 2017/3/30.
  */
 
-public class RegOperateUtil extends BaseReg implements RequestStatus {
+public class RegOperateManager extends BaseReg implements RequestStatus {
     public static boolean RegStatus = false;//注册码状态是否正常
-    private SharedPreferences sp;
     public static boolean istoolTip = false;//注册码状态改变是否提醒，例如：注册码到期，禁用等
     public static boolean isNumberLimit = false;//是否限制次数
     public static boolean isForbidden = false;//是否禁用
@@ -89,12 +94,12 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     private ProgressDialog progressDialog;
     private RegLatestContact.CancelCallBack cancelCallBack;
     private boolean firstCite = true;//第一次被引用
-    public static RegOperateUtil regOperateUtil;
+    public static RegOperateManager regOperateUtil;
     private RegLatestPresent present;
     private String input;
 
 
-    public RegOperateUtil(Context context) {
+    public RegOperateManager(Context context) {
         this.context = context;
         present = new RegLatestPresent();
         if (firstCite) {
@@ -104,11 +109,11 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 
     }
 
-    public static RegOperateUtil getInstance(Context context) {
+    public static RegOperateManager getInstance(Context context) {
 
         if (regOperateUtil == null) {
-            synchronized (RegOperateUtil.class) {
-                return new RegOperateUtil(context);
+            synchronized (RegOperateManager.class) {
+                return new RegOperateManager(context);
             }
         } else {
             return regOperateUtil;
@@ -132,16 +137,16 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     }
 
 
-    /**
-     * 保存注册码状态
-     *
-     * @param str 状态描述
-     */
-    private void SaveRegStatus(String str) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("REGSTATUS", str);
-        editor.commit();
-    }
+//    /**
+//     * 保存注册码状态
+//     *
+//     * @param str 状态描述
+//     */
+//    private void SaveRegStatus(String str) {
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString("REGSTATUS", str);
+//        editor.commit();
+//    }
 
 //    /**
 //     * 检查有没有未减掉的注册码次数
@@ -161,11 +166,11 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 
     //查看注册码未减的次数
     public void UnMinusedRegSizeToCommit() {
-        if (REGSIZE > 1) {
-            SharedPreferences.Editor et = sp.edit();
-            et.putInt("UNMINUSEDSIZE", REGSIZE - 1);
-            et.commit();
-        }
+//        if (REGSIZE > 1) {
+//            SharedPreferences.Editor et = sp.edit();
+//            et.putInt("UNMINUSEDSIZE", REGSIZE - 1);
+//            et.commit();
+//        }
     }
 
     /**
@@ -229,7 +234,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                     .show();
             return;
         }
-        present.checkReg((String) Hawk.get(HawkProperty.REG_CODE), APP_MARK, RegLatestContact.CHECK_REG_EVERYTIME, RegOperateUtil.this);
+        present.checkReg((String) Hawk.get(HawkProperty.REG_CODE), APP_MARK, RegLatestContact.CHECK_REG_EVERYTIME, RegOperateManager.this);
     }
 
     /**
@@ -332,128 +337,15 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     }
 
 
-    /**
-     * 通过软件的版本名称判定是否升级
-     *
-     * @param localVersionName  本地软件的版本名称
-     * @param serverVersionName 服务端软件的版本名称
-     * @return
-     */
-    private boolean updateableSoftVersion(String localVersionName, String serverVersionName) {
-        if (TextUtils.isEmpty(localVersionName) || TextUtils.isEmpty(serverVersionName)) {
-            return false;
-        }
-        String local3 = "0";
-        String server3 = "0";
-        String[] localVersion = localVersionName.split("\\.");
-        String[] serverVersion = serverVersionName.split("\\.");
-        String local1 = localVersion[0];
-        String local2 = localVersion[1];
-        if (localVersion.length == 3) {
-            local3 = localVersion[2];
-        }
-        String server1 = serverVersion[0];
-        String server2 = serverVersion[1];
-        if (serverVersion.length == 3) {
-            server3 = serverVersion[2];
-        }
-        if (Integer.parseInt(server1) > Integer.parseInt(local1)) {
-            return true;
-        }
-        if (Integer.parseInt(server2) > Integer.parseInt(local2)) {
-            return true;
-        }
-        if (Integer.parseInt(server3) > Integer.parseInt(local3)) {
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * 判定是否提醒升级
-     */
-    private boolean IsTheTime() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
-        final String time = sharedPreferences.getString("nextTime", "");
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        String time2 = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        if (TextUtils.isEmpty(time)) {
-            return true;
-        } else {
-            if (RegPubUtils.compareTime(time2, time)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
 
-    }
-
-    /**
-     * 提醒升级的对话框
-     *
-     * @param url
-     * @param description
-     */
-    private void WarnUpgradeDialog(final String url, String description) {
-
-        View v = LayoutInflater.from(context).inflate(R.layout.to_nfc_set, null);
-        final Dialog dialog_toSet = new Dialog(context, R.style.DialogStyle);
-        dialog_toSet.setCanceledOnTouchOutside(false);
-        dialog_toSet.setCancelable(false);
-        dialog_toSet.show();
-        Window window = dialog_toSet.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-        window.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-        lp.width = RegPubUtils.dip2px(context, 300); // 宽度
-        lp.height = RegPubUtils.dip2px(context, 260); // 高度
-        // lp.alpha = 0.7f; // 透明度
-        window.setAttributes(lp);
-        window.setContentView(v);
-        ListView feature_lv = (ListView) v.findViewById(R.id.feature_lv);
-        feature_lv.setDivider(null);
-        feature_lv.setAdapter(new DialogAdapter(context, description));
-        dialog_toSet.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-
-                if (keyCode == event.KEYCODE_BACK) {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        dialog_toSet.dismiss();
-                    }
-                }
-                return false;
-            }
-        });
-        final TextView nfs_set_sure_tv = (TextView) v.findViewById(R.id.nfs_set_sure_tv);
-        final TextView nfs_set_no_tv = (TextView) v.findViewById(R.id.nfs_set_no_tv);
-        nfs_set_sure_tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog_toSet.dismiss();
-                DownAPKfromService(url);
-            }
-        });
-        nfs_set_no_tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog_toSet.dismiss();
-                String nextTime = GetNextWarnTime(7);
-                SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
-                SharedPreferences.Editor et = sharedPreferences.edit();
-                et.putString("nextTime", nextTime);
-                et.commit();
-            }
-        });
-    }
 
     /**
      * 从服务器下载apk包
      *
      * @param url
      */
-    private void DownAPKfromService(String url) {
+    private void downAPKfromService(String url) {
 
         if (RegPubUtils.isConnected(context)) {
             mProgressDialog = new CommonProgressDialog(context);
@@ -538,17 +430,17 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 //                }
                 break;
             case RegLatestContact.GET_REG_INFO:
-                //获取注册码信息  验证接口  每次进入软件的时候需要调用这个接口  检测注册码的状态
-                RegCodeBean regInfo = (RegCodeBean) o;
-                if (regInfo != null) {
-                    String resultTag = regInfo.getResult();
-                    if ("OK".equals(resultTag)) {
-                        if (regInfo.getModel() != null && regInfo.getModel().size() > 0) {
-                            RegCodeBean.ModelBean regInfoBean = regInfo.getModel().get(0);
-//                            regInfoBean.getIs
-                        }
-                    }
-                }
+//                //获取注册码信息  验证接口  每次进入软件的时候需要调用这个接口  检测注册码的状态
+//                RegCodeBean regInfo = (RegCodeBean) o;
+//                if (regInfo != null) {
+//                    String resultTag = regInfo.getResult();
+//                    if ("OK".equals(resultTag)) {
+//                        if (regInfo.getModel() != null && regInfo.getModel().size() > 0) {
+//                            RegCodeBean.ModelBean regInfoBean = regInfo.getModel().get(0);
+////                            regInfoBean.getIs
+//                        }
+//                    }
+//                }
 
 //                if (!TextUtils.isEmpty(str)) {
 //                    try {
@@ -678,7 +570,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 //                            String appDescription = obj_.getString("softDescription");
 //                            if (updateableSoftVersion(getAPPVersion(), nearestVersion)) {
 //                                if (IsTheTime()) {
-//                                    WarnUpgradeDialog(down_url, appDescription);
+//                                    warnUpgradeDialog(down_url, appDescription);
 //                                }
 //
 //                            } else {//将
@@ -807,6 +699,13 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                                 if (!checkImei(modelBean)) {
                                     return;
                                 }
+                                String isAutoUpdate = modelBean.getIsAutoUpdate();
+                                if (isAutoUpdate != null && !TextUtils.isEmpty(isAutoUpdate)) {
+                                    if (isAutoUpdate.equals("1")) {//允许自动升级
+                                        getNearestVersionFromService();
+                                        return;
+                                    }
+                                }
                                 String isValid = modelBean.getIsValid();
                                 if (isValid != null && !TextUtils.isEmpty(isValid)) {
                                     if (isValid.equals("0")) {//注册码限制时间
@@ -851,9 +750,30 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                     }
                 }
                 break;
-
             case RegLatestContact.SET_IMEI:
 
+                break;
+            case RegLatestContact.GET_APP_VERSION_INFO :
+                AppInfoBean appInfoBean = (AppInfoBean) o;
+                if (appInfoBean != null) {
+                    if (appInfoBean.getModel() != null && appInfoBean.getModel().size() > 0) {
+                        AppInfoBean.ModelBean dataBean = appInfoBean.getModel().get(0);
+                        String nearestVersion = dataBean.getSoftwareVersion();
+                        String down_url = dataBean.getSoftDownloadUrl();
+                        if (updateableSoftVersion(getAPPVersion(), nearestVersion)) {
+                            if (IsTheTime()) {
+                                warnUpgradeDialog(AppHttpUrl.BASE_URL+down_url);
+                            }
+
+                        }
+//                        else {//将
+//                            SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
+//                            SharedPreferences.Editor et = sharedPreferences.edit();
+//                            et.putString("nextTime", "");
+//                            et.commit();
+//                        }
+                    }
+                }
                 break;
             default:
                 break;
@@ -909,7 +829,119 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     public void setRegistCodeNumber(int size) {
         present.setRegisCodeNumber((String) Hawk.get(HawkProperty.REG_CODE), size, this);
     }
+    /**
+     * 从服务器获取最新的版本
+     */
+    private void getNearestVersionFromService() {
 
+        if (isConnected(context)) {
+            //获取软件的key
+            present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_APP_VERSION_INFO, this);
+        }
+
+    }
+
+    /**
+     * 通过软件的版本名称判定是否升级
+     *
+     * @param localVersionName  本地软件的版本名称
+     * @param serverVersionName 服务端软件的版本名称
+     * @return
+     */
+    private boolean updateableSoftVersion(String localVersionName, String serverVersionName) {
+        if (TextUtils.isEmpty(localVersionName) || TextUtils.isEmpty(serverVersionName)) {
+            return false;
+        }
+        String local3 = "0";
+        String server3 = "0";
+        String[] localVersion = localVersionName.split("\\.");
+        String[] serverVersion = serverVersionName.split("\\.");
+        String local1 = localVersion[0];
+        String local2 = localVersion[1];
+        if (localVersion.length == 3) {
+            local3 = localVersion[2];
+        }
+        String server1 = serverVersion[0];
+        String server2 = serverVersion[1];
+        if (serverVersion.length == 3) {
+            server3 = serverVersion[2];
+        }
+        if (Integer.parseInt(server1) > Integer.parseInt(local1)) {
+            return true;
+        }
+        if (Integer.parseInt(server2) > Integer.parseInt(local2)) {
+            return true;
+        }
+        if (Integer.parseInt(server3) > Integer.parseInt(local3)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判定是否提醒升级
+     */
+    private boolean IsTheTime() {
+        final String time =   Hawk.get(HawkProperty.NEXT_WARN_UPDATE);
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        String time2 = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        if (TextUtils.isEmpty(time)) {
+            return true;
+        } else {
+            if (compareTime(time2, time)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+    }
+    /**
+     * 比较两个时间串的大小
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return
+     */
+    public static boolean compareTime(String startTime, String endTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Long a = sdf.parse(startTime).getTime();
+            Long b = sdf.parse(endTime).getTime();
+            if (a > b || a == b) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 提醒升级的对话框
+     * @param url
+     */
+    private void warnUpgradeDialog(final String url) {
+        AlertDialog dialog = new AlertDialog.Builder(context).setTitle("检测到软件有新版本，是否更新？")
+                .setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        downAPKfromService(url);
+                    }
+                }).setNegativeButton("稍后提示", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        String nextTime = GetNextWarnTime(7);
+                        Hawk.put(HawkProperty.NEXT_WARN_UPDATE,nextTime);
+                    }
+                }).show();
+    }
     private class DownloadTask extends AsyncTask<String, Integer, String> {
 
         private Context context;
@@ -930,7 +962,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
         @Override
         protected String doInBackground(String... params) {
             int i = 0;
-            String uri = URL_Reg_Center + params[0];
+            String uri =params[0];
             InputStream input = null;
             OutputStream output = null;
             HttpURLConnection connection = null;
@@ -1107,7 +1139,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
                 progressDialog = ProgressDialog.show(context, "请稍候",
                         "注册码验证中请不要进行其他操作", true);
                 progressDialog.setCancelable(true);
-                present.checkReg(input, APP_MARK, RegLatestContact.CHECK_REG, RegOperateUtil.this);
+                present.checkReg(input, APP_MARK, RegLatestContact.CHECK_REG, RegOperateManager.this);
 
             }
         };
@@ -1380,17 +1412,18 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
      * 检测保存本地的版本号
      */
     private void checkSavedVersion() {
-        String savedVersion = sp.getString("SavedVersion", "");
+        String savedVersion = Hawk.get(HawkProperty.APP_SAVED_VERSION,"");
 //        String savedVersion = "1.0";
         String nowVersion = getAPPVersion();
         if (savedVersion.equals("")) {
-            SharedPreferences.Editor et = sp.edit();
-            et.putString("SavedVersion", nowVersion);
-            et.commit();
+          Hawk.put(HawkProperty.APP_SAVED_VERSION,nowVersion);
+            //上传版本信息
+            String info = getInfoWhenVersionChanged(savedVersion, nowVersion);
+            present.uploadVersionInfo((String) Hawk.get(HawkProperty.REG_CODE), info, this);
         } else {
             if (!savedVersion.equals(nowVersion) && Double.parseDouble(nowVersion) > Double.parseDouble(savedVersion)) {
                 //上传版本信息
-                String info = GetInfoWhenVersionChanged(savedVersion, nowVersion);
+                String info = getInfoWhenVersionChanged(savedVersion, nowVersion);
                 present.uploadVersionInfo((String) Hawk.get(HawkProperty.REG_CODE), info, this);
             }
 
@@ -1398,7 +1431,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
 
     }
 
-    private String GetInfoWhenVersionChanged(String originalVersion, String newestVersion) {
+    private String getInfoWhenVersionChanged(String originalVersion, String newestVersion) {
         String PhoneNo = "";
         String Imei = "";
         String time = "";
@@ -1409,7 +1442,7 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
             Imei = mTManager.getDeviceId();
             PhoneNo = mTManager.getLine1Number();
         }
-        Info_sb.append("SoftName:" + getAPPName() + "," + "GuestName:" + sp.getString("GUESTNAME", "") + "," + "RegCode:" + Hawk.get(HawkProperty.REG_CODE) + "," + "PhoneNo:" + PhoneNo + "," + "Imei:" + Imei + "," + "Mac:" + macAddress() + "," + "Lat:" + Lat + "," + "Lng:" + Lng + "," + "Addr:" + Addr + "," + "OriginalVersion:" + originalVersion + "," + "NewestVersion:" + newestVersion + "," + "Time:" + time);
+        Info_sb.append("SoftName:" + getAPPName() + "," + "GuestName:" +Hawk.get(HawkProperty.APP_GUEST_NAME, "") + "," + "RegCode:" + Hawk.get(HawkProperty.REG_CODE) + "," + "PhoneNo:" + PhoneNo + "," + "Imei:" + Imei + "," + "Mac:" + macAddress() + "," + "Lat:" + Lat + "," + "Lng:" + Lng + "," + "Addr:" + Addr + "," + "OriginalVersion:" + originalVersion + "," + "NewestVersion:" + newestVersion + "," + "Time:" + time);
 
         return Info_sb.toString();
     }
@@ -1418,6 +1451,33 @@ public class RegOperateUtil extends BaseReg implements RequestStatus {
     public void setCancelCallBack(RegLatestContact.CancelCallBack callBack) {
         this.cancelCallBack = callBack;
     }
+// 判断网络是否正常
 
+    public static boolean isConnected(Context context) {
+        boolean isOk = true;
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mobNetInfo = connectivityManager
+                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            NetworkInfo wifiNetInfo = connectivityManager
+                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (wifiNetInfo != null && !wifiNetInfo.isConnectedOrConnecting()) {
+                if (mobNetInfo != null && !mobNetInfo.isConnectedOrConnecting()) {
+                    NetworkInfo info = connectivityManager
+                            .getActiveNetworkInfo();
+                    if (info == null) {
+                        isOk = false;
+                    }
+                }
+            }
+            mobNetInfo = null;
+            wifiNetInfo = null;
+            connectivityManager = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isOk;
+    }
 
 }

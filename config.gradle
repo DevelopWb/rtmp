@@ -6,9 +6,9 @@ ext {
             compileSdkVersion: 28,
             minSdkVersion    : 21,
             targetSdkVersion : 27,
-            versionCode      : 14,
+            versionCode      : 15,
             //解决otg插拔闪退不能切换的问题
-            versionName      : "1.2.11",
+            versionName      : "1.2.12",
     ]
     libsVersion = [
             // App dependencies version

@@ -70,10 +70,8 @@ public class FileUtils {
      * @param fileName   文件的名称  a.txt
      */
     public static void writeToTxtFile(String strcontent, String fileName) {
-        //生成文件夹之后，再生成文件，不然会出错
-        makeFilePath(getSavedLocalPropertyFilePath(), fileName);
 
-        String strFilePath = getSavedLocalPropertyFilePath() + fileName;
+
         String writedContent = getFileContent(fileName);
         if (!TextUtils.isEmpty(writedContent)) {
             return;
@@ -82,9 +80,9 @@ public class FileUtils {
         // 每次写入时，都换行写
         String strContent = MD5.md5(strcontent);
         try {
-            File file = new File(strFilePath);
+          //生成文件夹之后，再生成文件，不然会出错
+            File file =   makeFilePath(getSavedLocalPropertyFilePath(), fileName);
             if (!file.exists()) {
-                Log.d("TestFile", "Create the file:" + strFilePath);
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
@@ -133,19 +131,17 @@ public class FileUtils {
 
     /**
      * 获取保存本地配置文件的路径
+     *
      * @return
      */
-    private static String  getSavedLocalPropertyFilePath(){
-        return Environment.getExternalStorageDirectory().getAbsolutePath()+"/一见直播/.配置文件/";
+    private static String getSavedLocalPropertyFilePath() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/一见直播/.配置文件/";
     }
 
     //读取指定目录下的所有TXT文件的文件内容
     public static String getFileContent(String fileName) {
-        makeFilePath(getSavedLocalPropertyFilePath(), fileName);
-        File file = new File(getSavedLocalPropertyFilePath() + fileName);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+
+        File file = makeFilePath(getSavedLocalPropertyFilePath(), fileName);
         String content = "";
         if (!file.isDirectory()) { //检查此路径名的文件是否是一个目录(文件夹)
             if (file.getName().endsWith("txt")) {//文件格式为""文件

@@ -24,6 +24,8 @@ public class DialogAdapter extends BaseAdapter {
         this.context = context;
         if (description!=null&&!TextUtils.isEmpty(description)) {
             this.infos = description.split("\n");
+        }else {
+        infos = new String[]{""};
         }
     }
 

@@ -40,13 +40,12 @@ import android.widget.Toast;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
-import com.regmode.Utils.RegOperateUtil;
+import com.regmode.Utils.RegOperateManager;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
 import org.easydarwin.bus.StopRecord;
 import org.easydarwin.bus.StreamStat;
-import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
@@ -210,17 +209,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         setContentView(R.layout.activity_main);
         initView();
         BUSUtil.BUS.register(this);
-//        RegOperateUtil.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-//            @Override
-//            public void toFinishActivity() {
-//                finish();
-//            }
-//
-//            @Override
-//            public void toDoNext() {
-//
-//            }
-//        });
+        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }

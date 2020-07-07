@@ -121,6 +121,23 @@ public class HawkProperty {
      */
     public static final String APP_KEY = "app_key";
 
+    /**
+     * savedVersion
+     */
+    public static final String APP_SAVED_VERSION = "savedVersion";
+
+    /**
+     * APP_GUEST_NAME
+     */
+    public static final String APP_GUEST_NAME= "APP_GUEST_NAME";
+    /**
+     * 下次提醒升级的key
+     */
+    public static final String NEXT_WARN_UPDATE= "NEXT_WARN_UPDATE";
+
+
+
+
 
 
 
