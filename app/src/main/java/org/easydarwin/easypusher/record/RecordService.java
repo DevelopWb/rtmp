@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -30,11 +29,12 @@ import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
 import com.tencent.bugly.crashreport.CrashReport;
 
-import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.SplashActivity;
@@ -317,14 +317,10 @@ public class RecordService extends Service {
                                     outputBuffer.get(h264, mPpsSps.length, bufferInfo.size);
                                     mEasyPusher.push(h264, 0, mPpsSps.length + bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 2);
 
-                                    if (BuildConfig.DEBUG)
-                                        Log.i(TAG, String.format("push i video stamp:%d", bufferInfo.presentationTimeUs / 1000));
                                 } else {
                                     outputBuffer.get(h264, 0, bufferInfo.size);
                                     mEasyPusher.push(h264, 0, bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
 
-                                    if (BuildConfig.DEBUG)
-                                        Log.i(TAG, String.format("push video stamp:%d", bufferInfo.presentationTimeUs / 1000));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

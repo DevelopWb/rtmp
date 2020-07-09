@@ -1,9 +1,13 @@
 package org.easydarwin.sw;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by John on 2017/2/23.
@@ -15,11 +19,43 @@ public class TxtOverlay {
     }
 
     private final Context context;
-
+    private static TxtOverlay instance;
     private long ctx;
+
+    public static TxtOverlay getInstance() {
+        if (instance == null) {
+            throw new IllegalArgumentException("please call install in your application!");
+        }
+        return instance;
+    }
 
     public TxtOverlay(Context context) {
         this.context = context;
+    }
+
+    public static void install(Context context) {
+        if (instance == null) {
+            instance = new TxtOverlay(context.getApplicationContext());
+
+            File youyuan = context.getFileStreamPath("SIMYOU.ttf");
+            if (!youyuan.exists()) {
+                AssetManager am = context.getAssets();
+                try {
+                    InputStream is = am.open("zk/SIMYOU.ttf");
+                    FileOutputStream os = context.openFileOutput("SIMYOU.ttf", Context.MODE_PRIVATE);
+                    byte[] buffer = new byte[1024];
+                    int len = 0;
+                    while ((len = is.read(buffer)) != -1) {
+                        os.write(buffer, 0, len);
+                    }
+                    os.close();
+                    is.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void init(int width, int height, String fonts) {
@@ -31,7 +67,15 @@ public class TxtOverlay {
             throw new IllegalArgumentException("the font file must be exists!");
         }
 
-        ctx = txtOverlayInit(width, height,fonts);
+        ctx = txtOverlayInit(width, height, fonts);
+    }
+
+    public void init(int width, int height) {
+        File youyuan = context.getFileStreamPath("SIMYOU.ttf");
+        if (!youyuan.exists()) {
+            throw new IllegalArgumentException("the font file must be exists,please call install before!");
+        }
+        ctx = txtOverlayInit(width, height, youyuan.getAbsolutePath());
     }
 
     public void overlay(byte[] data, String txt) {

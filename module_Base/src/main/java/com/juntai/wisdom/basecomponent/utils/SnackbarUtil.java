@@ -1,13 +1,10 @@
 package com.juntai.wisdom.basecomponent.utils;
 
-import android.content.Context;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.view.Gravity;
+
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.juntai.wisdom.basecomponent.app.BaseApplication;
 
 public class SnackbarUtil {

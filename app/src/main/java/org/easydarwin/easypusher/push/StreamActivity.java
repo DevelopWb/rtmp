@@ -22,8 +22,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -59,7 +59,6 @@ import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
-import org.easydarwin.update.UpdateMgr;
 import org.easydarwin.util.BUSUtil;
 import org.easydarwin.util.Util;
 
@@ -97,7 +96,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public MediaStream mMediaStream;
     public static Intent mResultIntent;
     public static int mResultCode;
-    private UpdateMgr update;
 
     private BackgroundCameraService mService;
     private ServiceConnection conn = null;
@@ -1317,7 +1315,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         params.width = W;
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
-        mScreenResTv.setVisibility(View.INVISIBLE);
+//        mScreenResTv.setVisibility(View.INVISIBLE);
         mSwitchOritation.setVisibility(View.INVISIBLE);
         //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
         //        mScreenResTv.setText(String.format("分辨率:%s", title));

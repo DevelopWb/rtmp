@@ -1,7 +1,8 @@
 package com.juntai.wisdom.basecomponent.mvp;
 
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
+
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.juntai.wisdom.basecomponent.utils.Preconditions;
 

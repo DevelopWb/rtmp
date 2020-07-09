@@ -25,9 +25,9 @@ ext {
     ]
     dependencies = [
             //android 官方库
-            "appcompat-v7"                 : "com.android.support:appcompat-v7:$rootProject.supportVersion",
+            "appcompat-v7"                 : "androidx.appcompat:appcompat:1.0.0",
             "support-v4"                   : "com.android.support:support-v4:$rootProject.supportVersion",
-            "design"                       : "com.android.support:design:$rootProject.supportVersion",
+            "design"                       : "com.google.android.material:material:1.0.0",
             "annotations"                  : "com.android.support:support-annotations:$rootProject.supportVersion",
             "gson"                         : "com.google.code.gson:gson:2.6.2",
 //            "fastjson"                     :'com.alibaba:fastjson:1.2.67',
@@ -59,7 +59,7 @@ ext {
             "eventbus"                     : "org.greenrobot:eventbus:3.2.0",
             //日志工具
             "logger"                       : "com.orhanobut:logger:2.2.0",
-            "multidex"                     : "com.android.support:multidex:1.0.3",
+            "multidex"                     : 'androidx.multidex:multidex:2.0.0',
 
             "leakcanary-android"           : "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion",
             "leakcanary-android-no-op"     : "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion",

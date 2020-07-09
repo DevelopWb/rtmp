@@ -5,10 +5,10 @@
     android:background="@drawable/bg_white_corner_top_left_right"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.appcompat.widget.RecyclerView
         android:id="@+id/base_bottom_dialog_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"></androidx.appcompat.widget.RecyclerView>
 
     <View
         android:layout_width="match_parent"

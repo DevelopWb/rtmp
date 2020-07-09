@@ -3,11 +3,11 @@ package com.juntai.wisdom.basecomponent.base;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
 
 import com.juntai.wisdom.basecomponent.mvp.IPresenter;
 import com.juntai.wisdom.basecomponent.mvp.IView;
