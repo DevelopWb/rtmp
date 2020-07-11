@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @UpdateDate: 2020/4/26 11:53
  */
 public class PublicUtil {
-
+    public static final String DIRECTORY_NAME = "USBCamera";
     public static boolean isIP(String addr) {
         if (addr.length() < 7 || addr.length() > 15 || "".equals(addr)) {
             return false;

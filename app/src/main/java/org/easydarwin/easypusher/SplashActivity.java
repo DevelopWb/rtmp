@@ -107,15 +107,16 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 AppInfoBean.ModelBean dataBean = appInfoBean.getModel().get(0);
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
-                    Hawk.put(HawkProperty.APP_KEY, key);
-                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-                    //所有权限通过
-                    try {
-                        Thread.sleep(600);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+//                    Hawk.put(HawkProperty.APP_KEY, key);
+//                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
+//                    //所有权限通过
+//                    try {
+//                        Thread.sleep(600);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                    startActivity(new Intent(SplashActivity.this, USBCameraActivity.class));
                     finish();
                 }else {
                     ToastUtils.toast(this,"参数初始化失败");
