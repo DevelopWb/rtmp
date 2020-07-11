@@ -44,7 +44,7 @@
             android:layout_above="@id/textView3"
             android:layout_below="@id/main_toolbar">
 
-            <androidx.constraintlayout.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -126,7 +126,7 @@
                     app:layout_constraintRight_toLeftOf="@+id/guideline"
                     android:layout_height="wrap_content" />
 
-                <android.support.constraint.Guideline
+                <androidx.constraintlayout.widget.Guideline
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/guideline"
@@ -232,7 +232,7 @@
                     android:layout_height="40dp" />
 
 
-            </androidx.constraintlayout.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
     </RelativeLayout>

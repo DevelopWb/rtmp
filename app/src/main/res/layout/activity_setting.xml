@@ -41,7 +41,7 @@
                 android:padding="15dp"
                 tools:context="org.easydarwin.easypusher.mine.SettingActivity">
 
-                <androidx.constraintlayout.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_only_bottom_gray_shape_1px"
@@ -256,16 +256,16 @@
                         app:layout_constraintRight_toRightOf="parent"
                         style="@style/set_url_editText" />
 
-                    <android.support.constraint.Group
+                    <androidx.constraintlayout.widget.Group
                         android:id="@+id/left_live_gp"
                         android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:constraint_referenced_ids="secend_live_key,secend_live_scan_iv,secend_live_value_et
                         ,third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"
-                        ></android.support.constraint.Group>
+                        ></androidx.constraintlayout.widget.Group>
 
-                </androidx.constraintlayout.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
