@@ -67,20 +67,6 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private List<Boolean> selectArray = new ArrayList<>();
     ;
 
-    @Override
-    public void onUvcCameraConnected() {
-
-    }
-
-    @Override
-    public void onUvcCameraAttached() {
-
-    }
-
-    @Override
-    public void onUvcCameraDisConnected() {
-
-    }
 
     //    EditText url;
     @Override

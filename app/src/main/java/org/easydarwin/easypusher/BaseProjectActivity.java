@@ -3,6 +3,7 @@ package org.easydarwin.easypusher;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -29,11 +30,6 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
     protected boolean isPushingThirdStream = false;//是否正在推流
     protected boolean isPushingFourthStream = false;//是否正在推流
 
-    public abstract void onUvcCameraConnected();
-
-    public abstract void onUvcCameraAttached();
-
-    public abstract void onUvcCameraDisConnected();
 
     protected Context mContext;
 
@@ -41,9 +37,9 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+//        if (!EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().register(this);
+//        }
         ActivityManagerTool.getInstance().addActivity(this);
     }
 
@@ -51,32 +47,34 @@ public abstract class BaseProjectActivity extends RxAppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mContext = null;
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         ActivityManagerTool.getInstance().removeActivity(this);
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void receivedStringMsg(String msg) {
-        switch (msg) {
-            case "onAttach":
-//                Toast.makeText(getApplicationContext(),"Attached",Toast.LENGTH_SHORT).show();
-                onUvcCameraAttached();
-                break;
-            case "onConnect":
-//                Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
-                SPUtil.setBitrateKbps(this,5000000);
-                onUvcCameraConnected();
-                break;
-            case "onDisconnect":
-                SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
-//                Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
-
-                onUvcCameraDisConnected();
-                break;
-            default:
-                break;
-        }
+    protected void showShortMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void receivedStringMsg(String msg) {
+//        switch (msg) {
+//            case "onAttach":
+////                Toast.makeText(getApplicationContext(),"Attached",Toast.LENGTH_SHORT).show();
+//                onUvcCameraAttached();
+//                break;
+//            case "onConnect":
+////                Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
+//                SPUtil.setBitrateKbps(this,5000000);
+//                onUvcCameraConnected();
+//                break;
+//            case "onDisconnect":
+//                SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
+////                Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
+//
+//                onUvcCameraDisConnected();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     /**
      * 隐藏控件  Invisible  gone

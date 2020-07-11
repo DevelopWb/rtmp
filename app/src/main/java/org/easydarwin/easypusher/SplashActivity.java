@@ -36,20 +36,6 @@ import io.reactivex.functions.Consumer;
 public class SplashActivity extends BaseProjectActivity implements RequestStatus {
     private RegLatestPresent present;
 
-    @Override
-    public void onUvcCameraConnected() {
-//        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onUvcCameraAttached() {
-//        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onUvcCameraDisConnected() {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,16 +93,16 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 AppInfoBean.ModelBean dataBean = appInfoBean.getModel().get(0);
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
-//                    Hawk.put(HawkProperty.APP_KEY, key);
+                    Hawk.put(HawkProperty.APP_KEY, key);
 //                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-//                    //所有权限通过
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                    startActivity(new Intent(SplashActivity.this, USBCameraActivity.class));
+                    //所有权限通过
+                    try {
+                        Thread.sleep(600);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+//                    sta/**/rtActivity(new Intent(SplashActivity.this, USBCameraActivity.class));
                     finish();
                 }else {
                     ToastUtils.toast(this,"参数初始化失败");

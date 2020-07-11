@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -543,7 +545,8 @@ public abstract class AbstractUVCCameraHandler extends Handler {
             if (DEBUG) Log.v(TAG_THREAD, "handleStartPreview:");
             if ((mUVCCamera == null) || mIsPreviewing) return;
             try {
-                mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 31, mPreviewMode, mBandwidthFactor);
+//                uvcCamera.setPreviewSize(uvcWidth,uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+                mUVCCamera.setPreviewSize(mWidth, mHeight, 1, 30, mPreviewMode, mBandwidthFactor);
                 // 获取USB Camera预览数据，使用NV21颜色会失真
                 // 无论使用YUV还是MPEG，setFrameCallback的设置效果一致
 //				mUVCCamera.setFrameCallback(mIFrameCallback, UVCCamera.PIXEL_FORMAT_NV21);
@@ -802,10 +805,18 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         public void handleStillPicture(String picPath) {
             this.picPath = picPath;
         }
-
+        BlockingQueue<byte[]> cache = new ArrayBlockingQueue<byte[]>(100);
         private final IFrameCallback mIFrameCallback = new IFrameCallback() {
             @Override
             public void onFrame(final ByteBuffer frame) {
+                frame.clear();
+
+                byte[] data = cache.poll();
+                if (data == null) {
+                    data = new byte[frame.capacity()];
+                }
+
+                frame.get(data);
 //				final MediaVideoBufferEncoder videoEncoder;
 //				synchronized (mSync) {
 //					videoEncoder = mVideoEncoder;
@@ -814,32 +825,32 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 //					videoEncoder.frameAvailableSoon();
 //					videoEncoder.encode(frame);
 //				}
-                int len = frame.capacity();
-                final byte[] yuv = new byte[len];
-                frame.get(yuv);
+//                int len = frame.capacity();
+//                final byte[] yuv = new byte[len];
+//                frame.get(yuv);
                 // nv21 yuv data callback
                 if (mPreviewListener != null) {
-                    mPreviewListener.onPreviewResult(yuv);
+                    mPreviewListener.onPreviewResult(data);
                 }
-                // picture
-                if (isCaptureStill && !TextUtils.isEmpty(picPath)) {
-                    isCaptureStill = false;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            saveYuv2Jpeg(picPath, yuv);
-                        }
-                    }).start();
-                }
-                // video
-                if (mH264Consumer != null) {
-                    // overlay
-                    if(isSupportOverlay) {
-                        TxtOverlay.getInstance().overlay(yuv, new SimpleDateFormat("yyyy-MM-dd EEEE HH:mm:ss").format(new Date()));
-                    }
-
-                    mH264Consumer.setRawYuv(yuv, mWidth, mHeight);
-                }
+//                // picture
+//                if (isCaptureStill && !TextUtils.isEmpty(picPath)) {
+//                    isCaptureStill = false;
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            saveYuv2Jpeg(picPath, data);
+//                        }
+//                    }).start();
+//                }
+//                // video
+//                if (mH264Consumer != null) {
+//                    // overlay
+//                    if(isSupportOverlay) {
+//                        TxtOverlay.getInstance().overlay(data, new SimpleDateFormat("yyyy-MM-dd EEEE HH:mm:ss").format(new Date()));
+//                    }
+//
+//                    mH264Consumer.setRawYuv(data, mWidth, mHeight);
+//                }
             }
         };
 

@@ -17,6 +17,14 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:keepScreenOn="true" />
+        <com.serenegiant.usb.widget.UVCCameraTextureView
+            android:id="@+id/uvc_camera_view"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:keepScreenOn="true"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+           />
     </RelativeLayout>
 
     <TextView
