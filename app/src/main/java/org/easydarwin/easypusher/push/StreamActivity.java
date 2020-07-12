@@ -47,6 +47,7 @@ import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateManager;
+import com.serenegiant.usb.Size;
 import com.serenegiant.usb.common.AbstractUVCCameraHandler;
 import com.serenegiant.usb.widget.CameraViewInterface;
 import com.serenegiant.usb.widget.UVCCameraTextureView;
@@ -203,7 +204,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     break;
                 case UVC_DISCONNECT:
                     mCameraHelper.closeCamera();
-                    mMediaStream.destroyCamera();
                     mSurfaceView.setVisibility(View.VISIBLE);
                     mMediaStream.startPreview();
                     mUvcTextureView.setVisibility(View.GONE);
@@ -305,14 +305,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         });
         mCameraHelper = UVCCameraHelper.getInstance();
-        mCameraHelper.setDefaultPreviewSize(1280,720);
+        mCameraHelper.setDefaultPreviewSize(640,480);
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
 
         mCameraHelper.setOnPreviewFrameListener(new AbstractUVCCameraHandler.OnPreViewResultListener() {
             @Override
             public void onPreviewResult(byte[] nv21Yuv) {
-                mMediaStream.onUvcCameraPreviewFrame(nv21Yuv,1280,720);
-                Log.d(TAG, "onPreviewResult: " + nv21Yuv.length);
+                mMediaStream.onUvcCameraPreviewFrame(nv21Yuv,640,480);
+//                Log.d(TAG, "onPreviewResult: " + nv21Yuv.length);
             }
         });
 

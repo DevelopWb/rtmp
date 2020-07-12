@@ -105,8 +105,7 @@ public class MediaStream {
     public static final int CAMERA_FACING_FRONT = 1;
     public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
-    int nativeWidth = 1920, nativeHeight = 1080;//原生camera的宽高
-    int uvcWidth = 1920, uvcHeight = 1080;//uvcCamera的宽高
+    int nativeWidth = 640, nativeHeight = 480;//原生camera的宽高
     private int mTargetCameraId;
     private int frameWidth;
     private int frameHeight;
@@ -986,11 +985,6 @@ public class MediaStream {
             return;
         }
 
-//        if (uvcCamera != null) {
-//            uvcCamera.destroy();
-//            uvcCamera = null;
-//        }
-
         if (mCamera != null) {
             mCamera.stopPreview();
 
@@ -999,9 +993,7 @@ public class MediaStream {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             Log.i(TAG, "release Camera");
-
             mCamera = null;
         }
         stopCameraAudioVedio();

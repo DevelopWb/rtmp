@@ -805,32 +805,23 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         public void handleStillPicture(String picPath) {
             this.picPath = picPath;
         }
-        BlockingQueue<byte[]> cache = new ArrayBlockingQueue<byte[]>(100);
+//        BlockingQueue<byte[]> cache = new ArrayBlockingQueue<byte[]>(100);
         private final IFrameCallback mIFrameCallback = new IFrameCallback() {
             @Override
             public void onFrame(final ByteBuffer frame) {
-                frame.clear();
-
-                byte[] data = cache.poll();
-                if (data == null) {
-                    data = new byte[frame.capacity()];
-                }
-
-                frame.get(data);
-//				final MediaVideoBufferEncoder videoEncoder;
-//				synchronized (mSync) {
-//					videoEncoder = mVideoEncoder;
-//				}
-//				if (videoEncoder != null) {
-//					videoEncoder.frameAvailableSoon();
-//					videoEncoder.encode(frame);
-//				}
-//                int len = frame.capacity();
-//                final byte[] yuv = new byte[len];
-//                frame.get(yuv);
-                // nv21 yuv data callback
+//                frame.clear();
+//
+//                byte[] data = cache.poll();
+//                if (data == null) {
+//                    data = new byte[frame.capacity()];
+//                }
+//
+//                frame.get(data);
+                int len = frame.capacity();
+                final byte[] yuv = new byte[len];
+                frame.get(yuv);
                 if (mPreviewListener != null) {
-                    mPreviewListener.onPreviewResult(data);
+                    mPreviewListener.onPreviewResult(yuv);
                 }
 //                // picture
 //                if (isCaptureStill && !TextUtils.isEmpty(picPath)) {
