@@ -156,7 +156,7 @@ public class UVCCameraHelper {
         }
         // initialize camera handler
         mCamView.setAspectRatio(previewWidth / (float)previewHeight);
-        mCameraHandler = UVCCameraHandler.createHandler(mActivity, mCamView, 2,
+        mCameraHandler = UVCCameraHandler.createHandler(mActivity, mCamView, 1,
                 previewWidth, previewHeight, mFrameFormat);
     }
 
