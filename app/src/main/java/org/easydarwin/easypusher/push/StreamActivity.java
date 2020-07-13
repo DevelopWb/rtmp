@@ -163,22 +163,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 showShortMsg("connecting");
                 // initialize seekbar
                 // need to wait UVCCamera initialize over
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(2500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Looper.prepare();
-                        if (mCameraHelper != null && mCameraHelper.isCameraOpened()) {
-//                            mSeekbarBrightness.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_BRIGHTNESS));
-//                            mSeekbarContrast.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_CONTRAST));
-                        }
-                        Looper.loop();
-                    }
-                }).start();
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(2500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        Looper.prepare();
+//                        if (mCameraHelper != null && mCameraHelper.isCameraOpened()) {
+////                            mSeekbarBrightness.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_BRIGHTNESS));
+////                            mSeekbarContrast.setProgress(mCameraHelper.getModelValue(UVCCameraHelper.MODE_CONTRAST));
+//                        }
+//                        Looper.loop();
+//                    }
+//                }).start();
             }
         }
 
@@ -308,13 +308,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mCameraHelper.setDefaultPreviewSize(640,480);
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
 
-        mCameraHelper.setOnPreviewFrameListener(new AbstractUVCCameraHandler.OnPreViewResultListener() {
-            @Override
-            public void onPreviewResult(byte[] nv21Yuv) {
-                mMediaStream.onUvcCameraPreviewFrame(nv21Yuv,640,480);
-//                Log.d(TAG, "onPreviewResult: " + nv21Yuv.length);
-            }
-        });
 
     }
     @Override
@@ -336,10 +329,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
     @Override
     public void onSurfaceCreated(CameraViewInterface view, Surface surface) {
-        if (!isPreview && mCameraHelper.isCameraOpened()) {
-            mCameraHelper.startPreview(mUvcCameraView);
-            isPreview = true;
-        }
+//        if (!isPreview && mCameraHelper.isCameraOpened()) {
+//            mCameraHelper.startPreview(mUvcCameraView);
+//            isPreview = true;
+//        }
     }
 
     @Override
@@ -349,10 +342,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onSurfaceDestroy(CameraViewInterface view, Surface surface) {
-        if (isPreview && mCameraHelper.isCameraOpened()) {
-            mCameraHelper.stopPreview();
-            isPreview = false;
-        }
+//        if (isPreview && mCameraHelper.isCameraOpened()) {
+//            mCameraHelper.stopPreview();
+//            isPreview = false;
+//        }
     }
     /**
      * 初始化view
