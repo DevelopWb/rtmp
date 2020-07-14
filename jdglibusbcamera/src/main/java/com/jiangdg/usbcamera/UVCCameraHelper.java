@@ -6,6 +6,9 @@ import android.hardware.usb.UsbDevice;
 import android.os.Environment;
 
 import com.jiangdg.libusbcamera.R;
+
+import org.easydarwin.sw.TxtOverlay;
+
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.Size;
 import com.serenegiant.usb.USBMonitor;
@@ -15,8 +18,6 @@ import com.serenegiant.usb.common.UVCCameraHandler;
 import com.serenegiant.usb.encoder.RecordParams;
 import com.serenegiant.usb.widget.CameraViewInterface;
 
-
-import org.easydarwin.sw.TxtOverlay;
 
 import java.io.File;
 import java.util.List;
@@ -51,10 +52,9 @@ public class UVCCameraHelper {
     // Camera Handler
     private UVCCameraHandler mCameraHandler;
     private USBMonitor.UsbControlBlock mCtrlBlock;
-
+    public boolean uvcConnected = false;
     private Activity mActivity;
     private CameraViewInterface mCamView;
-    public boolean uvcConnected = false;
 
     private UVCCameraHelper() {
     }
@@ -111,8 +111,8 @@ public class UVCCameraHelper {
             @Override
             public void onConnect(final UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
                 mCtrlBlock = ctrlBlock;
-                openCamera(ctrlBlock);
                 uvcConnected = true;
+
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -135,7 +135,7 @@ public class UVCCameraHelper {
             // do nothing
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-                uvcConnected= false;
+                uvcConnected = false;
                 if (listener != null) {
                     listener.onDisConnectDev(device);
                 }
@@ -146,11 +146,9 @@ public class UVCCameraHelper {
             }
         });
 
+//        createUVCCamera();
     }
 
-    /**
-     * 创建uvcCamera
-     */
     public void createUVCCamera() {
         if (mCamView == null)
             throw new NullPointerException("CameraViewInterface cannot be null!");
@@ -162,8 +160,9 @@ public class UVCCameraHelper {
         }
         // initialize camera handler
         mCamView.setAspectRatio(previewWidth / (float) previewHeight);
-        mCameraHandler = UVCCameraHandler.createHandler(mActivity, mCamView, 1,
+        mCameraHandler = UVCCameraHandler.createHandler(mActivity, mCamView, 2,
                 previewWidth, previewHeight, mFrameFormat);
+        openCamera(mCtrlBlock);
     }
 
     public void updateResolution(int width, int height) {
@@ -190,7 +189,7 @@ public class UVCCameraHelper {
                     e.printStackTrace();
                 }
                 // start previewing
-                startPreview();
+                startPreview(mCamView);
             }
         }).start();
     }
@@ -327,8 +326,8 @@ public class UVCCameraHelper {
         }
     }
 
-    public void startPreview() {
-        SurfaceTexture st = mCamView.getSurfaceTexture();
+    public void startPreview(CameraViewInterface cameraView) {
+        SurfaceTexture st = cameraView.getSurfaceTexture();
         if (mCameraHandler != null) {
             mCameraHandler.startPreview(st);
         }

@@ -602,7 +602,7 @@ public class aaaActivity extends BaseProjectActivity implements View.OnClickList
 
             boolean enableVideo = SPUtil.getEnableVideo(this);
 
-            ms = new MediaStream(getApplicationContext(), surface, enableVideo);
+            ms = new MediaStream(getApplicationContext(), surface, null,null,enableVideo);
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
             startCamera();

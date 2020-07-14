@@ -197,10 +197,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     txtStatus.setText(state);
                     break;
                 case UVC_CONNECT:
-                    mUvcTextureView.setVisibility(View.VISIBLE);
-                    mMediaStream.destroyCamera();
+                    mMediaStream.stopPreview();
                     mSurfaceView.setVisibility(View.GONE);
-//                    mMediaStream.initConsumer(1280,720);
+                    mUvcTextureView.setVisibility(View.VISIBLE);
+                    mMediaStream.createUvcCamera();
                     break;
                 case UVC_DISCONNECT:
                     mCameraHelper.closeCamera();
@@ -305,7 +305,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         });
         mCameraHelper = UVCCameraHelper.getInstance();
-        mCameraHelper.setDefaultPreviewSize(640,480);
+        mUvcCameraView.setCallback(this);
+        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH),Hawk.get(HawkProperty.KEY_UVC_HEIGHT));
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
 
 
@@ -329,10 +330,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
     @Override
     public void onSurfaceCreated(CameraViewInterface view, Surface surface) {
-//        if (!isPreview && mCameraHelper.isCameraOpened()) {
-//            mCameraHelper.startPreview(mUvcCameraView);
-//            isPreview = true;
-//        }
+        if (!isPreview && mCameraHelper.isCameraOpened()) {
+            mCameraHelper.startPreview(mUvcCameraView);
+            isPreview = true;
+        }
     }
 
     @Override
@@ -342,10 +343,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onSurfaceDestroy(CameraViewInterface view, Surface surface) {
-//        if (isPreview && mCameraHelper.isCameraOpened()) {
-//            mCameraHelper.stopPreview();
-//            isPreview = false;
-//        }
+        if (isPreview && mCameraHelper.isCameraOpened()) {
+            mCameraHelper.stopPreview();
+            isPreview = false;
+        }
     }
     /**
      * 初始化view
@@ -714,7 +715,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
             boolean enableVideo = SPUtil.getEnableVideo(this);
 
-            ms = new MediaStream(getApplicationContext(), surface, enableVideo);
+            ms = new MediaStream(getApplicationContext(), surface,mCameraHelper,mUvcCameraView, enableVideo);
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
             startCamera();
@@ -723,7 +724,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     private void startCamera() {
-        mMediaStream.updateResolution();
+//        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();

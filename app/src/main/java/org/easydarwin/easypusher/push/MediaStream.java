@@ -23,6 +23,7 @@ import com.regmode.Utils.RegOperateManager;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.usb.common.AbstractUVCCameraHandler;
+import com.serenegiant.usb.widget.CameraViewInterface;
 
 import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.MyApp;
@@ -84,7 +85,6 @@ public class MediaStream {
 
     private Context context;
     WeakReference<SurfaceTexture> mSurfaceHolderRef;
-    WeakReference<UVCCameraHelper> mUvcHelper;
 
     private VideoConsumer mZeroVC, mFirstVC, mSecendVC, mThirdVC, mFourthVC, mRecordVC;
     private AudioStream audioStream;
@@ -113,19 +113,18 @@ public class MediaStream {
     private int frameWidth;
     private int frameHeight;
     private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
-
-    public void setUvcCameraHelper(UVCCameraHelper uvcCameraHelper) {
-        mUvcHelper = new WeakReference(uvcCameraHelper);
-    }
+    private UVCCameraHelper mUvcHelper;
+    private CameraViewInterface mUVCCameraView;
 
     /**
      * 初始化MediaStream
      */
-    public MediaStream(Context context, SurfaceTexture texture, boolean enableVideo) {
+    public MediaStream(Context context, SurfaceTexture texture, UVCCameraHelper uvcCameraHelper,CameraViewInterface mUVCCameraView, boolean enableVideo) {
         this.context = context;
         audioStream = AudioStream.getInstance(context);
         mSurfaceHolderRef = new WeakReference(texture);
-
+        this.mUvcHelper = uvcCameraHelper;
+        this.mUVCCameraView = mUVCCameraView;
         mCameraThread = new HandlerThread("CAMERA") {
             public void run() {
                 try {
@@ -197,11 +196,7 @@ public class MediaStream {
             return;
         }
 
-        if (mCameraId == CAMERA_FACING_BACK_UVC) {
-            createUvcCamera();
-        } else {
-            createNativeCamera();
-        }
+        createNativeCamera();
     }
 
     private void createNativeCamera() {
@@ -292,12 +287,47 @@ public class MediaStream {
     /**
      * uvc 第一步是创建camera
      */
-    private void createUvcCamera() {
+    public void createUvcCamera() {
+        mHevc = SPUtil.getHevcCodec(context);
+        if (mZeroEasyPusher == null) {
+            mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+        }
+        //Hawk.get(HawkProperty.APP_KEY)
+        if (mFirstEasyPusher == null) {
+            mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+        }
+        if (PublicUtil.isMoreThanTheAndroid10()) {
+            if (mSecendEasyPusher == null) {
+                mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+            }
+            if (mThirdEasyPusher == null) {
+                mThirdEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+            }
+            if (mFourthEasyPusher == null) {
+                mFourthEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+            }
+        }
 
+        if (!enableVideo) {
+            return;
+        }
         uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
         uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
-        mUvcHelper.get().setDefaultPreviewSize(uvcWidth,uvcHeight);
-        mUvcHelper.get().createUVCCamera();
+        mUvcHelper.createUVCCamera();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // wait for camera created
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // start previewing
+                startUvcPreview();
+            }
+        }).start();
+        initConsumer(uvcWidth, uvcHeight);
 
     }
 
@@ -308,22 +338,11 @@ public class MediaStream {
             mCameraHandler.post(() -> startPreview());
             return;
         }
-        if (mUvcHelper.get().uvcConnected) {
-           startUvcPreview();
-            initConsumer(uvcWidth, uvcHeight);
-        } else if (mCamera != null) {
-
+        if (mCamera != null) {
             startCameraPreview();
             initConsumer(frameWidth, frameHeight);
         }
-        audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
-        audioStream.addPusher(mZeroEasyPusher);
-        audioStream.addPusher(mFirstEasyPusher);
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            audioStream.addPusher(mSecendEasyPusher);
-            audioStream.addPusher(mThirdEasyPusher);
-            audioStream.addPusher(mFourthEasyPusher);
-        }
+
 
     }
 
@@ -378,6 +397,14 @@ public class MediaStream {
             mThirdVC.onVideoStart(width, height);
             mFourthVC.onVideoStart(width, height);
         }
+        audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
+        audioStream.addPusher(mZeroEasyPusher);
+        audioStream.addPusher(mFirstEasyPusher);
+        if (PublicUtil.isMoreThanTheAndroid10()) {
+            audioStream.addPusher(mSecendEasyPusher);
+            audioStream.addPusher(mThirdEasyPusher);
+            audioStream.addPusher(mFourthEasyPusher);
+        }
 
     }
 
@@ -385,15 +412,15 @@ public class MediaStream {
      * uvc 第二步 开始预览
      */
     private void startUvcPreview() {
-
+        mUvcHelper.startPreview(mUVCCameraView);
         try {
-            mUvcHelper.get().setOnPreviewFrameListener(new AbstractUVCCameraHandler.OnPreViewResultListener() {
+            mUvcHelper.setOnPreviewFrameListener(new AbstractUVCCameraHandler.OnPreViewResultListener() {
                 @Override
                 public void onPreviewResult(byte[] data) {
                     onUvcCameraPreviewFrame(data);
                 }
             });
-            mUvcHelper.get().startPreview();
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -442,46 +469,42 @@ public class MediaStream {
 
     /// 停止预览
     public synchronized void stopPreview() {
-        if (Thread.currentThread() != mCameraThread) {
-            mCameraHandler.post(() -> stopPreview());
-            return;
-        }
-
-        if (mUvcHelper.get().uvcConnected) {
-           mUvcHelper.get().stopPreview();
-        }
-
-        //        mCameraHandler.removeCallbacks(dequeueRunnable);
-
+//        if (Thread.currentThread() != mCameraThread) {
+//            mCameraHandler.post(() -> stopPreview());
+//            return;
+//        }
         // 关闭摄像头
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.setPreviewCallbackWithBuffer(null);
-        }
-
-        // 关闭音频采集和音频编码器
-        if (audioStream != null) {
-            audioStream.removePusher(mZeroEasyPusher);
-            audioStream.removePusher(mFirstEasyPusher);
-            if (PublicUtil.isMoreThanTheAndroid10()) {
-                audioStream.removePusher(mSecendEasyPusher);
-                audioStream.removePusher(mThirdEasyPusher);
-                audioStream.removePusher(mFourthEasyPusher);
+            try {
+                mCamera.release();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            audioStream.setMuxer(null);
-            Log.i(TAG, "Stop AudioStream");
+            Log.i(TAG, "release Camera");
+            mCamera = null;
         }
-        stopVcVedio(0);
-        for (int i = 0; i < 5; i++) {
-            stopVcVedio(i);
+        // 关闭视频编码器
+        if (mZeroVC != null) {
+            mZeroVC.onVideoStop();
         }
-
+        if (mFirstVC != null) {
+            mFirstVC.onVideoStop();
+        }
+        if (mSecendVC != null) {
+            mSecendVC.onVideoStop();
+        }
+        if (mThirdVC != null) {
+            mThirdVC.onVideoStop();
+        }
+        if (mFourthVC != null) {
+            mFourthVC.onVideoStop();
+        }
         // 关闭录像的编码器
         if (mRecordVC != null) {
             mRecordVC.onVideoStop();
         }
-
         // 关闭音视频合成器
         if (mMuxer != null) {
             mMuxer.release();
@@ -489,39 +512,6 @@ public class MediaStream {
         }
     }
 
-    /**
-     * 关闭视频编码器
-     * private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
-     *
-     * @param type
-     */
-    private void stopVcVedio(int type) {
-        VideoConsumer videoConsumer = null;
-        switch (type) {
-            case 0:
-                videoConsumer = mZeroVC;
-                break;
-            case 1:
-                videoConsumer = mFirstVC;
-                break;
-            case 2:
-                videoConsumer = mSecendVC;
-                break;
-            case 3:
-                videoConsumer = mThirdVC;
-                break;
-            case 4:
-                videoConsumer = mFourthVC;
-                break;
-            default:
-                break;
-        }
-        // 关闭视频编码器
-        if (videoConsumer != null) {
-            videoConsumer.onVideoStop();
-        }
-
-    }
 
 
     /// 开始推流
@@ -616,7 +606,7 @@ public class MediaStream {
             return;
         }
 
-        if (mCamera == null &&!mUvcHelper.get().uvcConnected) {
+        if (mCamera == null) {
             return;
         }
 
@@ -624,7 +614,7 @@ public class MediaStream {
         mMuxer = new EasyMuxer(new File(recordPath, new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date())).toString(), 300000);
 
         mRecordVC = new RecordVideoConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mMuxer, SPUtil.getEnableVideoOverlay(context), SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-        if (mUvcHelper.get().uvcConnected) {
+        if (mUvcHelper.uvcConnected) {
             mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         } else {
             boolean frameRotate;
@@ -665,7 +655,7 @@ public class MediaStream {
 
     /// 更新分辨率
     public void updateResolution() {
-        if (mCamera == null && !mUvcHelper.get().uvcConnected)
+        if (mCamera == null && !mUvcHelper.uvcConnected)
             return;
 
         stopPreview();
@@ -709,7 +699,7 @@ public class MediaStream {
 
             try {
                 if (mCameraId == CAMERA_FACING_BACK_UVC) {
-                    if (!mUvcHelper.get().uvcConnected) {
+                    if (!mUvcHelper.uvcConnected) {
                         return;
                     }
                 }
@@ -767,7 +757,6 @@ public class MediaStream {
     };
 
     /* ============================== UVC Camera ============================== */
-
 
 
     public void onUvcCameraPreviewFrame(byte[] data) {
@@ -940,29 +929,23 @@ public class MediaStream {
 
     /// 销毁Camera
     public synchronized void destroyCamera() {
-        if (Thread.currentThread() != mCameraThread) {
-            mCameraHandler.post(() -> destroyCamera());
-            return;
-        }
-
-        if (mUvcHelper.get().uvcConnected) {
-            mUvcHelper.get().stopPreview();
-        }
-
-        if (mCamera != null) {
-            mCamera.stopPreview();
-
-            try {
-                mCamera.release();
-            } catch (Exception e) {
-                e.printStackTrace();
+//        if (Thread.currentThread() != mCameraThread) {
+//            mCameraHandler.post(() -> destroyCamera());
+//            return;
+//        }
+        // 关闭音频采集和音频编码器
+        if (audioStream != null) {
+            audioStream.removePusher(mZeroEasyPusher);
+            audioStream.removePusher(mFirstEasyPusher);
+            if (PublicUtil.isMoreThanTheAndroid10()) {
+                audioStream.removePusher(mSecendEasyPusher);
+                audioStream.removePusher(mThirdEasyPusher);
+                audioStream.removePusher(mFourthEasyPusher);
             }
 
-            Log.i(TAG, "release Camera");
-
-            mCamera = null;
+            audioStream.setMuxer(null);
+            Log.i(TAG, "Stop AudioStream");
         }
-
         if (mMuxer != null) {
             mMuxer.release();
             mMuxer = null;
