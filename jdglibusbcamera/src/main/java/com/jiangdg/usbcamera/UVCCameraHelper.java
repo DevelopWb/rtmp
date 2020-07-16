@@ -56,6 +56,8 @@ public class UVCCameraHelper {
     private Activity mActivity;
     private CameraViewInterface mCamView;
 
+
+    private boolean  disConnectStatus = false;//解决段开始 监听到两次的问题
     private UVCCameraHelper() {
     }
 
@@ -110,6 +112,7 @@ public class UVCCameraHelper {
             // do open camera,start previewing
             @Override
             public void onConnect(final UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
+                disConnectStatus = false;
                 mCtrlBlock = ctrlBlock;
                 uvcConnected = true;
 
@@ -136,9 +139,13 @@ public class UVCCameraHelper {
             @Override
             public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
                 uvcConnected = false;
-                if (listener != null) {
-                    listener.onDisConnectDev(device);
+                if (!disConnectStatus) {
+                    disConnectStatus = true;
+                    if (listener != null) {
+                        listener.onDisConnectDev(device);
+                    }
                 }
+
             }
 
             @Override
@@ -153,7 +160,7 @@ public class UVCCameraHelper {
         if (mCamView == null)
             throw new NullPointerException("CameraViewInterface cannot be null!");
 
-        // release resources for initializing camera handler
+//        // release resources for initializing camera handler
         if (mCameraHandler != null) {
             mCameraHandler.release();
             mCameraHandler = null;

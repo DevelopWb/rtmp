@@ -134,6 +134,10 @@ public class HawkProperty {
      * 下次提醒升级的key
      */
     public static final String NEXT_WARN_UPDATE= "NEXT_WARN_UPDATE";
+    /**
+     * 当前的摄像头
+     */
+    public static final String CURRENT_NATIVE_CAMERA= "CURRENT_NATIVE_CAMERA";
 
 
 

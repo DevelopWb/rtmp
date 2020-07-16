@@ -271,7 +271,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 
     public void release() {
         mReleased = true;
-        close();
+//        close();
         sendEmptyMessage(MSG_RELEASE);
     }
 

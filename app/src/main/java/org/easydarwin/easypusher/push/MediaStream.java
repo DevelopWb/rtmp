@@ -20,8 +20,6 @@ import com.jiangdg.usbcamera.UVCCameraHelper;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.Utils.RegOperateManager;
-import com.serenegiant.usb.IFrameCallback;
-import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.usb.common.AbstractUVCCameraHandler;
 import com.serenegiant.usb.widget.CameraViewInterface;
 
@@ -49,14 +47,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar;
 import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
@@ -69,7 +64,7 @@ import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_TI_FormatYUV4
  * 摄像头实时数据采集，并调用相关编码器
  */
 public class MediaStream {
-    private static final String TAG = aaaMediaStream.class.getSimpleName();
+    private static final String TAG = "MediaStream";
     private static final int SWITCH_CAMERA = 11;
 
     private final boolean enableVideo;
@@ -105,7 +100,6 @@ public class MediaStream {
      * */ int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     public static final int CAMERA_FACING_BACK = 0;//后置
     public static final int CAMERA_FACING_FRONT = 1;
-    public static final int CAMERA_FACING_BACK_UVC = 2;
     public static final int CAMERA_FACING_BACK_LOOP = -1;
     int nativeWidth = 1920, nativeHeight = 1080;//原生camera的宽高
     int uvcWidth = 1280, uvcHeight = 720;//uvcCamera的宽高
@@ -134,11 +128,11 @@ public class MediaStream {
                     Intent intent = new Intent(context, BackgroundCameraService.class);
                     context.stopService(intent);
                 } finally {
-                    for (int i = 0; i < 5; i++) {
-                        stopPusherStream(i);
-                    }
-                    stopPreview();
-                    destroyCamera();
+//                    for (int i = 0; i < 5; i++) {
+//                        stopPusherStream(i);
+//                    }
+//                    stopPreview();
+//                    releaseAudioStream();
                 }
             }
         };
@@ -279,7 +273,7 @@ public class MediaStream {
             e.printStackTrace(pw);
 
             //            String stack = sw.toString();
-            destroyCamera();
+            releaseAudioStream();
             e.printStackTrace();
         }
     }
@@ -427,12 +421,22 @@ public class MediaStream {
 
     }
 
+    /**
+     * uvc 停止预览
+     */
+    public  void  stopUvcPreview(){
+        mUvcHelper.stopPreview();
+        releaseResource();
+        releaseAudioStream();
+//        mUvcHelper.closeCamera();
+        mUvcHelper.setOnPreviewFrameListener(null);
+
+    }
     private void startCameraPreview() {
         int previewFormat = parameters.getPreviewFormat();
 
         Camera.Size previewSize = parameters.getPreviewSize();
         int size = previewSize.width * previewSize.height * ImageFormat.getBitsPerPixel(previewFormat) / 8;
-        mCamera.addCallbackBuffer(new byte[size]);
         mCamera.addCallbackBuffer(new byte[size]);
         mCamera.setPreviewCallbackWithBuffer(previewCallback);
 
@@ -485,6 +489,14 @@ public class MediaStream {
             Log.i(TAG, "release Camera");
             mCamera = null;
         }
+        releaseResource();
+        releaseAudioStream();
+    }
+
+    /**
+     * 释放资源
+     */
+    public void releaseResource() {
         // 关闭视频编码器
         if (mZeroVC != null) {
             mZeroVC.onVideoStop();
@@ -505,13 +517,12 @@ public class MediaStream {
         if (mRecordVC != null) {
             mRecordVC.onVideoStop();
         }
-        // 关闭音视频合成器
-        if (mMuxer != null) {
-            mMuxer.release();
-            mMuxer = null;
-        }
+//        // 关闭音视频合成器
+//        if (mMuxer != null) {
+//            mMuxer.release();
+//            mMuxer = null;
+//        }
     }
-
 
 
     /// 开始推流
@@ -659,7 +670,7 @@ public class MediaStream {
             return;
 
         stopPreview();
-        destroyCamera();
+        releaseAudioStream();
         //
         //        mCameraHandler.post(() -> {
         //            frameWidth = w;
@@ -698,14 +709,11 @@ public class MediaStream {
                 return;
 
             try {
-                if (mCameraId == CAMERA_FACING_BACK_UVC) {
-                    if (!mUvcHelper.uvcConnected) {
-                        return;
-                    }
-                }
-
-                stopPreview();
-                destroyCamera();
+//                if (mCameraId == CAMERA_FACING_BACK_UVC) {
+//                    if (!mUvcHelper.uvcConnected) {
+//                        return;
+//                    }
+//                }
                 createCamera(mCameraId);
                 startPreview();
             } catch (Exception e) {
@@ -928,9 +936,9 @@ public class MediaStream {
     }
 
     /// 销毁Camera
-    public synchronized void destroyCamera() {
+    public synchronized void releaseAudioStream() {
 //        if (Thread.currentThread() != mCameraThread) {
-//            mCameraHandler.post(() -> destroyCamera());
+//            mCameraHandler.post(() -> releaseAudioStream());
 //            return;
 //        }
         // 关闭音频采集和音频编码器

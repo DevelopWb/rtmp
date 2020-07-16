@@ -124,15 +124,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private boolean isPreview;
     private UVCCameraHelper mCameraHelper;
 
+    private  boolean uvcConnected = false;
+
 
     private UVCCameraHelper.OnMyDevConnectListener listener = new UVCCameraHelper.OnMyDevConnectListener() {
 
         @Override
         public void onAttachDev(UsbDevice device) {
-
-
-
-            // request open permission
             if (!isRequest) {
                 isRequest = true;
                 if (mCameraHelper != null) {
@@ -154,7 +152,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         @Override
         public void onConnectDev(UsbDevice device, boolean isConnected) {
             handler.sendEmptyMessage(UVC_CONNECT);
-
+            uvcConnected = true;
             if (!isConnected) {
                 showShortMsg("fail to connect,please check resolution params");
                 isPreview = false;
@@ -185,6 +183,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         @Override
         public void onDisConnectDev(UsbDevice device) {
             handler.sendEmptyMessage(UVC_DISCONNECT);
+            uvcConnected = false;
             showShortMsg("disconnecting");
         }
     };
@@ -197,16 +196,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     txtStatus.setText(state);
                     break;
                 case UVC_CONNECT:
-                    mMediaStream.stopPreview();
-                    mSurfaceView.setVisibility(View.GONE);
-                    mUvcTextureView.setVisibility(View.VISIBLE);
-                    mMediaStream.createUvcCamera();
+                    switchToUvcCamera();
                     break;
                 case UVC_DISCONNECT:
-                    mCameraHelper.closeCamera();
-                    mSurfaceView.setVisibility(View.VISIBLE);
-                    mMediaStream.startPreview();
-                    mUvcTextureView.setVisibility(View.GONE);
+                    //拔掉otg后 自动切换到后置摄像头
+                    releaseUvcCamera();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // wait for camera created
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).start();
                     Display mDisplay = getWindowManager().getDefaultDisplay();
                     int W = mDisplay.getWidth();
                     int H = mDisplay.getHeight();
@@ -214,42 +220,41 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     params.height = H;
                     params.width = W;
                     mSurfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
-                    if (mMediaStream != null) {
-                        if (mMediaStream.isZeroPushStream) {
-                            startOrStopPush();
-                        }
-                        if (mMediaStream.isFirstPushStream) {
-                            startOrStopFirstPush();
-                        }
-                        if (mMediaStream.isSecendPushStream) {
-                            startOrStopSecendPush();
-                        }
-                    }
-                    mScreenResTv.setVisibility(View.VISIBLE);
-                    mSwitchOritation.setVisibility(View.VISIBLE);
                     int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
                     if (2 == position) {
                         position = 0;
                         SPUtil.setScreenPushingCameraIndex(StreamActivity.this, position);
                     }
-                    switch (position) {
-                        case 0:
-                            mSelectCameraTv.setText("摄像头:后置");
-                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
-                            break;
-                        case 1:
-                            mSelectCameraTv.setText("摄像头:前置");
-                            mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
+                    mSelectCameraTv.setText("摄像头:后置");
+                    mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
             }
         }
     };
+
+    /**
+     * 切换到uvcCamera
+     */
+    private void switchToUvcCamera() {
+        mMediaStream.stopPreview();
+        mSurfaceView.setVisibility(View.GONE);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mUvcTextureView.setVisibility(View.VISIBLE);
+        mMediaStream.createUvcCamera();
+        mSelectCameraTv.setText("摄像头:外置");
+    }
+    /**
+     * 释放uvcCamera
+     */
+    private void releaseUvcCamera() {
+        mMediaStream.stopUvcPreview();
+        mSurfaceView.setVisibility(View.VISIBLE);
+        mUvcTextureView.setVisibility(View.GONE);
+    }
+
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -306,7 +311,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         });
         mCameraHelper = UVCCameraHelper.getInstance();
         mUvcCameraView.setCallback(this);
-        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH),Hawk.get(HawkProperty.KEY_UVC_HEIGHT));
+        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH,1920),Hawk.get(HawkProperty.KEY_UVC_HEIGHT,1080));
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
 
 
@@ -726,7 +731,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private void startCamera() {
 //        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
-        mMediaStream.createCamera(getSelectedCameraIndex());
+        mMediaStream.createCamera(2==getSelectedCameraIndex()?0:1);
         mMediaStream.startPreview();
 
         //        sendMessage(getPushStatusMsg());
@@ -937,15 +942,35 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 switch (which) {
                                     case 0:
                                         mSelectCameraTv.setText("摄像头:后置");
+                                        if (uvcConnected) {
+                                            releaseUvcCamera();
+                                        }else {
+                                            mMediaStream.stopPreview();
+                                            try {
+                                                Thread.sleep(500);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                                         break;
                                     case 1:
                                         mSelectCameraTv.setText("摄像头:前置");
+                                        if (uvcConnected) {
+                                            releaseUvcCamera();
+                                        }else {
+                                            mMediaStream.stopPreview();
+                                            try {
+                                                Thread.sleep(500);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
                                         break;
                                     case 2:
                                         mSelectCameraTv.setText("摄像头:外置");
-                                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+                                       mCameraHelper.requestPermission(0);
                                         break;
                                     default:
                                         break;
@@ -1047,9 +1072,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private CharSequence[] getCameras() {
-//        if (UVCCameraService.uvcConnected) {
-//            return new CharSequence[]{"外置摄像头"};
-//        }
+        if (uvcConnected) {
+            return new CharSequence[]{"后置摄像头", "前置摄像头","外置摄像头"};
+        }
         return new CharSequence[]{"后置摄像头", "前置摄像头"};
 
     }
@@ -1060,12 +1085,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private int getSelectedCameraIndex() {
-        int position = SPUtil.getScreenPushingCameraIndex(this);
-//        if (UVCCameraService.uvcConnected) {
-//            SPUtil.setScreenPushingCameraIndex(this, 2);
-//            return 2;
-//        }
-        return position;
+        return SPUtil.getScreenPushingCameraIndex(this);
 
     }
 
@@ -1074,17 +1094,29 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      *
      * @return
      */
+    /**
+     * 获取选择的摄像头的index
+     *
+     * @return
+     */
     private String getSelectedCamera() {
-        int position = SPUtil.getScreenPushingCameraIndex(this);
-//        if (UVCCameraService.uvcConnected) {
-//            SPUtil.setScreenPushingCameraIndex(this, 2);
-//            return "外置";
-//        }
-
-        return 0 == position ? "后置" : "前置";
-
+        String  cameraName = null;
+        int position = getSelectedCameraIndex();
+        switch (position) {
+            case 0:
+                cameraName =  "后置";
+            break;
+            case 1:
+                cameraName = "后置";
+            break;
+            case 2:
+                cameraName = "外置";
+            break;
+            default:
+                break;
+        }
+        return cameraName;
     }
-
 
     /*
      * 推送屏幕
@@ -1159,11 +1191,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 切换分辨率
      * */
     public void onClickResolution(View view) {
-//        if (UVCCameraService.uvcConnected) {
-//            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
-//        } else {
-//            setCameraRes(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
-//        }
+        if (uvcConnected) {
+            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
+        } else {
+            setCameraRes(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
+        }
 
     }
 
@@ -1192,16 +1224,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
                             Hawk.put(HawkProperty.KEY_NATIVE_WIDTH, Integer.parseInt(titles[0]));
                             Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT, Integer.parseInt(titles[1]));
+                            if (mMediaStream != null) {
+                                mMediaStream.updateResolution();
+                            }
                         } else {
                             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
                             Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
                             Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
+                            mCameraHelper.updateResolution(Integer.parseInt(titles[0]),Integer.parseInt(titles[1]));
                         }
                         mScreenResTv.setText("分辨率:" + title);
 
-                        if (mMediaStream != null) {
-                            mMediaStream.updateResolution();
-                        }
+
                         dialog.dismiss();
                     }
 

@@ -24,7 +24,6 @@ import java.nio.ByteBuffer;
 
 public class UVCCameraService extends Service {
 
-    public static boolean uvcConnected = false;
     public static boolean uvcAttached = false;
     private static  UvcConnectionStatus  uvcConnectedCallBack;
 
@@ -125,7 +124,6 @@ public class UVCCameraService extends Service {
             @Override
             public void onConnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock, final boolean createNew) {
                 releaseCamera();
-                uvcConnected = true;
 
                     Log.v(TAG, "onConnect:");
 
@@ -169,7 +167,6 @@ public class UVCCameraService extends Service {
             @Override
             public void onDisconnect(final UsbDevice device, final USBMonitor.UsbControlBlock ctrlBlock) {
                 Log.v(TAG, "onDisconnect:");
-                uvcConnected = false;
 //                Toast.makeText(MainActivity.this, R.string.usb_camera_disconnected, Toast.LENGTH_SHORT).show();
 
 //                releaseCamera();
