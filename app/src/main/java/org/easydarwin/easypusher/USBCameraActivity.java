@@ -250,7 +250,7 @@ public class USBCameraActivity extends AppCompatActivity implements CameraDialog
                     showShortMsg("sorry,camera open failed");
                     return super.onOptionsItemSelected(item);
                 }
-                if (!mCameraHelper.isPushing()) {
+                if (!mCameraHelper.isRecording()) {
                     String videoPath = UVCCameraHelper.ROOT_PATH + PublicUtil.DIRECTORY_NAME + "/videos/" + System.currentTimeMillis()
                             + UVCCameraHelper.SUFFIX_MP4;
 

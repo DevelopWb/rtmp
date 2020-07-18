@@ -171,10 +171,11 @@ public class MediaStream {
             mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
         //Hawk.get(HawkProperty.APP_KEY)
-        if (mFirstEasyPusher == null) {
-            mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
-        }
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            if (mFirstEasyPusher == null) {
+                mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+            }
             if (mSecendEasyPusher == null) {
                 mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
             }
@@ -287,10 +288,11 @@ public class MediaStream {
             mZeroEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
         }
         //Hawk.get(HawkProperty.APP_KEY)
-        if (mFirstEasyPusher == null) {
-            mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
-        }
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            if (mFirstEasyPusher == null) {
+                mFirstEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
+            }
             if (mSecendEasyPusher == null) {
                 mSecendEasyPusher = new EasyRTMP(mHevc ? EasyRTMP.VIDEO_CODEC_H265 : EasyRTMP.VIDEO_CODEC_H264, Hawk.get(HawkProperty.APP_KEY));
             }
@@ -362,11 +364,12 @@ public class MediaStream {
                     info.mName,
                     info.mColorFormat);
             mZeroVC = new ClippableVideoConsumer(context, hw, width, height, SPUtil.getEnableVideoOverlay(context));
-            HWConsumer hwBili = new HWConsumer(context,
-                    mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFirstEasyPusher,
-                    SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
-            mFirstVC = new ClippableVideoConsumer(context, hwBili, width, height, SPUtil.getEnableVideoOverlay(context));
+
             if (PublicUtil.isMoreThanTheAndroid10()) {
+                HWConsumer hwBili = new HWConsumer(context,
+                        mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mFirstEasyPusher,
+                        SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
+                mFirstVC = new ClippableVideoConsumer(context, hwBili, width, height, SPUtil.getEnableVideoOverlay(context));
                 HWConsumer hwHuya = new HWConsumer(context,
                         mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mSecendEasyPusher,
                         SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
@@ -385,16 +388,18 @@ public class MediaStream {
 
         }
         mZeroVC.onVideoStart(width, height);
-        mFirstVC.onVideoStart(width, height);
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            mFirstVC.onVideoStart(width, height);
             mSecendVC.onVideoStart(width, height);
             mThirdVC.onVideoStart(width, height);
             mFourthVC.onVideoStart(width, height);
         }
         audioStream.setEnableAudio(SPUtil.getEnableAudio(context));
         audioStream.addPusher(mZeroEasyPusher);
-        audioStream.addPusher(mFirstEasyPusher);
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            audioStream.addPusher(mFirstEasyPusher);
             audioStream.addPusher(mSecendEasyPusher);
             audioStream.addPusher(mThirdEasyPusher);
             audioStream.addPusher(mFourthEasyPusher);
@@ -617,7 +622,7 @@ public class MediaStream {
             return;
         }
 
-        if (mCamera == null) {
+        if (mCamera == null&&!mUvcHelper.uvcConnected) {
             return;
         }
 
@@ -626,7 +631,7 @@ public class MediaStream {
 
         mRecordVC = new RecordVideoConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mMuxer, SPUtil.getEnableVideoOverlay(context), SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
         if (mUvcHelper.uvcConnected) {
-            mRecordVC.onVideoStart(uvcWidth, uvcHeight);
+            mRecordVC.onVideoStart(uvcHeight, uvcWidth);
         } else {
             boolean frameRotate;
             int result;
@@ -755,8 +760,9 @@ public class MediaStream {
         }
 
         mZeroVC.onVideo(data, 0);
-        mFirstVC.onVideo(data, 0);
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            mFirstVC.onVideo(data, 0);
             mSecendVC.onVideo(data, 0);
             mThirdVC.onVideo(data, 0);
             mFourthVC.onVideo(data, 0);
@@ -783,8 +789,9 @@ public class MediaStream {
         }
 
         mZeroVC.onVideo(data, 0);
-        mFirstVC.onVideo(data, 0);
+
         if (PublicUtil.isMoreThanTheAndroid10()) {
+            mFirstVC.onVideo(data, 0);
             mSecendVC.onVideo(data, 0);
             mThirdVC.onVideo(data, 0);
             mFourthVC.onVideo(data, 0);
@@ -944,8 +951,9 @@ public class MediaStream {
         // 关闭音频采集和音频编码器
         if (audioStream != null) {
             audioStream.removePusher(mZeroEasyPusher);
-            audioStream.removePusher(mFirstEasyPusher);
+
             if (PublicUtil.isMoreThanTheAndroid10()) {
+                audioStream.removePusher(mFirstEasyPusher);
                 audioStream.removePusher(mSecendEasyPusher);
                 audioStream.removePusher(mThirdEasyPusher);
                 audioStream.removePusher(mFourthEasyPusher);

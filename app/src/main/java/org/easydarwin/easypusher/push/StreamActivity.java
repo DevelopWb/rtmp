@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -47,8 +46,8 @@ import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
 import com.regmode.Utils.RegOperateManager;
-import com.serenegiant.usb.Size;
 import com.serenegiant.usb.common.AbstractUVCCameraHandler;
+import com.serenegiant.usb.encoder.RecordParams;
 import com.serenegiant.usb.widget.CameraViewInterface;
 import com.serenegiant.usb.widget.UVCCameraTextureView;
 import com.squareup.otto.Subscribe;
@@ -59,6 +58,7 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.USBCameraActivity;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
@@ -1046,16 +1046,62 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
 
                 ImageView ib = findViewById(R.id.streaming_activity_record);
-
-                if (mMediaStream != null) {
-                    if (mMediaStream.isRecording()) {
-                        mMediaStream.stopRecord();
+                if (uvcConnected) {
+                    if (mCameraHelper == null || !mCameraHelper.isCameraOpened()) {
+                        showShortMsg("sorry,camera open failed");
+                        return;
+                    }
+                    if (!mCameraHelper.isRecording()) {
                         ib.setImageResource(R.drawable.record_pressed);
-                    } else {
-                        mMediaStream.startRecord();
+                        String videoPath = Config.recordPath()+File.separator + System.currentTimeMillis();
+
+//                    FileUtils.createfile(FileUtils.ROOT_PATH + "test666.h264");
+                        // if you want to record,please create RecordParams like this
+                        RecordParams params = new RecordParams();
+                        params.setRecordPath(videoPath);
+                        params.setRecordDuration(0);                        // auto divide saved,default 0 means not divided
+                        params.setVoiceClose(false);    // is close voice
+
+                        params.setSupportOverlay(true); // overlay only support armeabi-v7a & arm64-v8a
+                        mCameraHelper.startPusher(params, new AbstractUVCCameraHandler.OnEncodeResultListener() {
+                            @Override
+                            public void onEncodeResult(byte[] data, int offset, int length, long timestamp, int type) {
+                                // type = 1,h264 video stream
+                                if (type == 1) {
+                                    FileUtils.putFileStream(data, offset, length);
+                                }
+                                // type = 0,aac audio stream
+                                if (type == 0) {
+
+                                }
+                            }
+
+                            @Override
+                            public void onRecordResult(String videoPath) {
+                                if (TextUtils.isEmpty(videoPath)) {
+                                    return;
+                                }
+                                new Handler(getMainLooper()).post(() -> Toast.makeText(StreamActivity.this, "save videoPath:" + videoPath, Toast.LENGTH_SHORT).show());
+                            }
+                        });
+                    }else {
                         ib.setImageResource(R.drawable.record);
+                        FileUtils.releaseFile();
+                        mCameraHelper.stopPusher();
+                        showShortMsg("stop record...");
+                    }
+                }else {
+                    if (mMediaStream != null) {
+                        if (mMediaStream.isRecording()) {
+                            mMediaStream.stopRecord();
+                            ib.setImageResource(R.drawable.record_pressed);
+                        } else {
+                            mMediaStream.startRecord();
+                            ib.setImageResource(R.drawable.record);
+                        }
                     }
                 }
+
                 break;
             case R.id.set_ll:
                 //设置

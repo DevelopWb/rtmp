@@ -272,13 +272,13 @@ public class UVCCameraHelper {
     }
 
     public void startPusher(AbstractUVCCameraHandler.OnEncodeResultListener listener) {
-        if (mCameraHandler != null && !isPushing()) {
+        if (mCameraHandler != null && !isRecording()) {
             mCameraHandler.startRecording(null, listener);
         }
     }
 
     public void startPusher(RecordParams params, AbstractUVCCameraHandler.OnEncodeResultListener listener) {
-        if (mCameraHandler != null && !isPushing()) {
+        if (mCameraHandler != null && !isRecording()) {
             if (params.isSupportOverlay()) {
                 TxtOverlay.install(mActivity.getApplicationContext());
             }
@@ -287,12 +287,12 @@ public class UVCCameraHelper {
     }
 
     public void stopPusher() {
-        if (mCameraHandler != null && isPushing()) {
+        if (mCameraHandler != null && isRecording()) {
             mCameraHandler.stopRecording();
         }
     }
 
-    public boolean isPushing() {
+    public boolean isRecording() {
         if (mCameraHandler != null) {
             return mCameraHandler.isRecording();
         }
