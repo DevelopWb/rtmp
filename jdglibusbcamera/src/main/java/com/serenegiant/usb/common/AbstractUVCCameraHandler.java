@@ -833,6 +833,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 //                        }
 //                    }).start();
 //                }
+
 //                // video
                 if (mH264Consumer != null) {
                     // overlay

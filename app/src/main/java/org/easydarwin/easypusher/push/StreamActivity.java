@@ -1052,8 +1052,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         return;
                     }
                     if (!mCameraHelper.isRecording()) {
+                        // 通知UI 开始录像
+                        BUSUtil.BUS.post(new StartRecord());
                         ib.setImageResource(R.drawable.record_pressed);
-                        String videoPath = Config.recordPath()+File.separator + System.currentTimeMillis();
+                        String videoPath = Config.recordPath()+File.separator + System.currentTimeMillis() + UVCCameraHelper.SUFFIX_MP4;;
 
 //                    FileUtils.createfile(FileUtils.ROOT_PATH + "test666.h264");
                         // if you want to record,please create RecordParams like this
@@ -1081,6 +1083,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 if (TextUtils.isEmpty(videoPath)) {
                                     return;
                                 }
+                                BUSUtil.BUS.post(new StopRecord());
                                 new Handler(getMainLooper()).post(() -> Toast.makeText(StreamActivity.this, "save videoPath:" + videoPath, Toast.LENGTH_SHORT).show());
                             }
                         });
