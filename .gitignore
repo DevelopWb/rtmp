@@ -6,7 +6,5 @@
 build/
 
 *.iml
-
 app/rtmp
-
 local.properties
