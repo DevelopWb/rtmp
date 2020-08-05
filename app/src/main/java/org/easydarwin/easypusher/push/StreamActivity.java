@@ -313,7 +313,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mUvcCameraView.setCallback(this);
         mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH,1920),Hawk.get(HawkProperty.KEY_UVC_HEIGHT,1080));
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
-
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(new Intent(this, BackgroundService.class));
+        } else {
+            // Pre-O behavior.
+            startService(new Intent(this, BackgroundService.class));
+        }
 
     }
     @Override
@@ -915,12 +920,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
-                if (Build.VERSION.SDK_INT >= 26) {
-                    startForegroundService(new Intent(this, BackgroundService.class));
-                } else {
-                    // Pre-O behavior.
-                    startService(new Intent(this, BackgroundService.class));
-                }
+
             }).setPositiveButton("退出程序", (dialogInterface, i) -> {
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
