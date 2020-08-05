@@ -90,6 +90,9 @@
         <service
             android:name=".push.BackgroundCameraService"
             android:enabled="true" />
+        <service
+            android:name=".push.BackgroundService"
+            android:enabled="true" />
 
         <service
             android:name=".push.UVCCameraService"

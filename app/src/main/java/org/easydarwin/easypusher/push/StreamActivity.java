@@ -440,6 +440,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mCameraHelper != null) {
             mCameraHelper.release();
         }
+        stopService(new Intent(this,BackgroundService.class));
         BUSUtil.BUS.unregister(this);
         if (conn != null) {
             unbindService(conn);
@@ -449,16 +450,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         handler.removeCallbacksAndMessages(null);
         if (mMediaStream != null) {
             mMediaStream.stopPreview();
-            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-                mService.activePreview();
-            } else {
-                for (int i = 0; i < 5; i++) {
-                    mMediaStream.stopPusherStream(i);
-                }
-                mMediaStream.release();
-                mMediaStream = null;
-                stopService(new Intent(this, BackgroundCameraService.class));
+            for (int i = 0; i < 5; i++) {
+                mMediaStream.stopPusherStream(i);
             }
+            mMediaStream.release();
+            mMediaStream = null;
+            stopService(new Intent(this, BackgroundCameraService.class));
+//            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+//                mService.activePreview();
+//            } else {
+//                for (int i = 0; i < 5; i++) {
+//                    mMediaStream.stopPusherStream(i);
+//                }
+//                mMediaStream.release();
+//                mMediaStream = null;
+//                stopService(new Intent(this, BackgroundCameraService.class));
+//            }
         }
         super.onDestroy();
     }
@@ -902,7 +909,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
             new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后," +
                     "再回来这里关闭直播。").setNeutralButton("后台采集", (dialogInterface, i) -> {
-                StreamActivity.super.onBackPressed();
+//                StreamActivity.super.onBackPressed();
+                //实现home键效果
+                Intent intent= new Intent(Intent.ACTION_MAIN);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+                startService(new Intent(this,BackgroundService.class));
             }).setPositiveButton("退出程序", (dialogInterface, i) -> {
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
