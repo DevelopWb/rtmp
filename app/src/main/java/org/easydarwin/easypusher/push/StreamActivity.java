@@ -915,7 +915,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
-                startService(new Intent(this,BackgroundService.class));
+                if (Build.VERSION.SDK_INT >= 26) {
+                    startForegroundService(new Intent(this, BackgroundService.class));
+                } else {
+                    // Pre-O behavior.
+                    startService(new Intent(this, BackgroundService.class));
+                }
             }).setPositiveButton("退出程序", (dialogInterface, i) -> {
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
