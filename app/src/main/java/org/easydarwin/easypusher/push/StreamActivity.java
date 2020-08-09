@@ -311,7 +311,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         });
         mCameraHelper = UVCCameraHelper.getInstance();
         mUvcCameraView.setCallback(this);
-        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH,1920),Hawk.get(HawkProperty.KEY_UVC_HEIGHT,1080));
+        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH,1280),Hawk.get(HawkProperty.KEY_UVC_HEIGHT,720));
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(new Intent(this, BackgroundService.class));
