@@ -318,6 +318,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         } else {
             // Pre-O behavior.
             startService(new Intent(this, BackgroundService.class));
+
         }
 
     }
