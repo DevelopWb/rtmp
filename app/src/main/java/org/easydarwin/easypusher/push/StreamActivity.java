@@ -284,7 +284,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mThirdLiveIv;
     private ImageView mFourthLiveIv;
     private ImageView mVedioPushBottomTagIv;
-    private ImageView mSecendLiveIv, mBlackBgIv;
+    private ImageView mSecendLiveIv;
     private Intent uvcServiceIntent;
     private CameraViewInterface mUvcCameraView;
     private UVCCameraTextureView mUvcTextureView;
@@ -392,7 +392,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFourthLiveIv = (ImageView) findViewById(R.id.fourth_live_iv);
         mFourthLiveIv.setOnClickListener(this);
         mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
-        mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
+//        mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
 //        mBlackBgIv.setOnClickListener(new DoubleClickListener() {
@@ -666,29 +666,29 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private void initSurfaceViewClick() {
         mSurfaceView.setSurfaceTextureListener(this);
-        mSurfaceView.setOnClickListener(new DoubleClickListener() {
-            @Override
-            public void onDoubleClick(View v) {
-                if (mBlackBgIv.getVisibility() == View.VISIBLE) {
-                    mBlackBgIv.setVisibility(View.GONE);
-                } else {
-                    mBlackBgIv.setVisibility(View.VISIBLE);
-                }
-                //                //推流
-                //                if (!mMediaStream.isStreaming()) {
-                //                    mPushStreamIv.performClick();
-                //                }
-            }
-
-            @Override
-            public void onOneClick(View v) {
-                try {
-                    mMediaStream.getCamera().autoFocus(null);
-                } catch (Exception e) {
-
-                }
-            }
-        });
+//        mSurfaceView.setOnClickListener(new DoubleClickListener() {
+//            @Override
+//            public void onDoubleClick(View v) {
+//                if (mBlackBgIv.getVisibility() == View.VISIBLE) {
+//                    mBlackBgIv.setVisibility(View.GONE);
+//                } else {
+//                    mBlackBgIv.setVisibility(View.VISIBLE);
+//                }
+//                //                //推流
+//                //                if (!mMediaStream.isStreaming()) {
+//                //                    mPushStreamIv.performClick();
+//                //                }
+//            }
+//
+//            @Override
+//            public void onOneClick(View v) {
+//                try {
+//                    mMediaStream.getCamera().autoFocus(null);
+//                } catch (Exception e) {
+//
+//                }
+//            }
+//        });
     }
 
 
@@ -744,7 +744,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private void startCamera() {
 //        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
-        mMediaStream.createCamera(2==getSelectedCameraIndex()?0:1);
+        mMediaStream.createCamera(2==getSelectedCameraIndex()?0:getSelectedCameraIndex());
         mMediaStream.startPreview();
 
         //        sendMessage(getPushStatusMsg());

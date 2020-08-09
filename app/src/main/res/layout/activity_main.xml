@@ -290,11 +290,11 @@
         android:padding="5dp"
         android:textColor="#ff0000" />
 
-    <ImageView
-        android:id="@+id/black_bg_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@mipmap/black_bg"
-        android:visibility="gone" />
+<!--    <ImageView-->
+<!--        android:id="@+id/black_bg_iv"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:scaleType="fitXY"-->
+<!--        android:src="@mipmap/black_bg"-->
+<!--        android:visibility="gone" />-->
 </RelativeLayout>
