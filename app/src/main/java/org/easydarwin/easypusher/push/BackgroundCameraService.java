@@ -146,7 +146,7 @@ public class BackgroundCameraService extends Service implements TextureView.Surf
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
-            return START_NOT_STICKY;
+            return START_STICKY;
         }
 
         return super.onStartCommand(intent, flags, startId);
