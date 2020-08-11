@@ -120,8 +120,7 @@ public class AACEncodeConsumer extends Thread{
         }
         // 初始化音频文件参数
         byte[] mp3Buffer = new byte[1024];
-
-        // 这里有问题，当本地录制结束后，没有写入
+        // todo 这里有问题，当本地录制结束后，没有写入
         while(! isExit){
             byte[] audioBuffer = new byte[2048];
             // 采集音频

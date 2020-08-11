@@ -641,7 +641,7 @@ public class MediaStream {
 
         mRecordVC = new RecordVideoConsumer(context, mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC, mMuxer, SPUtil.getEnableVideoOverlay(context), SPUtil.getBitrateKbps(context), info.mName, info.mColorFormat);
         if (mUvcHelper.uvcConnected) {
-            mRecordVC.onVideoStart(uvcHeight, uvcWidth);
+            mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         } else {
             boolean frameRotate;
             int result;
@@ -792,7 +792,7 @@ public class MediaStream {
         }
         int width = mUvcHelper.getPreviewWidth();
         int height = mUvcHelper.getPreviewHeight();
-        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height, 0, 2);
+        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height, 0, 0);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
         isUVCPushing = true;
         if (mRecordVC != null) {
