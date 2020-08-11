@@ -82,7 +82,7 @@ import static org.easydarwin.easyrtmp.push.EasyRTMP.OnInitPusherCallback.CODE.EA
  * 预览+推流等主页
  */
 public class StreamActivity extends BaseProjectActivity implements View.OnClickListener,
-        TextureView.SurfaceTextureListener , CameraViewInterface.Callback{
+        TextureView.SurfaceTextureListener, CameraViewInterface.Callback {
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440",
             "3840x2160"};
@@ -124,7 +124,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private boolean isPreview;
     private UVCCameraHelper mCameraHelper;
 
-    private  boolean uvcConnected = false;
+    private boolean uvcConnected = false;
 
 
     private UVCCameraHelper.OnMyDevConnectListener listener = new UVCCameraHelper.OnMyDevConnectListener() {
@@ -142,6 +142,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         @Override
         public void onDettachDev(UsbDevice device) {
             // close camera
+
             if (isRequest) {
                 isRequest = false;
                 mCameraHelper.closeCamera();
@@ -196,9 +197,26 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     txtStatus.setText(state);
                     break;
                 case UVC_CONNECT:
+                    //直播过程中 插入otg设备  这时候需要断开直播
+                    if (isStreaming()) {
+                        for (int i = 0; i < 5; i++) {
+                            mMediaStream.stopPusherStream(i);
+                        }
+                        setPushLiveIv();
+                    }
                     switchToUvcCamera();
                     break;
                 case UVC_DISCONNECT:
+                    //断开otg连接时 如果正在推流 断开推流
+                    if (isStreaming()) {
+                        if (mMediaStream.isUVCPushing) {
+                            for (int i = 0; i < 5; i++) {
+                                mMediaStream.stopPusherStream(i);
+                            }
+                            setPushLiveIv();
+                        }
+                    }
+
                     //拔掉otg后 自动切换到后置摄像头
                     releaseUvcCamera();
                     new Thread(new Runnable() {
@@ -245,11 +263,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mUvcTextureView.setVisibility(View.VISIBLE);
         mMediaStream.createUvcCamera();
         mSelectCameraTv.setText("摄像头:外置");
+        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
+        mScreenResTv.setText(String.format("分辨率:%s", title));
     }
+
     /**
      * 释放uvcCamera
      */
     private void releaseUvcCamera() {
+        uvcConnected = false;
         mMediaStream.stopUvcPreview();
         mSurfaceView.setVisibility(View.VISIBLE);
         mUvcTextureView.setVisibility(View.GONE);
@@ -311,7 +333,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         });
         mCameraHelper = UVCCameraHelper.getInstance();
         mUvcCameraView.setCallback(this);
-        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH,1280),Hawk.get(HawkProperty.KEY_UVC_HEIGHT,720));
+        mCameraHelper.setDefaultPreviewSize(Hawk.get(HawkProperty.KEY_UVC_WIDTH, 1920), Hawk.get(HawkProperty.KEY_UVC_HEIGHT, 1080));
         mCameraHelper.initUSBMonitor(this, mUvcCameraView, listener);
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(new Intent(this, BackgroundService.class));
@@ -322,6 +344,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
 
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -339,6 +362,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mCameraHelper.unregisterUSB();
         }
     }
+
     @Override
     public void onSurfaceCreated(CameraViewInterface view, Surface surface) {
         if (!isPreview && mCameraHelper.isCameraOpened()) {
@@ -359,12 +383,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             isPreview = false;
         }
     }
+
     /**
      * 初始化view
      */
     private void initView() {
         mUvcTextureView = (UVCCameraTextureView) findViewById(R.id.uvc_camera_view);
-        mUvcCameraView = (CameraViewInterface)mUvcTextureView;
+        mUvcCameraView = (CameraViewInterface) mUvcTextureView;
         //        spnResolution = findViewById(R.id.spn_resolution);
         streamStat = findViewById(R.id.stream_stat);
         txtStatus = findViewById(R.id.txt_stream_status);
@@ -419,7 +444,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
 
 
-
     }
 
     @Override
@@ -446,7 +470,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mCameraHelper != null) {
             mCameraHelper.release();
         }
-        stopService(new Intent(this,BackgroundService.class));
+        stopService(new Intent(this, BackgroundService.class));
         BUSUtil.BUS.unregister(this);
         if (conn != null) {
             unbindService(conn);
@@ -480,8 +504,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream ||
-                mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
+        return mMediaStream != null && (MediaStream.isZeroPushStream || MediaStream.isFirstPushStream ||
+                MediaStream.isSecendPushStream || MediaStream.isThirdPushStream || MediaStream.isFourthPushStream);
     }
 
 
@@ -514,6 +538,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
         String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_DOUYU);
         String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_XIGUA);
+        initLiveImage(SettingActivity.LIVE_TYPE_YUN, 0);
         initLiveImage(firstLiveName, 1);
         initLiveImage(secendLiveName, 2);
         initLiveImage(thirdLiveName, 3);
@@ -528,27 +553,39 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         ImageView imageView = null;
         boolean isOn = false;
         switch (index) {
+            case 0:
+                imageView = mPushStreamIv;
+                isOn = MediaStream.isZeroPushStream;
+                break;
             case 1:
                 imageView = mFirstLiveIv;
-                isOn = isPushingFirstStream;
+                isOn = MediaStream.isFirstPushStream;
                 break;
             case 2:
                 imageView = mSecendLiveIv;
-                isOn = isPushingSecendStream;
+                isOn = MediaStream.isSecendPushStream;
                 break;
             case 3:
                 imageView = mThirdLiveIv;
-                isOn = isPushingThirdStream;
+                isOn = MediaStream.isThirdPushStream;
                 break;
             case 4:
                 imageView = mFourthLiveIv;
-                isOn = isPushingFourthStream;
+                isOn = MediaStream.isFourthPushStream;
                 break;
             default:
                 break;
         }
 
         switch (liveName) {
+            case SettingActivity.LIVE_TYPE_YUN:
+                if (isOn) {
+                    imageView.setImageResource(R.mipmap.push_stream_on);
+                } else {
+                    imageView.setImageResource(R.mipmap.push_stream_off);
+                }
+
+                break;
             case SettingActivity.LIVE_TYPE_BILI:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.bilibili_on);
@@ -733,7 +770,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
             boolean enableVideo = SPUtil.getEnableVideo(this);
 
-            ms = new MediaStream(getApplicationContext(), surface,mCameraHelper,mUvcCameraView, enableVideo);
+            ms = new MediaStream(getApplicationContext(), surface, mCameraHelper, mUvcCameraView, enableVideo);
             ms.setRecordPath(easyPusher.getPath());
             mMediaStream = ms;
             startCamera();
@@ -744,7 +781,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private void startCamera() {
 //        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
-        mMediaStream.createCamera(2==getSelectedCameraIndex()?0:getSelectedCameraIndex());
+        mMediaStream.createCamera(2 == getSelectedCameraIndex() ? 0 : getSelectedCameraIndex());
         mMediaStream.startPreview();
 
         //        sendMessage(getPushStatusMsg());
@@ -878,13 +915,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getPushStatusMsg() {
-        if (mMediaStream.isZeroPushStream) {
-            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
+        if (MediaStream.isZeroPushStream) {
+            if (MediaStream.isFirstPushStream || MediaStream.isSecendPushStream) {
                 return "直播中";
             }
             return "直播中";
         } else {
-            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
+            if (MediaStream.isFirstPushStream || MediaStream.isSecendPushStream) {
                 return "直播中";
             }
         }
@@ -917,7 +954,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     "再回来这里关闭直播。").setNeutralButton("后台采集", (dialogInterface, i) -> {
 //                StreamActivity.super.onBackPressed();
                 //实现home键效果
-                Intent intent= new Intent(Intent.ACTION_MAIN);
+                Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
@@ -963,7 +1000,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                         mSelectCameraTv.setText("摄像头:后置");
                                         if (uvcConnected) {
                                             releaseUvcCamera();
-                                        }else {
+                                        } else {
                                             mMediaStream.stopPreview();
                                             try {
                                                 Thread.sleep(500);
@@ -977,7 +1014,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                         mSelectCameraTv.setText("摄像头:前置");
                                         if (uvcConnected) {
                                             releaseUvcCamera();
-                                        }else {
+                                        } else {
                                             mMediaStream.stopPreview();
                                             try {
                                                 Thread.sleep(500);
@@ -989,7 +1026,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                         break;
                                     case 2:
                                         mSelectCameraTv.setText("摄像头:外置");
-                                       mCameraHelper.requestPermission(0);
+                                        switchToUvcCamera();
                                         break;
                                     default:
                                         break;
@@ -1074,7 +1111,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         // 通知UI 开始录像
                         BUSUtil.BUS.post(new StartRecord());
                         ib.setImageResource(R.drawable.record_pressed);
-                        String videoPath = Config.recordPath()+File.separator + System.currentTimeMillis() + UVCCameraHelper.SUFFIX_MP4;;
+                        String videoPath = Config.recordPath() + File.separator + System.currentTimeMillis() + UVCCameraHelper.SUFFIX_MP4;
+                        ;
 
 //                    FileUtils.createfile(FileUtils.ROOT_PATH + "test666.h264");
                         // if you want to record,please create RecordParams like this
@@ -1106,13 +1144,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 new Handler(getMainLooper()).post(() -> Toast.makeText(StreamActivity.this, "save videoPath:" + videoPath, Toast.LENGTH_SHORT).show());
                             }
                         });
-                    }else {
+                    } else {
                         ib.setImageResource(R.drawable.record);
                         FileUtils.releaseFile();
                         mCameraHelper.stopPusher();
                         showShortMsg("stop record...");
                     }
-                }else {
+                } else {
                     if (mMediaStream != null) {
                         if (mMediaStream.isRecording()) {
                             mMediaStream.stopRecord();
@@ -1140,8 +1178,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private CharSequence[] getCameras() {
+
         if (uvcConnected) {
-            return new CharSequence[]{"后置摄像头", "前置摄像头","外置摄像头"};
+            return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
         }
         return new CharSequence[]{"后置摄像头", "前置摄像头"};
 
@@ -1168,18 +1207,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getSelectedCamera() {
-        String  cameraName = null;
+        String cameraName = null;
         int position = getSelectedCameraIndex();
         switch (position) {
             case 0:
-                cameraName =  "后置";
-            break;
+                cameraName = "后置";
+                break;
             case 1:
                 cameraName = "后置";
-            break;
+                break;
             case 2:
                 cameraName = "外置";
-            break;
+                break;
             default:
                 break;
         }
@@ -1299,7 +1338,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
                             Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
                             Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
-                            mCameraHelper.updateResolution(Integer.parseInt(titles[0]),Integer.parseInt(titles[1]));
+                            mCameraHelper.updateResolution(Integer.parseInt(titles[0]), Integer.parseInt(titles[1]));
                         }
                         mScreenResTv.setText("分辨率:" + title);
 
@@ -1318,8 +1357,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopPush() {
 
-        if (mMediaStream != null && !mMediaStream.isZeroPushStream) {
-            isPushingStream = true;
+        if (mMediaStream != null && !MediaStream.isZeroPushStream) {
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
@@ -1337,20 +1375,16 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     return;
                 }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
+                setPushLiveIv();
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
                 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
                 e.printStackTrace();
-                isPushingStream = false;
                 mMediaStream.stopPusherStream(0);
-                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
                 sendMessage("断开连接");
             }
         } else {
-            isPushingStream = false;
             mMediaStream.stopPusherStream(0);
-            mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
             sendMessage("断开连接");
         }
     }
@@ -1362,8 +1396,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFirstPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
-            isPushingFirstStream = true;
+        if (mMediaStream != null && !MediaStream.isFirstPushStream) {
             try {
                 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(1, code -> BUSUtil.BUS.post(new PushCallback(code)));
@@ -1375,7 +1408,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("参数初始化失败");
             }
         } else {
-            isPushingFirstStream = false;
             mMediaStream.stopPusherStream(1);
             setPushLiveIv();
             sendMessage("断开连接");
@@ -1389,8 +1421,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopThirdPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
-            isPushingThirdStream = true;
+        if (mMediaStream != null && !MediaStream.isThirdPushStream) {
             try {
                 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
@@ -1402,7 +1433,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingThirdStream = false;
             mMediaStream.stopPusherStream(3);
             setPushLiveIv();
             sendMessage("断开连接");
@@ -1416,8 +1446,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void startOrStopFourthPush() {
 
 
-        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
-            isPushingFourthStream = true;
+        if (mMediaStream != null && !MediaStream.isFourthPushStream) {
             try {
                 mMediaStream.startPushStream(4, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 setPushLiveIv();
@@ -1428,7 +1457,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("激活失败，无效Key");
             }
         } else {
-            isPushingFourthStream = false;
             mMediaStream.stopPusherStream(4);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             setPushLiveIv();
@@ -1442,8 +1470,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopSecendPush() {
 
-        if (mMediaStream != null && !mMediaStream.isSecendPushStream) {
-            isPushingSecendStream = true;
+        if (mMediaStream != null && !MediaStream.isSecendPushStream) {
             try {
                 //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
                 mMediaStream.startPushStream(2, code -> BUSUtil.BUS.post(new PushCallback(code)));
@@ -1455,7 +1482,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 sendMessage("参数初始化失败");
             }
         } else {
-            isPushingSecendStream = false;
             mMediaStream.stopPusherStream(2);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
             setPushLiveIv();

@@ -71,11 +71,11 @@ public class MediaStream {
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
 
     private String recordPath;          // 录像地址
-    protected boolean isZeroPushStream = false;       // 是否要推送数据
-    protected boolean isFirstPushStream = false;       // 是否要推送bili数据
-    protected boolean isSecendPushStream = false;       // 是否要推送huya数据
-    protected boolean isThirdPushStream = false;       // 是否要推送huya数据
-    protected boolean isFourthPushStream = false;       // 是否要推送huya数据
+    public static boolean isZeroPushStream = false;       // 是否要推送数据
+    public static boolean isFirstPushStream = false;       // 是否要推送bili数据
+    public static boolean isSecendPushStream = false;       // 是否要推送huya数据
+    public static boolean isThirdPushStream = false;       // 是否要推送huya数据
+    public static boolean isFourthPushStream = false;       // 是否要推送huya数据
     private int displayRotationDegree;  // 旋转角度
 
     private Context context;
@@ -89,7 +89,7 @@ public class MediaStream {
     private Pusher mSecendEasyPusher;//第二个
     private Pusher mThirdEasyPusher;//yi
     private Pusher mFourthEasyPusher;//now
-
+    public boolean isUVCPushing = false;//正在推送uvc数据
     private final HandlerThread mCameraThread;
     private final Handler mCameraHandler;
     /*
@@ -109,6 +109,7 @@ public class MediaStream {
     private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
     private UVCCameraHelper mUvcHelper;
     private CameraViewInterface mUVCCameraView;
+
 
     /**
      * 初始化MediaStream
@@ -415,6 +416,7 @@ public class MediaStream {
                 @Override
                 public void onPreviewResult(byte[] data) {
                     onUvcCameraPreviewFrame(data);
+
                 }
             });
 
@@ -428,11 +430,14 @@ public class MediaStream {
      * uvc 停止预览
      */
     public void stopUvcPreview() {
+        mUvcHelper.setOnPreviewFrameListener(null);
         mUvcHelper.stopPreview();
+        mUvcHelper.closeCamera();
+        mUvcHelper.release();
         releaseResource();
         releaseAudioStream();
 //        mUvcHelper.closeCamera();
-        mUvcHelper.setOnPreviewFrameListener(null);
+
 
     }
 
@@ -504,22 +509,28 @@ public class MediaStream {
         // 关闭视频编码器
         if (mZeroVC != null) {
             mZeroVC.onVideoStop();
+            mZeroVC = null;
         }
         if (mFirstVC != null) {
             mFirstVC.onVideoStop();
+            mFirstVC = null;
         }
         if (mSecendVC != null) {
             mSecendVC.onVideoStop();
+            mSecendVC = null;
         }
         if (mThirdVC != null) {
             mThirdVC.onVideoStop();
+            mThirdVC = null;
         }
         if (mFourthVC != null) {
             mFourthVC.onVideoStop();
+            mFourthVC = null;
         }
         // 关闭录像的编码器
         if (mRecordVC != null) {
             mRecordVC.onVideoStop();
+            mRecordVC = null;
         }
 //        // 关闭音视频合成器
 //        if (mMuxer != null) {
@@ -753,7 +764,7 @@ public class MediaStream {
 
         JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight, result % 360, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
-
+        isUVCPushing = false;
         if (mRecordVC != null) {
             mRecordVC.onVideo(i420_buffer, 0);
         }
@@ -781,9 +792,9 @@ public class MediaStream {
         }
         int width = mUvcHelper.getPreviewWidth();
         int height = mUvcHelper.getPreviewHeight();
-        JNIUtil.ConvertToI420(data, i420_buffer,width , height, 0, 0, width,height, 0, 2);
+        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height, 0, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
-
+        isUVCPushing = true;
         if (mRecordVC != null) {
             mRecordVC.onVideo(i420_buffer, 0);
         }

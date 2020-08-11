@@ -809,30 +809,12 @@ public abstract class AbstractUVCCameraHandler extends Handler {
         private final IFrameCallback mIFrameCallback = new IFrameCallback() {
             @Override
             public void onFrame(final ByteBuffer frame) {
-//                frame.clear();
-//
-//                byte[] data = cache.poll();
-//                if (data == null) {
-//                    data = new byte[frame.capacity()];
-//                }
-//
-//                frame.get(data);
                 int len = frame.capacity();
                 final byte[] yuv = new byte[len];
                 frame.get(yuv);
                 if (mPreviewListener != null) {
                     mPreviewListener.onPreviewResult(yuv);
                 }
-//                // picture
-//                if (isCaptureStill && !TextUtils.isEmpty(picPath)) {
-//                    isCaptureStill = false;
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            saveYuv2Jpeg(picPath, data);
-//                        }
-//                    }).start();
-//                }
 
 //                // video
                 if (mH264Consumer != null) {

@@ -30,6 +30,7 @@ import com.orhanobut.hawk.Hawk;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.push.MediaStream;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
@@ -52,6 +53,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private static final int REQUEST_SCAN_TEXT_URL_HUYA = 1005;      // 扫描二维码huya
     private static final int REQUEST_SCAN_TEXT_URL_YI = 1006;      // 扫描二维码yi
     private static final int REQUEST_SCAN_TEXT_URL_NOW = 1007;      // 扫描二维码now
+    public static final String LIVE_TYPE_YUN = "一见云控";
     public static final String LIVE_TYPE_BILI = "哔哩哔哩";
     public static final String LIVE_TYPE_HUYA = "虎牙直播";
     public static final String LIVE_TYPE_YI = "一直播";
@@ -278,7 +280,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
 
     @Override
     public void onBackPressed() {
-        if (!isPushingStream) {
+        if (!MediaStream.isZeroPushStream) {
             String text = binding.pushServerIpEt.getText().toString().trim();
             if (text.contains("//")) {
                 text = text.substring(text.indexOf("//") + 2, text.length());
@@ -291,21 +293,21 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         } else {
             ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
         }
-        if (!isPushingFirstStream) {
+        if (!MediaStream.isFirstPushStream) {
             String bilibili = binding.firstLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_FIRST_URL, bilibili);
 
         }
-        if (!isPushingSecendStream) {
+        if (!MediaStream.isSecendPushStream) {
             String huya = binding.secendLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_SECEND_URL, huya);
         }
-        if (!isPushingThirdStream) {
+        if (!MediaStream.isThirdPushStream) {
             String url = binding.thirdLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_THIRD_URL, url);
 
         }
-        if (!isPushingFourthStream) {
+        if (!MediaStream.isFourthPushStream) {
             String url = binding.fourthLiveValueEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_FOURTH_URL, url);
 
@@ -448,22 +450,22 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
      */
     private void selectLiveType(int type) {
         if (1 == type) {
-            if (isPushingFirstStream) {
+            if (MediaStream.isFirstPushStream) {
                 ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FIRST_LIVE,LIVE_TYPE_BILI)+"直播，无法更改地址");
                 return;
             }
         } else if (2 == type) {
-            if (isPushingSecendStream) {
+            if (MediaStream.isSecendPushStream) {
                 ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.SECENDLIVE,LIVE_TYPE_HUYA)+"直播，无法更改地址");
                 return;
             }
         } else if (3 == type) {
-            if (isPushingThirdStream) {
+            if (MediaStream.isThirdPushStream) {
                 ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.THIRD_LIVE,LIVE_TYPE_YI)+"直播，无法更改地址");
                 return;
             }
         } else {
-            if (isPushingFourthStream) {
+            if (MediaStream.isFourthPushStream) {
                 ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FOURTH_LIVE,LIVE_TYPE_NOW)+"直播，无法更改地址");
                 return;
             }

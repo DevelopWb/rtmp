@@ -24,12 +24,6 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class BaseProjectActivity extends RxAppCompatActivity {
 
-    protected boolean isPushingStream = false;//是否正在推流
-    protected boolean isPushingFirstStream = false;//是否正在推流
-    protected boolean isPushingSecendStream = false;//是否正在推流
-    protected boolean isPushingThirdStream = false;//是否正在推流
-    protected boolean isPushingFourthStream = false;//是否正在推流
-
 
     protected Context mContext;
 
