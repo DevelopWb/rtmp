@@ -722,7 +722,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
             callOnStopRecording();
             // 返回路径
             if (mListener != null) {
-                mListener.onRecordResult(videoPath + ".mp4");
+                mListener.onRecordResult(videoPath);
             }
         }
 

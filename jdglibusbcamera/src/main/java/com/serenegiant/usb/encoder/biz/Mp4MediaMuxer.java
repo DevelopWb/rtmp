@@ -37,7 +37,7 @@ public class Mp4MediaMuxer {
         if(durationMillis != 0) {
             mFilePath = path + "-" + index++ + ".mp4";
         }else{
-            mFilePath = path+".mp4";
+            mFilePath = path;
         }
         Object mux = null;
         try {

@@ -41,9 +41,9 @@ import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.push.PushCallback;
 import org.easydarwin.easypusher.push.StreamActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
-import org.easydarwin.easypusher.util.PublicUtil;
-import org.easydarwin.encode.AudioStream;
+
 import org.easydarwin.easyrtmp.push.EasyRTMP;
+import org.easydarwin.encode.AudioStream;
 import org.easydarwin.push.Pusher;
 import org.easydarwin.easypusher.push.MediaStream;
 import org.easydarwin.easypusher.util.Config;

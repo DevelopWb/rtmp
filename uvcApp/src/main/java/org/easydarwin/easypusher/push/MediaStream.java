@@ -43,7 +43,6 @@ import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.EasyApplication;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
-import org.easydarwin.encode.AudioStream;
 import org.easydarwin.encode.HWConsumer;
 import org.easydarwin.encode.SWConsumer;
 import org.easydarwin.encode.VideoConsumer;
