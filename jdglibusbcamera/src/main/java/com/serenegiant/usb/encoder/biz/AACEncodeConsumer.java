@@ -12,8 +12,6 @@ import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
-import org.easydarwin.encode.AudioAManager;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +41,7 @@ public class AACEncodeConsumer extends Thread{
     private int qaulityDegree = 7;
     private int bufferSizeInBytes;
 
+    private AudioRecord mAudioRecord; // 音频采集
     private MediaCodec mAudioEncoder;   // 音频编码
     private OnAACEncodeResultListener listener;
     private  int mSamplingRateIndex = 0;//ADTS
@@ -53,6 +52,11 @@ public class AACEncodeConsumer extends Thread{
     private WeakReference<Mp4MediaMuxer> mMuxerRef;
     private MediaFormat newFormat;
 
+    private static final int[] AUDIO_SOURCES = new int[] {
+            MediaRecorder.AudioSource.DEFAULT,
+            MediaRecorder.AudioSource.MIC,
+            MediaRecorder.AudioSource.CAMCORDER,
+    };
     /**
      * There are 13 supported frequencies by ADTS.
      **/
@@ -119,7 +123,7 @@ public class AACEncodeConsumer extends Thread{
         while(! isExit){
             byte[] audioBuffer = new byte[2048];
             // 采集音频
-            int readBytes = AudioAManager.getInstance().getAudioRecord().read(audioBuffer,0,BUFFER_SIZE);
+            int readBytes = mAudioRecord.read(audioBuffer,0,BUFFER_SIZE);
 
             if(DEBUG)
                 Log.i(TAG,"采集音频readBytes = "+readBytes);
@@ -246,7 +250,24 @@ public class AACEncodeConsumer extends Thread{
         Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
         int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
-        AudioAManager.getInstance().getAudioRecord().startRecording();
+        for (final int src: AUDIO_SOURCES) {
+            try {
+                mAudioRecord = new AudioRecord(src,
+                        SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                if (mAudioRecord != null) {
+                    if (mAudioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+                        mAudioRecord.release();
+                        mAudioRecord = null;
+                    }
+                }
+            } catch (final Exception e) {
+                mAudioRecord = null;
+            }
+            if (mAudioRecord != null) {
+                break;
+            }
+        }
+        mAudioRecord.startRecording();
     }
 
     private void initMediaCodec(){
@@ -278,7 +299,11 @@ public class AACEncodeConsumer extends Thread{
     private void stopAudioRecord() {
         if(DEBUG)
             Log.d(TAG,"AACEncodeConsumer-->停止采集音频");
-        AudioAManager.getInstance().releaseAudio();
+        if(mAudioRecord != null){
+            mAudioRecord.stop();
+            mAudioRecord.release();
+            mAudioRecord = null;
+        }
     }
 
     private void stopMediaCodec() {

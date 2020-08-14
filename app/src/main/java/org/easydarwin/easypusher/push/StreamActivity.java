@@ -1109,7 +1109,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         return;
                     }
                     if (!mCameraHelper.isRecording()) {
-//                        mMediaStream.releaseAudioStream();
+                        mMediaStream.releaseAudioStream();
                         // 通知UI 开始录像
                         BUSUtil.BUS.post(new StartRecord());
                         ib.setImageResource(R.drawable.record_pressed);
