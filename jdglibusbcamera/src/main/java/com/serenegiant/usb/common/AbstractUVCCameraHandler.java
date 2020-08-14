@@ -972,7 +972,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 //				final Field sseField = audioSystemClass.getDeclaredField("STREAM_SYSTEM_ENFORCED");
 //				streamType = sseField.getInt(null);
 //			} catch (final Exception e) {
-//				streamType = AudioManager.STREAM_SYSTEM;	// set appropriate according to your app policy
+//				streamType = AudioAManager.STREAM_SYSTEM;	// set appropriate according to your app policy
 //			}
 //			if (mSoundPool != null) {
 //				try {
@@ -998,7 +998,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 //	            final Field sseField = audioSystemClass.getDeclaredField("STREAM_SYSTEM_ENFORCED");
 //	            streamType = sseField.getInt(null);
 //	        } catch (final Exception e) {
-//	        	streamType = AudioManager.STREAM_SYSTEM;	// set appropriate according to your app policy
+//	        	streamType = AudioAManager.STREAM_SYSTEM;	// set appropriate according to your app policy
 //	        }
 //	        if (mSoundPool != null) {
 //	        	try {

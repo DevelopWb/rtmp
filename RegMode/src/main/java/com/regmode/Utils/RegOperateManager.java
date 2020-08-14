@@ -291,19 +291,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             @Override
             public void onClick(View v) {
                 if (text != null && !TextUtils.isEmpty(text)) {
-                    if (text.contains("注册码不存在")) {
-                        if (cancelCallBack != null) {
-                            cancelCallBack.toFinishActivity();
-                        }
-                    } else if (text.contains("注册码已过期")) {
-                        if (cancelCallBack != null) {
-                            cancelCallBack.toFinishActivity();
-                        }
-                    } else if (text.equals("次数已用完")) {
-                        if (cancelCallBack != null) {
-                            cancelCallBack.toFinishActivity();
-                        }
-                    } else if (text.equals("不可用")) {
+                    if (text.contains("不存在")||text.contains("已过期")||text.contains("已用完")||text.contains("不可用")||text.contains("不匹配")) {
                         if (cancelCallBack != null) {
                             cancelCallBack.toFinishActivity();
                         }

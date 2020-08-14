@@ -1026,7 +1026,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                         break;
                                     case 2:
                                         mSelectCameraTv.setText("摄像头:外置");
-                                        switchToUvcCamera();
+                                        mCameraHelper.requestPermission(0);
+//                                        switchToUvcCamera();
                                         break;
                                     default:
                                         break;
@@ -1108,7 +1109,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         return;
                     }
                     if (!mCameraHelper.isRecording()) {
-                        mMediaStream.releaseAudioStream();
+//                        mMediaStream.releaseAudioStream();
                         // 通知UI 开始录像
                         BUSUtil.BUS.post(new StartRecord());
                         ib.setImageResource(R.drawable.record_pressed);
@@ -1179,11 +1180,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private CharSequence[] getCameras() {
-
-        if (uvcConnected) {
-            return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
-        }
-        return new CharSequence[]{"后置摄像头", "前置摄像头"};
+        return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
+//        if (uvcConnected) {
+//            return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
+//        }
+//        return new CharSequence[]{"后置摄像头", "前置摄像头"};
 
     }
 

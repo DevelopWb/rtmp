@@ -32,6 +32,8 @@ import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import org.easydarwin.encode.AudioAManager;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -102,11 +104,6 @@ public class MediaAudioEncoder extends MediaEncoder implements IAudioEncoder {
 		super.release();
     }
 
-	private static final int[] AUDIO_SOURCES = new int[] {
-		MediaRecorder.AudioSource.DEFAULT,
-		MediaRecorder.AudioSource.MIC,
-		MediaRecorder.AudioSource.CAMCORDER,
-	};
 
 	/**
 	 * Thread to capture audio data from internal mic as uncompressed 16bit PCM data
@@ -123,24 +120,7 @@ public class MediaAudioEncoder extends MediaEncoder implements IAudioEncoder {
 			if (buffer_size < min_buffer_size)
 				buffer_size = ((min_buffer_size / SAMPLES_PER_FRAME) + 1) * SAMPLES_PER_FRAME * 2;
 			final ByteBuffer buf = ByteBuffer.allocateDirect(SAMPLES_PER_FRAME).order(ByteOrder.nativeOrder());
-			AudioRecord audioRecord = null;
-			for (final int src: AUDIO_SOURCES) {
-				try {
-					audioRecord = new AudioRecord(src,
-						SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, buffer_size);
-					if (audioRecord != null) {
-						if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
-							audioRecord.release();
-							audioRecord = null;
-         				}
-					}
-				} catch (final Exception e) {
-					audioRecord = null;
-				}
-				if (audioRecord != null) {
-					break;
-				}
-			}
+			AudioRecord audioRecord = AudioAManager.getInstance().getAudioRecord();
 			if (audioRecord != null) {
 				try {
 					if (mIsCapturing) {

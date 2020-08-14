@@ -433,7 +433,6 @@ public class MediaStream {
         mUvcHelper.setOnPreviewFrameListener(null);
         mUvcHelper.stopPreview();
         mUvcHelper.closeCamera();
-        mUvcHelper.release();
         releaseResource();
         releaseAudioStream();
 //        mUvcHelper.closeCamera();
