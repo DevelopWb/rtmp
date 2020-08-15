@@ -199,6 +199,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mVedioPushBottomTagIv;
     private ImageView mSecendLiveIv, mBlackBgIv;
     private Intent uvcServiceIntent;
+    private LinearLayout mBottomPushStreamLl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,6 +261,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
+        mBottomPushStreamLl = (LinearLayout) findViewById(R.id.push_stream_ll);
+        mBottomPushStreamLl.setOnClickListener(this);
         mBlackBgIv.setOnClickListener(new DoubleClickListener() {
             @Override
             public void onDoubleClick(View v) {
@@ -869,6 +872,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.push_stream_iv:
                 startOrStopPush();
                 break;
+            case R.id.push_stream_ll:
+                startOrStopPush();
+                break;
             case R.id.first_live_iv:
                 String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 if (TextUtils.isEmpty(url_bili)) {
@@ -1130,7 +1136,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null && !mMediaStream.isZeroPushStream) {
             isPushingStream = true;
             try {
-                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
+                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "58.49.46.179");
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
                 String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {
@@ -1153,16 +1159,19 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 e.printStackTrace();
                 isPushingStream = false;
                 mMediaStream.stopPusherStream(0);
-                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
-                sendMessage("断开连接");
+                //                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+                sendMessage("推流鉴权失败，请联系管理员！");
             }
         } else {
             isPushingStream = false;
             mMediaStream.stopPusherStream(0);
-            mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
-            sendMessage("断开连接");
+            //            mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            sendMessage("断开链接");
         }
     }
+
 
     /*
      * 推流or停止

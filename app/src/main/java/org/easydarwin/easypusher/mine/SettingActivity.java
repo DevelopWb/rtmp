@@ -93,7 +93,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
         binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "58.49.46.179"));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
         binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
@@ -115,11 +115,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.thirdLiveKey.setOnClickListener(this);
         binding.fourthLiveKey.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            binding.leftLiveGp.setVisibility(View.VISIBLE);
-        }else {
-            binding.leftLiveGp.setVisibility(View.GONE);
-        }
+//        if (PublicUtil.isMoreThanTheAndroid10()) {
+//            binding.leftLiveGp.setVisibility(View.VISIBLE);
+//        }else {
+//            binding.leftLiveGp.setVisibility(View.GONE);
+//        }
         // 使能摄像头后台采集
         onPushBackground();
 //        onEncodeType();

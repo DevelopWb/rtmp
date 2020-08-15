@@ -121,7 +121,7 @@
                         android:layout_height="35dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="直播标识:"
+                        android:text="监控标识:"
                         app:layout_constraintRight_toRightOf="@+id/server_port_tv"
                         app:layout_constraintTop_toBottomOf="@+id/server_port_tv" />
 
@@ -261,7 +261,7 @@
                         android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="secend_live_key,secend_live_scan_iv,secend_live_value_et
+                        app:constraint_referenced_ids="first_live_key,first_live_scan_iv,first_live_value_et,secend_live_key,secend_live_scan_iv,secend_live_value_et
                         ,third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"
                         ></android.support.constraint.Group>
 
@@ -274,6 +274,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
+                    android:visibility="gone"
                     android:text="开机自动推流" />
 
                 <CheckBox
@@ -299,6 +300,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:paddingLeft="5dp"
+                    android:visibility="gone"
                     android:paddingRight="5dp"
                     android:text="推送内容：" />
 
@@ -307,6 +309,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:paddingLeft="@dimen/activity_horizontal_margin">
 
                     <RadioButton

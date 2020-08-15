@@ -22,13 +22,11 @@ import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +36,6 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.basenetlib.RequestStatus;
-import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.juntai.wisdom.basecomponent.utils.FileUtils;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
@@ -48,7 +45,6 @@ import com.regmode.R;
 import com.regmode.RegLatestContact;
 import com.regmode.RegLatestPresent;
 import com.regmode.adapter.CommonProgressDialog;
-import com.regmode.adapter.DialogAdapter;
 import com.regmode.bean.AppInfoBean;
 import com.regmode.bean.RegCodeBean;
 
@@ -75,12 +71,6 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class RegOperateManager extends BaseReg implements RequestStatus {
-    public static boolean RegStatus = false;//注册码状态是否正常
-    public static boolean istoolTip = false;//注册码状态改变是否提醒，例如：注册码到期，禁用等
-    public static boolean isNumberLimit = false;//是否限制次数
-    public static boolean isForbidden = false;//是否禁用
-    public static int REGSIZE = 0;
-    public static String URL_Reg_Center = "http://zc.xun365.net";//注册码中心系统
     public static String APP_MARK = "YJZB";//软件标识
     private CommonProgressDialog mProgressDialog;
     private String nearestVersion;
@@ -178,24 +168,22 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
      *
      * @return
      */
-    public boolean isTheRegStatusOk(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("REG", MODE_PRIVATE);
-        String reg_status = sp.getString("REGSTATUS", "注册码正常");
+    public boolean isTheRegStatusOk(String reg_status) {
         //  "注册码已经禁用"
-        if (reg_status.equals("注册码已禁用")) {
-            Toast.makeText(context, "注册码无效，请联系管理员", Toast.LENGTH_SHORT).show();
+        if (reg_status.contains("已禁用")) {
+            warnRegStatus("注册码不可用，请联系管理员","");
             return false;
-        } else if (reg_status.equals("注册码次数已用完")) {
-            Toast.makeText(context, "注册码次数已用完，请联系管理员", Toast.LENGTH_SHORT).show();
-
+        } else if (reg_status.contains("次数用尽")) {
+            warnRegStatus("注册码次数已用完，请联系管理员","");
             return false;
-        } else if (reg_status.equals("注册码已过期")) {
-            Toast.makeText(context, "注册码使用时间过期，请联系管理员", Toast.LENGTH_SHORT).show();
+        } else if (reg_status.contains("已过期")) {
+            warnRegStatus("注册码已过期，请联系管理员","");
             return false;
-        } else if (reg_status.equals("注册码不正确")) {
-            Toast.makeText(context, "注册码不存在，请联系管理员", Toast.LENGTH_SHORT).show();
+        } else if (reg_status.contains("不存在")) {
+            warnRegStatus("注册码不存在，请联系管理员","");
             return false;
         } else {
+            warnRegStatus(reg_status,"");
             return true;
         }
     }
@@ -297,15 +285,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             @Override
             public void onClick(View v) {
                 if (text != null && !TextUtils.isEmpty(text)) {
-                    if (text.equals("注册码无效，请联系管理员")) {
-                        if (cancelCallBack != null) {
-                            cancelCallBack.toFinishActivity();
-                        }
-                    } else if (text.equals("注册码绑定MAC不匹配，请联系管理员")) {
-                        if (cancelCallBack != null) {
-                            cancelCallBack.toFinishActivity();
-                        }
-                    } else if (text.equals("注册码绑定IMEI不匹配，请联系管理员")) {
+                    if (text.contains("不存在")||text.contains("已过期")||text.contains("已用完")||text.contains("不可用")||text.contains("不匹配")) {
                         if (cancelCallBack != null) {
                             cancelCallBack.toFinishActivity();
                         }
@@ -378,274 +358,6 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             progressDialog.dismiss();
         }
         switch (tag) {
-            case RegLatestContact.SET_CODE:
-//                if (str == null) {
-//                    Toast.makeText(context, "服务器返回异常，请联系管理员", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                sp.edit().putInt("MINUSTIMES", 0).commit();
-//                try {
-//                    JSONObject obj = new JSONObject(str);
-//                    String model = obj.getString("Model");
-//                    //  "注册码已经禁用"
-//                    if (model.equals("注册码已经禁用")) {
-//                        RegStatus = false;
-//                        isForbidden = true;
-//                        SaveRegStatus("注册码已禁用");
-//                        if (istoolTip) {
-//                            Toast.makeText(context, "注册码已禁用，请联系管理员", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        return;
-//                    } else if (model.equals("注册码次数已用完")) {
-//                        RegStatus = false;
-//                        SaveRegStatus("注册码次数已用完");
-//                        REGSIZE++;
-//                        if (istoolTip) {
-//                            Toast.makeText(context, "注册码次数已用完，请联系管理员", Toast.LENGTH_SHORT).show();
-//                        }
-//                        return;
-//                    } else if (model.equals("注册码使用时间过期")) {
-//                        RegStatus = false;
-//                        SaveRegStatus("注册码已过期");
-//                        if (istoolTip) {
-//                            Toast.makeText(context, "注册码使用时间过期，请联系管理员", Toast.LENGTH_SHORT).show();
-//                        }
-//                        return;
-//                    } else if (model.equals("注册码不正确")) {
-//                        RegStatus = false;
-//                        SaveRegStatus("注册码不正确");
-//                        if (istoolTip) {
-//                            Toast.makeText(context, "注册码不存在，请联系管理员", Toast.LENGTH_SHORT).show();
-//                        }
-//                        return;
-//                    } else {
-//                        RegStatus = true;
-//                        SaveRegStatus("注册码正常");
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-                break;
-            case RegLatestContact.GET_REG_INFO:
-//                //获取注册码信息  验证接口  每次进入软件的时候需要调用这个接口  检测注册码的状态
-//                RegCodeBean regInfo = (RegCodeBean) o;
-//                if (regInfo != null) {
-//                    String resultTag = regInfo.getResult();
-//                    if ("OK".equals(resultTag)) {
-//                        if (regInfo.getModel() != null && regInfo.getModel().size() > 0) {
-//                            RegCodeBean.ModelBean regInfoBean = regInfo.getModel().get(0);
-////                            regInfoBean.getIs
-//                        }
-//                    }
-//                }
-
-//                if (!TextUtils.isEmpty(str)) {
-//                    try {
-//                        JSONObject obj = new JSONObject(str);
-//                        String result = obj.getString("Result");
-//                        JSONArray mArray = obj.getJSONArray("Model");
-//                        if (!TextUtils.isEmpty(result) && result.equals("ok")) {
-//                            if (mArray.length() == 0) {
-//                                boolean warn = sp.getBoolean("ISTOOLTIP", false);//0代表不提示
-//                                if (warn) {//提示
-//                                    SaveRegStatus("注册码不正确");
-//                                    WarnRegStatus("注册码无效，请联系管理员", "");
-//                                }
-//                            } else {
-//                                JSONObject obj_ = (JSONObject) mArray.get(0);
-//                                String Imei = obj_.getString("Imei").trim();
-//                                String MAC = obj_.getString("MAC").trim();
-//                                String isValid = obj_.getString("isValid");
-//                                String isNumber = obj_.getString("isNumber");
-//                                String isDisabled = obj_.getString("isDisabled");
-//                                String isAutoUpdate = obj_.getString("isAutoUpdate");
-//                                String isToolTip = obj_.getString("isToolTip").trim();
-////保存注册码状态信息
-//                                String RegisCodeState = obj_.getString("RegisCodeState");
-//                                RegSuccess(null, null, isToolTip, isNumber);
-//                                if (RegisCodeState.equals("正常")) {
-//                                    RegStatus = true;
-//                                    SaveRegStatus("注册码正常");
-//                                } else if (RegisCodeState.equals("已过期")) {
-//                                    RegStatus = false;
-//                                    SaveRegStatus("注册码已过期");
-//                                } else if (RegisCodeState.equals("次数用尽")) {
-//                                    RegStatus = false;
-//                                    SaveRegStatus("注册码次数已用完");
-//                                } else if (RegisCodeState.equals("已禁用")) {
-//                                    RegStatus = false;
-//                                    SaveRegStatus("注册码已禁用");
-//                                }
-//                                if (istoolTip) {
-//                                    if (isValid != null && !TextUtils.isEmpty(isValid)) {
-//                                        if (isValid.equals("0")) {//注册码限制时间
-//                                            String ValidEnd = obj_.getString("ValidEnd");
-//                                            String time = ValidEnd.split(" ")[0];
-//                                            if (RegPubUtils.TheDayToNextDay(time) > 0 && RegPubUtils.TheDayToNextDay(time) < 8) {
-//
-//                                                if (IsTheRegStatusTime("isValid")) {
-//                                                    WarnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) + "天，请联系管理员", "isValid");
-//                                                }
-//
-//                                            } else {//重置下次提醒的时间
-//                                                resetNextWarnTime("isValid");
-//                                            }
-//                                        }
-//                                    }
-//                                    if (!TextUtils.isEmpty(MAC)) {
-//                                        if (!macAddress().equals(MAC)) {
-//                                            //TOdo 关闭程序
-//                                            WarnRegStatus("注册码绑定MAC不匹配，请联系管理员", "disable");
-//                                        }
-//
-//                                    }
-//                                    if (!TextUtils.isEmpty(Imei)) {//说明该注册码没有绑定IMEI
-//                                        if (!GetImei().equals(Imei)) {
-//                                            //todo 关闭软件
-//                                            WarnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "disable");
-//                                        }
-//
-//                                    }
-//                                    if (isNumber != null && !TextUtils.isEmpty(isNumber)) {
-//                                        if (isNumber.equals("0")) {//注册码有次数限制
-//                                            String NumberTotal = obj_.getString("Number");
-//                                            String NumberUsed = obj_.getString("NumberNow");
-//                                            int NumberNow = Integer.parseInt(NumberTotal) - Integer.parseInt(NumberUsed);
-//                                            if (NumberNow < 100) {
-//                                                if (IsTheRegStatusTime("isNumber")) {
-//                                                    WarnRegStatus("注册码次数还剩" + NumberNow + "次，请联系管理员", "isNumber");
-//                                                }
-//
-//                                            } else {//重置下次提醒的日期
-//                                                resetNextWarnTime("isNumber");
-//                                            }
-//                                        }
-//                                    }
-//
-//                                }
-//                                if (isDisabled != null && !TextUtils.isEmpty(isDisabled)) {
-//                                    if (isDisabled.equals("0")) {//注册码已禁用
-//                                        isForbidden = true;
-//                                        WarnRegStatus("注册码无效，请联系管理员", "disable");
-//                                        return;
-//                                    } else {
-//                                        isForbidden = false;
-//                                    }
-//                                }
-//
-//                                if (isAutoUpdate != null && !TextUtils.isEmpty(isAutoUpdate)) {
-//                                    if (isAutoUpdate.equals("1")) {//允许自动升级
-//                                        present.getAppVersionInfoAndKeyFromService(this);
-//                                    }
-//                                }
-//                            }
-//                        } else {
-//                            if (IsTheRegStatusTime("isWrong")) {
-//                                WarnRegStatus("服务器连接异常", "isWrong");
-//                            }
-//
-//                        }
-//                    } catch (JSONException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    }
-//
-//
-//                }
-                break;
-            case RegLatestContact.GET_VERSION:
-                //获取
-//                if (str != null && !TextUtils.isEmpty(str)) {
-//
-//                    try {
-//                        JSONObject obj = new JSONObject(str);
-//                        JSONArray infos = obj.getJSONArray("Model");
-//                        if (infos.length() > 0) {
-//                            JSONObject obj_ = (JSONObject) infos.get(0);
-//                            nearestVersion = obj_.getString("SoftwareVersion").trim();
-//                            String down_url = obj_.getString("softDownloadUrl");
-//                            String appDescription = obj_.getString("softDescription");
-//                            if (updateableSoftVersion(getAPPVersion(), nearestVersion)) {
-//                                if (IsTheTime()) {
-//                                    warnUpgradeDialog(down_url, appDescription);
-//                                }
-//
-//                            } else {//将
-//                                SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
-//                                SharedPreferences.Editor et = sharedPreferences.edit();
-//                                et.putString("nextTime", "");
-//                                et.commit();
-//                            }
-//                        } else {
-//                            Toast.makeText(context, "服务器上查不到该软件", Toast.LENGTH_SHORT).show();
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-                break;
-
-
-            case RegLatestContact.REGIST:
-                //如果注册码已经注册
-//                if (!TextUtils.isEmpty(str)) {
-//                    RegBean regBean = GsonManager.getInstance().parseJsonToBean(str, RegBean.class);
-//                    List<RegBean.ModelBean> arrays = regBean.getModel();
-//                    if (arrays == null || arrays.size() == 0) {
-//                        Toast.makeText(context, "注册码不存在",
-//                                Toast.LENGTH_LONG).show();
-//                        return;
-//                    }
-//                    RegBean.ModelBean modelBean = arrays.get(0);
-////                    if (!getAPPVersion().equals(modelBean.getVersion())) {
-////                        Toast.makeText(context, "此注册码已绑定软件版本，请联系管理员",
-////                                Toast.LENGTH_LONG).show();
-////                        return;
-////                    }
-//                    String regStatus = modelBean.getRegisCodeState();
-//                    String mac = modelBean.getMAC();
-//                    String guestName = modelBean.getCustomerName();
-//                    String isToolTip = modelBean.getIsToolTip();
-//                    String isNumber = modelBean.getIsNumber();
-//                    if (regStatus.equals("正常")) {
-//                        if (TextUtils.isEmpty(mac)) {//没有绑定MAC
-//                            RegSuccess(input, guestName, isToolTip, isNumber);
-//                        } else {
-//                            if (macAddress().equals(mac)) {
-//                                RegSuccess(input, guestName, isToolTip, isNumber);
-//                            } else {
-//                                Toast.makeText(context, "请确定注册码绑定的手机(MAC)是否正确",
-//                                        Toast.LENGTH_LONG).show();
-//                            }
-//                        }
-//                    } else if (regStatus.equals("已过期")) {
-//                        RegStatus = false;
-//                        Toast.makeText(context, "注册码已过期，请联系管理员", Toast.LENGTH_LONG).show();
-//                    } else if (regStatus.equals("次数用尽")) {
-//                        RegStatus = false;
-//                        Toast.makeText(context, "注册码调用次数已用尽，请联系管理员", Toast.LENGTH_LONG).show();
-//                    } else if (regStatus.equals("已禁用")) {
-//                        RegStatus = false;
-//                        Toast.makeText(context, "注册码已禁用，请联系管理员", Toast.LENGTH_LONG).show();
-//                    } else {
-//                        RegStatus = false;
-//                        Toast.makeText(context, "注册码暂不可用，请联系管理员", Toast.LENGTH_LONG).show();
-//                    }
-//                    progressDialog.dismiss();
-//
-//                }
-
-                break;
-            case RegLatestContact.UPLOAD_V_INFO:
-//                if (str != null && !TextUtils.isEmpty(str)) {
-//                    SharedPreferences.Editor et = sp.edit();
-//                    et.putString("SavedVersion", getAPPVersion());
-//                    et.commit();
-//                }
-                break;
             case RegLatestContact.CHECK_REG:
                 //验证注册码
                 RegCodeBean regCodeBean = (RegCodeBean) o;
@@ -673,10 +385,10 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                     dialog_Reg.dismiss();
                                 }
                             } else {
-                                ToastUtils.toast(context, regStatus);
+                                isTheRegStatusOk(regStatus);
                             }
                         } else {
-                            ToastUtils.toast(context, "注册码不存在");
+                            isTheRegStatusOk("注册码不存在");
                         }
 
                     } else {
@@ -739,10 +451,11 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                     }
                                 }
                             } else {
-                                ToastUtils.toast(context, regStatus);
+                                isTheRegStatusOk(regStatus);
                             }
                         } else {
-                            ToastUtils.toast(context, "注册码不存在");
+                            isTheRegStatusOk("注册码不存在");
+
                         }
 
                     } else {
@@ -1396,17 +1109,6 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 //
 //    }
 
-    /**
-     * 获取imei
-     *
-     * @return
-     */
-    private String GetImei() {
-
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String imei = tm.getDeviceId();
-        return imei;
-    }
 
     /**
      * 检测保存本地的版本号
@@ -1416,7 +1118,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 //        String savedVersion = "1.0";
         String nowVersion = getAPPVersion();
         if (savedVersion.equals("")) {
-          Hawk.put(HawkProperty.APP_SAVED_VERSION,nowVersion);
+            Hawk.put(HawkProperty.APP_SAVED_VERSION,nowVersion);
             //上传版本信息
             String info = getInfoWhenVersionChanged(savedVersion, nowVersion);
             present.uploadVersionInfo((String) Hawk.get(HawkProperty.REG_CODE), info, this);

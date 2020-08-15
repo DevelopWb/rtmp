@@ -111,6 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:visibility="gone"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="10dp"

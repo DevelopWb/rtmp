@@ -25,7 +25,7 @@ public class Config {
     public static String getServerURL() {
 
         String url_head = "rtmp://";
-        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
+        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "58.49.46.179");
         String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
         String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
         String regCode =Hawk.get(HawkProperty.REG_CODE);
