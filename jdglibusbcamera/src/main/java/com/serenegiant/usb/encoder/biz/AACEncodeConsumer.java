@@ -35,7 +35,7 @@ public class AACEncodeConsumer extends Thread{
     private static final String TAG = "TMPU";
     private static final String MIME_TYPE = "audio/mp4a-latm";
     private static final long TIMES_OUT = 1000;
-    private static final int SAMPLE_RATE = 8000;     // 采样率
+//    private static final int SAMPLE_RATE = 8000;     // 采样率
     private static final int BIT_RATE = 16000;       // 比特率
     private static final int BUFFER_SIZE = 1920;     // 最小缓存
     private int outChannel = 1;
@@ -84,7 +84,7 @@ public class AACEncodeConsumer extends Thread{
 
     public AACEncodeConsumer(){
         for (int i=0;i < AUDIO_SAMPLING_RATES.length; i++) {
-            if (AUDIO_SAMPLING_RATES[i] == SAMPLE_RATE) {
+            if (AUDIO_SAMPLING_RATES[i] == AudioAManager.samplingRate) {
                 mSamplingRateIndex = i;
                 break;
             }
@@ -244,7 +244,7 @@ public class AACEncodeConsumer extends Thread{
             Log.d(TAG,"AACEncodeConsumer-->开始采集音频");
         // 设置进程优先级
         Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
-        int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO,
+        int bufferSize = AudioRecord.getMinBufferSize(AudioAManager.samplingRate, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
         AudioAManager.getInstance().getAudioRecord().startRecording();
     }
@@ -267,7 +267,7 @@ public class AACEncodeConsumer extends Thread{
         format.setString(MediaFormat.KEY_MIME, "audio/mp4a-latm");
         format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
         format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
-        format.setInteger(MediaFormat.KEY_SAMPLE_RATE, SAMPLE_RATE);
+        format.setInteger(MediaFormat.KEY_SAMPLE_RATE, AudioAManager.samplingRate);
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, BUFFER_SIZE);
         mAudioEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);

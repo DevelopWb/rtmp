@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.jiangdg.usbcamera.utils.FileUtils;
 
+import org.easydarwin.encode.AudioAManager;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
@@ -548,7 +550,7 @@ public abstract class MediaEncoder implements Runnable {
 	private int getSamplingRateIndex(){
 		int mSamplingRateIndex = -1;
 		for (int i=0;i < AUDIO_SAMPLING_RATES.length; i++) {
-			if (AUDIO_SAMPLING_RATES[i] == MediaAudioEncoder.SAMPLE_RATE) {
+			if (AUDIO_SAMPLING_RATES[i] == AudioAManager.samplingRate) {
 				mSamplingRateIndex = i;
 				break;
 			}

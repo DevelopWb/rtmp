@@ -12,7 +12,7 @@ import android.media.MediaRecorder;
  * @UpdateDate: 2020/8/14 21:37
  */
 public class AudioAManager {
-    int samplingRate = 8000;
+  public static   int samplingRate = 8000;
     AudioRecord mAudioRecord = null;   // 底层的音频采集
 
 
