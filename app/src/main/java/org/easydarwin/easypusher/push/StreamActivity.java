@@ -1077,7 +1077,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void onClickResolution(View view) {
         if (UVCCameraService.uvcConnected) {
-            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
+            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 2));
         } else {
             setCameraRes(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
         }
@@ -1136,7 +1136,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (mMediaStream != null && !mMediaStream.isZeroPushStream) {
             isPushingStream = true;
             try {
-                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "58.49.46.179");
+                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULT_SERVER_IP);
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
                 String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {

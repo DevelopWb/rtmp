@@ -36,6 +36,7 @@ import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
+import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
@@ -93,7 +94,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
         binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "58.49.46.179"));
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULT_SERVER_IP));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
         binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
