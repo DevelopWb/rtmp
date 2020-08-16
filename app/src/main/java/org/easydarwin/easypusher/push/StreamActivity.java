@@ -1071,7 +1071,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void onClickResolution(View view) {
         if (UVCCameraService.uvcConnected) {
-            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1));
+            setCameraRes(resUvcDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 2));
         } else {
             setCameraRes(resDisplay, Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2));
         }
