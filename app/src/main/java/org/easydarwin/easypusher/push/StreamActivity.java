@@ -49,6 +49,7 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
@@ -91,7 +92,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     TextView txtStatus, streamStat;
     TextView textRecordTick;
     TextView mScreenResTv;//屏幕分辨率
-
+    private UVCCameraService mUvcService;
     List<String> listResolution = new ArrayList<>();
 
     public MediaStream mMediaStream;
@@ -125,13 +126,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                     break;
                 case UVC_DISCONNECT:
-                    Display mDisplay = getWindowManager().getDefaultDisplay();
-                    int W = mDisplay.getWidth();
-                    int H = mDisplay.getHeight();
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-                    params.height = H;
-                    params.width = W;
-                    surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
                     if (mMediaStream != null) {
                         if (mMediaStream.isZeroPushStream) {
                             startOrStopPush();
@@ -143,8 +137,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             startOrStopSecendPush();
                         }
                     }
-                    mScreenResTv.setVisibility(View.VISIBLE);
-                    mSwitchOritation.setVisibility(View.VISIBLE);
+                    surfaceViewToNativeCamera();
                     int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
                     if (2 == position) {
                         position = 0;
@@ -168,6 +161,21 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
     };
+
+    /**
+     * 切换到原生摄像头
+     */
+    private void surfaceViewToNativeCamera() {
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+        int W = mDisplay.getWidth();
+        int H = mDisplay.getHeight();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        params.height = H;
+        params.width = W;
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+        mSwitchOritation.setVisibility(View.VISIBLE);
+    }
+
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -199,6 +207,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mVedioPushBottomTagIv;
     private ImageView mSecendLiveIv, mBlackBgIv;
     private Intent uvcServiceIntent;
+    private ServiceConnection connUVC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,7 +342,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-                return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream ||
+        return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream ||
                 mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
     }
 
@@ -498,6 +507,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         // create background service for background use.
         Intent backCameraIntent = new Intent(this, BackgroundCameraService.class);
         startService(backCameraIntent);
+
         if (conn == null) {
             conn = new ServiceConnection() {
                 @Override
@@ -515,14 +525,29 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 }
             };
-        }else {
+        } else {
 //            if (!UVCCameraService.uvcConnected) {
 //                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
 //            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
+        startService(new Intent(this, UVCCameraService.class));
+        if (connUVC == null) {
+            connUVC = new ServiceConnection() {
 
 
+                @Override
+                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName componentName) {
+
+                }
+            };
+        }
+        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
         if (mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
             textRecordTick.removeCallbacks(mRecordTickRunnable);
@@ -647,48 +672,48 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
-        /*
-         * 开始录像的通知
-         * */
-        @Subscribe
-        public void onStartRecord(StartRecord sr) {
-            // 开始录像的通知，记下当前时间
-            mRecording = true;
-            mRecordingBegin = System.currentTimeMillis();
+    /*
+     * 开始录像的通知
+     * */
+    @Subscribe
+    public void onStartRecord(StartRecord sr) {
+        // 开始录像的通知，记下当前时间
+        mRecording = true;
+        mRecordingBegin = System.currentTimeMillis();
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    textRecordTick.setVisibility(View.VISIBLE);
-                    textRecordTick.removeCallbacks(mRecordTickRunnable);
-                    textRecordTick.post(mRecordTickRunnable);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textRecordTick.setVisibility(View.VISIBLE);
+                textRecordTick.removeCallbacks(mRecordTickRunnable);
+                textRecordTick.post(mRecordTickRunnable);
 
-                    ImageView ib = findViewById(R.id.streaming_activity_record);
-                    ib.setImageResource(R.drawable.record_pressed);
-                }
-            });
-        }
+                ImageView ib = findViewById(R.id.streaming_activity_record);
+                ib.setImageResource(R.drawable.record_pressed);
+            }
+        });
+    }
 
-        /*
-         * 得知停止录像
-         * */
-        @Subscribe
-        public void onStopRecord(StopRecord sr) {
-            // 停止录像的通知，更新状态
-            mRecording = false;
-            mRecordingBegin = 0;
+    /*
+     * 得知停止录像
+     * */
+    @Subscribe
+    public void onStopRecord(StopRecord sr) {
+        // 停止录像的通知，更新状态
+        mRecording = false;
+        mRecordingBegin = 0;
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    textRecordTick.setVisibility(View.INVISIBLE);
-                    textRecordTick.removeCallbacks(mRecordTickRunnable);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textRecordTick.setVisibility(View.INVISIBLE);
+                textRecordTick.removeCallbacks(mRecordTickRunnable);
 
-                    ImageView ib = findViewById(R.id.streaming_activity_record);
-                    ib.setImageResource(R.drawable.record);
-                }
-            });
-        }
+                ImageView ib = findViewById(R.id.streaming_activity_record);
+                ib.setImageResource(R.drawable.record);
+            }
+        });
+    }
 
     /*
      * 开始推流，获取fps、bps
@@ -847,16 +872,19 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
                                 switch (which) {
                                     case 0:
+                                        surfaceViewToNativeCamera();
                                         mSelectCameraTv.setText("摄像头:后置");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                                         break;
                                     case 1:
+                                        surfaceViewToNativeCamera();
                                         mSelectCameraTv.setText("摄像头:前置");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
                                         break;
                                     case 2:
                                         mSelectCameraTv.setText("摄像头:外置");
-                                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+                                        mUvcService.reRequestOtg();
+//                                        mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
                                         break;
                                     default:
                                         break;
@@ -958,10 +986,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private CharSequence[] getCameras() {
-        if (UVCCameraService.uvcConnected) {
-            return new CharSequence[]{"外置摄像头"};
-        }
-        return new CharSequence[]{"后置摄像头", "前置摄像头"};
+        return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
 
     }
 
@@ -987,13 +1012,16 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private String getSelectedCamera() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-        if (UVCCameraService.uvcConnected) {
-            SPUtil.setScreenPushingCameraIndex(this, 2);
+        if (0 == position) {
+            return "后置";
+        }
+        if (1 == position) {
+            return "前置";
+        }
+        if (2 == position) {
             return "外置";
         }
-
-        return 0 == position ? "后置" : "前置";
-
+        return "";
     }
 
 
@@ -1103,16 +1131,21 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, position);
                             Hawk.put(HawkProperty.KEY_NATIVE_WIDTH, Integer.parseInt(titles[0]));
                             Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT, Integer.parseInt(titles[1]));
+                            if (mMediaStream != null) {
+                                mMediaStream.updateResolution();
+                            }
                         } else {
                             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
                             Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
                             Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
+                            if (mMediaStream != null) {
+                                mMediaStream.updateResolution();
+                            }
+                            mUvcService.reRequestOtg();
                         }
                         mScreenResTv.setText("分辨率:" + title);
 
-                        if (mMediaStream != null) {
-                            mMediaStream.updateResolution();
-                        }
+
                         dialog.dismiss();
                     }
 
@@ -1316,8 +1349,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         params.height = H / 2;
         params.width = W;
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+        SPUtil.setScreenPushingCameraIndex(this, 2);
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
-        mScreenResTv.setVisibility(View.INVISIBLE);
+//        mScreenResTv.setVisibility(View.INVISIBLE);
         mSwitchOritation.setVisibility(View.INVISIBLE);
         //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
         //        mScreenResTv.setText(String.format("分辨率:%s", title));

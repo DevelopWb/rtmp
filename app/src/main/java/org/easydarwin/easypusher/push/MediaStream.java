@@ -298,6 +298,7 @@ public class MediaStream {
 
         uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
         uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
+        Log.e(TAG,"otg宽"+uvcWidth+"otg高"+uvcHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 //            uvcCamera.setPreviewSize(frameWidth,
@@ -702,7 +703,6 @@ public class MediaStream {
         //            frameWidth = w;
         //            frameHeight = h;
         //        });
-
         createCamera(mCameraId);
         startPreview();
     }

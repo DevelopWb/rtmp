@@ -7,6 +7,7 @@
 
 package org.easydarwin.easypusher.util;
 
+import android.hardware.usb.UsbDevice;
 import android.os.Environment;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
@@ -20,6 +21,7 @@ import java.io.File;
 public class Config {
 
     private static final String SERVER_URL = "serverUrl";
+    public static UsbDevice usbDevice = null;
 //    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
 
     public static String getServerURL() {

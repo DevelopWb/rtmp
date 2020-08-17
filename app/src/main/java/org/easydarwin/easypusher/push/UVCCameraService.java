@@ -4,6 +4,7 @@ import android.app.Service;
 import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -14,9 +15,13 @@ import android.widget.Toast;
 import com.serenegiant.usb.DeviceFilter;
 import com.serenegiant.usb.IButtonCallback;
 import com.serenegiant.usb.IStatusCallback;
+
 import org.easydarwin.USBMonitor;
+
 import com.serenegiant.usb.UVCCamera;
+
 import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.util.Config;
 import org.greenrobot.eventbus.EventBus;
 
 import java.nio.ByteBuffer;
@@ -25,12 +30,8 @@ public class UVCCameraService extends Service {
 
     public static boolean uvcConnected = false;
     public static boolean uvcAttached = false;
-    private static  UvcConnectionStatus  uvcConnectedCallBack;
 
 
-    public static void  setUvcConnectedCallBack(UvcConnectionStatus  uvcConnectedCallBack){
-        UVCCameraService.uvcConnectedCallBack = uvcConnectedCallBack;
-    }
 
     public static class UVCCameraLivaData extends LiveData<UVCCamera> {
         @Override
@@ -77,8 +78,6 @@ public class UVCCameraService extends Service {
     private SparseArray<UVCCamera> cameras = new SparseArray<>();
 
 
-
-
     public UVCCamera getCamera() {
         return mUVCCamera;
     }
@@ -93,6 +92,10 @@ public class UVCCameraService extends Service {
                 //
             }
         }
+    }
+
+    public void reRequestOtg() {
+        mUSBMonitor.requestPermission(Config.usbDevice);
     }
 
     @Override
@@ -112,12 +115,9 @@ public class UVCCameraService extends Service {
             @Override
             public void onAttach(final UsbDevice device) {
                 Log.v(TAG, "onAttach:" + device);
-
+                Config.usbDevice = device;
                 uvcAttached = true;
                 mUSBMonitor.requestPermission(device);
-                if (uvcConnectedCallBack != null) {
-                    uvcConnectedCallBack.onUvcCameraAttached();
-                }
                 EventBus.getDefault().post("onAttach");
             }
 
@@ -126,7 +126,7 @@ public class UVCCameraService extends Service {
                 releaseCamera();
                 uvcConnected = true;
 
-                    Log.v(TAG, "onConnect:");
+                Log.v(TAG, "onConnect:");
 
                 try {
                     final UVCCamera camera = new MyUVCCamera();
@@ -155,11 +155,10 @@ public class UVCCameraService extends Service {
                     liveData.postValue(camera);
 //                    Toast.makeText(UVCCameraService.this, "UVCCamera connected!", Toast.LENGTH_SHORT).show();
                     EventBus.getDefault().post("onConnect");
-                    if (uvcConnectedCallBack != null) {
-                        uvcConnectedCallBack.onUvcCameraConnected();
-                    }
-                    if (device != null)
+                    if (device != null){
                         cameras.append(device.getDeviceId(), camera);
+                    }
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -174,11 +173,12 @@ public class UVCCameraService extends Service {
 //                releaseCamera();
 
                 if (device != null) {
+                    //设备还存在 没有拔下来
                     UVCCamera camera = cameras.get(device.getDeviceId());
 
                     if (mUVCCamera == camera) {
                         mUVCCamera = null;
-                        Toast.makeText(UVCCameraService.this, "UVCCamera disconnected!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UVCCameraService.this, "设备还存在", Toast.LENGTH_SHORT).show();
                         liveData.postValue(null);
                     }
 
@@ -188,14 +188,8 @@ public class UVCCameraService extends Service {
                     mUVCCamera = null;
                     liveData.postValue(null);
                 }
-                if (uvcConnectedCallBack != null) {
-                    uvcConnectedCallBack.onUvcCameraDisConnected();
-                }
                 EventBus.getDefault().post("onDisconnect");
-//                if (mUSBMonitor != null) {
-//                    mUSBMonitor.destroy();
-//                }
-//
+
 //                mUSBMonitor = new USBMonitor(OutterCameraService.this, this);
 //                mUSBMonitor.setDeviceFilter(DeviceFilter.getDeviceFilters(OutterCameraService.this, R.xml.device_filter));
 //                mUSBMonitor.register();
@@ -229,10 +223,14 @@ public class UVCCameraService extends Service {
 
         super.onDestroy();
     }
-
+    public class LocalBinder extends Binder {
+        public UVCCameraService getService() {
+            return UVCCameraService.this;
+        }
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new LocalBinder();
     }
 }
