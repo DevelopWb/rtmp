@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -62,7 +62,9 @@
             android:name=".push.StreamActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"></activity>
-
+        <service
+            android:name=".push.BackgroundService"
+            android:enabled="true" />
         <activity android:name=".mine.AboutActivity" />
         <activity android:name=".mine.scan.QRScanActivity" />
 

@@ -126,4 +126,20 @@ public class NotificationTool {
                 NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
     }
+    /**
+     * 获取notification
+     * @param context
+     * @return
+     */
+    public static Notification getNotification(Context context){
+        String channelId = "notifi";
+        String channelName = "消息";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            createNotificationChannel(context,channelId, channelName, importance);
+
+        }
+        return new NotificationCompat.Builder(context, channelId).build();
+    }
 }
