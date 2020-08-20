@@ -135,7 +135,7 @@ public class FileUtils {
      * @return
      */
     private static String getSavedLocalPropertyFilePath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/一见直播/.配置文件/";
+        return Environment.getExternalStorageDirectory().getAbsolutePath() +File.separator+PubUtil.APP_NAME +"/.配置文件/";
     }
 
     //读取指定目录下的所有TXT文件的文件内容

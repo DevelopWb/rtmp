@@ -36,7 +36,4 @@ public class Config {
                 .apply();
     }
 
-    public static String recordPath() {
-        return Environment.getExternalStorageDirectory() +"/一见直播";
-    }
 }

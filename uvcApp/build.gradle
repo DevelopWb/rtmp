@@ -41,7 +41,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "一见直播-" + variant.versionCode + "-" + variant.versionName + ".apk"
+            outputFileName =  variant.versionCode + "-" + variant.versionName + ".apk"
         }
     }
 
