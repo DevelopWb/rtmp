@@ -178,7 +178,6 @@ public class UVCCameraService extends Service {
 
                     if (mUVCCamera == camera) {
                         mUVCCamera = null;
-                        Toast.makeText(UVCCameraService.this, "设备还存在", Toast.LENGTH_SHORT).show();
                         liveData.postValue(null);
                     }
 
