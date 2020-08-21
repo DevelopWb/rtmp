@@ -569,29 +569,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private void initSurfaceViewClick() {
         surfaceView.setSurfaceTextureListener(this);
-        surfaceView.setOnClickListener(new DoubleClickListener() {
-            @Override
-            public void onDoubleClick(View v) {
-                if (mBlackBgIv.getVisibility() == View.VISIBLE) {
-                    mBlackBgIv.setVisibility(View.GONE);
-                } else {
-                    mBlackBgIv.setVisibility(View.VISIBLE);
-                }
-                //                //推流
-                //                if (!mMediaStream.isStreaming()) {
-                //                    mPushStreamIv.performClick();
-                //                }
-            }
-
-            @Override
-            public void onOneClick(View v) {
-                try {
-                    mMediaStream.getCamera().autoFocus(null);
-                } catch (Exception e) {
-
-                }
-            }
-        });
     }
 
 
