@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -161,6 +162,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
     };
+    private Group mFloatViewGp;
 
     /**
      * 切换到原生摄像头
@@ -205,9 +207,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mThirdLiveIv;
     private ImageView mFourthLiveIv;
     private ImageView mVedioPushBottomTagIv;
-    private ImageView mSecendLiveIv, mBlackBgIv;
+    private ImageView mSecendLiveIv;
     private Intent uvcServiceIntent;
     private ServiceConnection connUVC;
+
+    private boolean  hideFloatViews = false;//隐藏悬浮控件
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,22 +270,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFourthLiveIv = (ImageView) findViewById(R.id.fourth_live_iv);
         mFourthLiveIv.setOnClickListener(this);
         mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
-        mBlackBgIv = (ImageView) findViewById(R.id.black_bg_iv);
+        mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
-        mBlackBgIv.setOnClickListener(new DoubleClickListener() {
-            @Override
-            public void onDoubleClick(View v) {
-                mBlackBgIv.setVisibility(View.GONE);
-                //推流
-                mPushStreamIv.performClick();
-            }
-
-            @Override
-            public void onOneClick(View v) {
-
-            }
-        });
         String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
@@ -569,6 +560,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private void initSurfaceViewClick() {
         surfaceView.setSurfaceTextureListener(this);
+        surfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideFloatViews = !hideFloatViews;
+                if (hideFloatViews) {
+                    mFloatViewGp.setVisibility(View.GONE);
+                }else {
+                    mFloatViewGp.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
