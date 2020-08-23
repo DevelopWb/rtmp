@@ -54,6 +54,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
         present = new RegLatestPresent();
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,

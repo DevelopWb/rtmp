@@ -7,14 +7,19 @@
     android:background="#000000"
     tools:context="org.easydarwin.easypusher.push.StreamActivity">
 
-
-    <TextureView
-        android:id="@+id/sv_surfaceview"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:keepScreenOn="true"
         app:layout_constraintBottom_toTopOf="@+id/option_bar_container"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextureView
+            android:id="@+id/sv_surfaceview"
+            android:layout_width="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true" />
+    </RelativeLayout>
 
     <android.support.constraint.Group
         android:id="@+id/float_views_group"
@@ -156,6 +161,14 @@
                 android:layout_marginTop="5dp"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/now_live_off" />
+            <ImageView
+                android:id="@+id/video_record_full_screen_iv"
+                android:layout_width="30dp"
+                android:padding="5dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/video_record_normal" />
 
         </LinearLayout>
 

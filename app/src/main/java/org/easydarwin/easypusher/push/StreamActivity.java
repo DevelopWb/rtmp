@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
@@ -127,17 +128,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                     break;
                 case UVC_DISCONNECT:
-                    if (mMediaStream != null) {
-                        if (mMediaStream.isZeroPushStream) {
-                            startOrStopPush();
-                        }
-                        if (mMediaStream.isFirstPushStream) {
-                            startOrStopFirstPush();
-                        }
-                        if (mMediaStream.isSecendPushStream) {
-                            startOrStopSecendPush();
-                        }
-                    }
+                    stopAllPushStream();
                     surfaceViewToNativeCamera();
                     int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
                     if (2 == position) {
@@ -162,6 +153,32 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
     };
+    private ImageView startRecordIv;
+    private boolean uvcConnected = false;
+
+    /**
+     * 停止所有的推流
+     */
+    private void stopAllPushStream() {
+        if (mMediaStream != null) {
+            if (mMediaStream.isZeroPushStream) {
+                startOrStopPush();
+            }
+            if (mMediaStream.isFirstPushStream) {
+                startOrStopFirstPush();
+            }
+            if (mMediaStream.isSecendPushStream) {
+                startOrStopSecendPush();
+            }
+            if (mMediaStream.isThirdPushStream) {
+                startOrStopThirdPush();
+            }
+            if (mMediaStream.isFourthPushStream) {
+                startOrStopFourthPush();
+            }
+        }
+    }
+
     private Group mFloatViewGp;
 
     /**
@@ -205,13 +222,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private ImageView mPushStreamIv, mSwitchOritation;
     private ImageView mFirstLiveIv;
     private ImageView mThirdLiveIv;
-    private ImageView mFourthLiveIv;
+    private ImageView mFourthLiveIv, mFullScreenIv;
     private ImageView mVedioPushBottomTagIv;
     private ImageView mSecendLiveIv;
     private Intent uvcServiceIntent;
     private ServiceConnection connUVC;
 
-    private boolean  hideFloatViews = false;//隐藏悬浮控件
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,6 +237,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
         BUSUtil.BUS.register(this);
         RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
             @Override
@@ -251,6 +268,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
         txtStreamAddress = findViewById(R.id.txt_stream_address);
         textRecordTick = findViewById(R.id.tv_start_record);
+        startRecordIv = findViewById(R.id.streaming_activity_record);
         mScreenResTv = findViewById(R.id.txt_res);
         surfaceView = findViewById(R.id.sv_surfaceview);
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
@@ -269,6 +287,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mThirdLiveIv.setOnClickListener(this);
         mFourthLiveIv = (ImageView) findViewById(R.id.fourth_live_iv);
         mFourthLiveIv.setOnClickListener(this);
+        mFullScreenIv = (ImageView) findViewById(R.id.video_record_full_screen_iv);
+        mFullScreenIv.setOnClickListener(this);
         mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
         mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
@@ -276,6 +296,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2)].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
+
         setPushLiveIv();
         if (PublicUtil.isMoreThanTheAndroid10()) {
             setViewsVisible(mSecendLiveIv, mThirdLiveIv, mFourthLiveIv);
@@ -288,7 +309,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             // Pre-O behavior.
             startService(new Intent(this, BackgroundService.class));
         }
-
+        if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
+            mFloatViewGp.setVisibility(View.GONE);
+        }else {
+            mFloatViewGp.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -563,11 +588,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         surfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideFloatViews = !hideFloatViews;
-                if (hideFloatViews) {
-                    mFloatViewGp.setVisibility(View.GONE);
-                }else {
+                if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
                     mFloatViewGp.setVisibility(View.VISIBLE);
+                    //屏幕竖屏
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
+                    Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
                 }
             }
         });
@@ -919,6 +945,43 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
                 startOrStopFourthPush();
                 break;
+            case R.id.video_record_full_screen_iv:
+                mFullScreenIv.setImageResource(R.mipmap.video_record_press);
+                //停止本地推流和录像
+                stopAllPushStream();
+                if (mMediaStream.isRecording()) {
+                    mMediaStream.stopRecord();
+                    startRecordIv.setImageResource(R.drawable.record);
+                }
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setMessage("由于抖音快手录屏要求限制，当开启录屏直播后，会停止所有推流直播，并且请保持屏幕处于亮屏和非锁屏状态！")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                               Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,true);
+                                if (uvcConnected) {
+                                    if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
+                                        mFloatViewGp.setVisibility(View.GONE);
+                                    }else {
+                                        mFloatViewGp.setVisibility(View.VISIBLE);
+                                    }
+                                    return;
+                                }
+                                //屏幕设为横屏
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
+                            }
+                        }).show();
+
+                break;
 
             case R.id.switch_oritation_iv:
                 /*
@@ -948,15 +1011,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     return;
                 }
 
-                ImageView ib = findViewById(R.id.streaming_activity_record);
 
                 if (mMediaStream != null) {
                     if (mMediaStream.isRecording()) {
                         mMediaStream.stopRecord();
-                        ib.setImageResource(R.drawable.record_pressed);
+                        startRecordIv.setImageResource(R.drawable.record);
                     } else {
                         mMediaStream.startRecord();
-                        ib.setImageResource(R.drawable.record);
+                        startRecordIv.setImageResource(R.drawable.record_pressed);
                     }
                 }
                 break;
@@ -1325,6 +1387,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraConnected() {
+        uvcConnected = true;
         //        Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
@@ -1354,6 +1417,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraDisConnected() {
+        uvcConnected = false;
         //        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
         handler.sendEmptyMessage(UVC_DISCONNECT);
 
