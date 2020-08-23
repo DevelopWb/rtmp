@@ -6,9 +6,9 @@ ext {
             compileSdkVersion: 28,
             minSdkVersion    : 21,
             targetSdkVersion : 27,
-            versionCode      : 19,
+            versionCode      : 20,
             //全面屏问题
-            versionName      : "1.3.3",
+            versionName      : "1.3.4",
     ]
     libsVersion = [
             // App dependencies version

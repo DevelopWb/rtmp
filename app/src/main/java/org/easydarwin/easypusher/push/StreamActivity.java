@@ -154,7 +154,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     };
     private ImageView startRecordIv;
-    private boolean uvcConnected = false;
 
     /**
      * 停止所有的推流
@@ -309,9 +308,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             // Pre-O behavior.
             startService(new Intent(this, BackgroundService.class));
         }
-        if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
+        if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
             mFloatViewGp.setVisibility(View.GONE);
-        }else {
+        } else {
             mFloatViewGp.setVisibility(View.VISIBLE);
         }
     }
@@ -588,12 +587,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         surfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
+                if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
                     mFloatViewGp.setVisibility(View.VISIBLE);
                     //屏幕竖屏
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
-                    Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
+                    Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
                 }
             }
         });
@@ -967,15 +966,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                               Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,true);
-                                if (uvcConnected) {
-                                    if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS,false)) {
-                                        mFloatViewGp.setVisibility(View.GONE);
-                                    }else {
-                                        mFloatViewGp.setVisibility(View.VISIBLE);
-                                    }
-                                    return;
-                                }
+                                Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, true);
                                 //屏幕设为横屏
                                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//横屏
                             }
@@ -1387,7 +1378,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraConnected() {
-        uvcConnected = true;
         //        Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
@@ -1398,8 +1388,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         int H = mDisplay.getHeight();
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-        params.height = H / 2;
-        params.width = W;
+        if (!Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
+            params.height = H / 2;
+            params.width = W;
+        } else {
+            params.height = H;
+            params.width = W / 2;
+        }
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         SPUtil.setScreenPushingCameraIndex(this, 2);
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
@@ -1417,7 +1412,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraDisConnected() {
-        uvcConnected = false;
         //        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
         handler.sendEmptyMessage(UVC_DISCONNECT);
 
