@@ -1393,7 +1393,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             params.width = W;
         } else {
             params.height = H;
-            params.width = W / 2;
+            params.width = W;
         }
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
         SPUtil.setScreenPushingCameraIndex(this, 2);
