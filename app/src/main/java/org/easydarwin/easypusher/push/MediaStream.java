@@ -341,7 +341,7 @@ public class MediaStream {
         if (uvcCamera != null) {
 
             startUvcPreview();
-            initConsumer(uvcWidth, uvcHeight);
+            initConsumer(frameWidth, frameHeight);
         } else if (mCamera != null) {
 
             startCameraPreview();
@@ -424,6 +424,8 @@ public class MediaStream {
         try {
             uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
             uvcCamera.startPreview();
+            frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? uvcHeight : uvcWidth;
+            frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? uvcWidth : uvcHeight;
         } catch (Throwable e) {
             e.printStackTrace();
         }
