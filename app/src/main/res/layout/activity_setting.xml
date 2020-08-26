@@ -53,16 +53,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:text="注册码:"
-                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/regist_code_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        app:layout_constraintLeft_toLeftOf="@+id/push_server_ip_et"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:text="dfadfasd"
+                        android:layout_marginLeft="15dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/regist_code_key"
+                        app:layout_constraintLeft_toRightOf="@+id/regist_code_key"
+                        app:layout_constraintTop_toTopOf="@+id/regist_code_key" />
 
                     <TextView
                         android:id="@+id/server_ip_tv"
@@ -151,8 +153,8 @@
                         android:gravity="center"
                         android:inputType="number"
                         android:text="哔哩"
-                        app:layout_constraintRight_toRightOf="@+id/live_tag_tv"
-                        app:layout_constraintTop_toBottomOf="@+id/live_tag_tv" />
+                        app:layout_constraintRight_toRightOf="@+id/regist_code_key"
+                        app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
                     <ImageView
                         android:id="@+id/first_live_scan_iv"
                         app:layout_constraintRight_toRightOf="@+id/first_live_key"
@@ -168,7 +170,7 @@
                         style="@style/set_url_editText"
                         android:layout_marginLeft="15dp"
                         app:layout_constraintTop_toTopOf="@+id/first_live_key"
-                        app:layout_constraintLeft_toRightOf="@+id/live_tag_tv"
+                        app:layout_constraintLeft_toRightOf="@+id/first_live_key"
                         app:layout_constraintRight_toRightOf="parent"
                         />
                     <TextView
@@ -263,6 +265,12 @@
                         android:layout_height="wrap_content"
                         app:constraint_referenced_ids="secend_live_key,secend_live_scan_iv,secend_live_value_et
                         ,third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"
+                        ></android.support.constraint.Group>
+                    <android.support.constraint.Group
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et"
                         ></android.support.constraint.Group>
 
                 </android.support.constraint.ConstraintLayout>

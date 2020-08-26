@@ -340,20 +340,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             unbindService(conn);
             conn = null;
         }
+        if (connUVC != null) {
+            unbindService(connUVC);
+            connUVC = null;
+        }
 
         handler.removeCallbacksAndMessages(null);
         if (mMediaStream != null) {
             mMediaStream.stopPreview();
-            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-                mService.activePreview();
-            } else {
+            mMediaStream.release();
+            mMediaStream = null;
+            stopService(new Intent(this, BackgroundCameraService.class));
+            stopService(new Intent(this, UVCCameraService.class));
+            if (isStreaming()) {
                 for (int i = 0; i < 5; i++) {
                     mMediaStream.stopPusherStream(i);
                 }
-                mMediaStream.release();
-                mMediaStream = null;
-                stopService(new Intent(this, BackgroundCameraService.class));
-                stopService(new Intent(this, UVCCameraService.class));
+
             }
         }
         super.onDestroy();
@@ -649,7 +652,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     private void startCamera() {
-        mMediaStream.updateResolution();
+//        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();
@@ -946,12 +949,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
             case R.id.video_record_full_screen_iv:
                 mFullScreenIv.setImageResource(R.mipmap.video_record_press);
-                //停止本地推流和录像
-                stopAllPushStream();
-                if (mMediaStream.isRecording()) {
-                    mMediaStream.stopRecord();
-                    startRecordIv.setImageResource(R.drawable.record);
-                }
+
                 new AlertDialog.Builder(this)
                         .setCancelable(false)
                         .setMessage("由于抖音快手录屏要求限制，当开启录屏直播后，会停止所有推流直播，并且请保持屏幕处于亮屏和非锁屏状态！")
@@ -965,6 +963,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //停止本地推流和录像
+                                stopAllPushStream();
+                                if (mMediaStream.isRecording()) {
+                                    mMediaStream.stopRecord();
+                                    startRecordIv.setImageResource(R.drawable.record);
+                                }
                                 dialog.dismiss();
                                 Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, true);
                                 //屏幕设为横屏
@@ -1415,5 +1419,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        Toast.makeText(getApplicationContext(),"disconnect",Toast.LENGTH_SHORT).show();
         handler.sendEmptyMessage(UVC_DISCONNECT);
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

@@ -126,6 +126,7 @@
             <ImageView
                 android:id="@+id/push_stream_iv"
                 android:layout_width="30dp"
+                android:visibility="gone"
                 android:layout_height="30dp"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/push_stream_off" />
