@@ -29,6 +29,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -116,6 +117,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private long mExitTime;//声明一个long类型变量：用于存放上一点击“返回键”的时刻
     private final static int UVC_CONNECT = 111;
     private final static int UVC_DISCONNECT = 112;
+
+    public static boolean  IS_VERTICAL_SCREEN = true;//是否是竖屏
+
+
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -608,6 +614,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
     private void goonWithAvailableTexture(SurfaceTexture surface) {
+        Configuration mConfiguration = getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation; //获取屏幕方向
+        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+            //横屏
+            IS_VERTICAL_SCREEN =false;
+        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+            //竖屏
+            IS_VERTICAL_SCREEN = true;
+        }
+
+
+
         final File easyPusher = new File(Config.recordPath());
         easyPusher.mkdir();
 
@@ -630,15 +648,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
             }
 
-            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
-                int orientation = getRequestedOrientation();
-
-                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } else {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                }
-            }
+//            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
+//                int orientation = getRequestedOrientation();
+//
+//                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                } else {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                }
+//            }
         } else {
 
             boolean enableVideo = SPUtil.getEnableVideo(this);
@@ -1423,6 +1441,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        //横屏
+        if (surfaceView.isAvailable()) {
+            if (!UVCCameraService.uvcConnected) {
+                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+            }
+        }
         super.onConfigurationChanged(newConfig);
     }
 }
