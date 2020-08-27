@@ -341,7 +341,7 @@ public class MediaStream {
         if (uvcCamera != null) {
 
             startUvcPreview();
-            initConsumer(frameWidth, frameHeight);
+            initConsumer(uvcWidth, uvcHeight);
         } else if (mCamera != null) {
 
             startCameraPreview();
@@ -424,8 +424,8 @@ public class MediaStream {
         try {
             uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
             uvcCamera.startPreview();
-            frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? uvcHeight : uvcWidth;
-            frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? uvcWidth : uvcHeight;
+//            frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? uvcHeight : uvcWidth;
+//            frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? uvcWidth/2 : uvcHeight;
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -766,7 +766,11 @@ public class MediaStream {
         if (!StreamActivity.IS_VERTICAL_SCREEN) {
             oritation = 0;
         } else {
-            oritation = 90;
+            if (mCameraId ==CAMERA_FACING_FRONT) {
+                oritation = 270;
+            }else {
+                oritation = 90;
+            }
         }
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];

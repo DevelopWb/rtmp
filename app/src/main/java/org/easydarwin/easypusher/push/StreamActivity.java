@@ -313,11 +313,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             // Pre-O behavior.
             startService(new Intent(this, BackgroundService.class));
         }
-        if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
-            mFloatViewGp.setVisibility(View.GONE);
-        } else {
-            mFloatViewGp.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override
@@ -334,6 +330,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
+        if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
+            mFloatViewGp.setVisibility(View.GONE);
+        } else {
+            mFloatViewGp.setVisibility(View.VISIBLE);
+            mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
+        }
         goonWithPermissionGranted();
     }
 
