@@ -315,13 +315,13 @@ public class RecordService extends Service {
                                 if (sync) {
                                     System.arraycopy(mPpsSps, 0, h264, 0, mPpsSps.length);
                                     outputBuffer.get(h264, mPpsSps.length, bufferInfo.size);
-                                    mEasyPusher.push(h264, 0, mPpsSps.length + bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 2);
+                                    mEasyPusher.push(h264, 0, mPpsSps.length + bufferInfo.size, 0, 2);
 
                                     if (BuildConfig.DEBUG)
                                         Log.i(TAG, String.format("push i video stamp:%d", bufferInfo.presentationTimeUs / 1000));
                                 } else {
                                     outputBuffer.get(h264, 0, bufferInfo.size);
-                                    mEasyPusher.push(h264, 0, bufferInfo.size, bufferInfo.presentationTimeUs / 1000, 1);
+                                    mEasyPusher.push(h264, 0, bufferInfo.size, 0, 1);
 
                                     if (BuildConfig.DEBUG)
                                         Log.i(TAG, String.format("push video stamp:%d", bufferInfo.presentationTimeUs / 1000));
