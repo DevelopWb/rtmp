@@ -160,6 +160,7 @@ public class UVCCameraService extends Service {
                     }
 
                 } catch (Exception ex) {
+                    uvcConnected = false;
                     ex.printStackTrace();
                 }
             }

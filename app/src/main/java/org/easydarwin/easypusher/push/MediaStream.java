@@ -21,9 +21,11 @@ import com.orhanobut.hawk.Hawk;
 import com.regmode.Utils.RegOperateManager;
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
+
 import org.easydarwin.bus.SupportResolution;
 import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.util.Config;
+
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
 import org.easydarwin.easypusher.util.PublicUtil;
@@ -298,7 +300,7 @@ public class MediaStream {
 
         uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, uvcWidth);
         uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, uvcHeight);
-        Log.e(TAG,"otg宽"+uvcWidth+"otg高"+uvcHeight);
+        Log.e(TAG, "otg宽" + uvcWidth + "otg高" + uvcHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
 //            uvcCamera.setPreviewSize(frameWidth,
@@ -309,7 +311,7 @@ public class MediaStream {
             //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
 //                uvcCamera.setPreviewSize(DisplayUtil.dp2px(context,300), DisplayUtil.dp2px(context,300), 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
-                uvcCamera.setPreviewSize(uvcWidth,uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
+                uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             } catch (final IllegalArgumentException e) {
                 try {
                     // fallback to YUV mode
@@ -422,6 +424,8 @@ public class MediaStream {
         try {
             uvcCamera.setFrameCallback(uvcFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP/*UVCCamera.PIXEL_FORMAT_NV21   之前选的4*/);
             uvcCamera.startPreview();
+//            frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? uvcHeight : uvcWidth;
+//            frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? uvcWidth/2 : uvcHeight;
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -451,21 +455,14 @@ public class MediaStream {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         mCamera.startPreview();
-        boolean frameRotate;
-        int result;
-
-        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (camInfo.orientation + displayRotationDegree) % 360;
-        } else {  // back-facing
-            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+            mCamera.setDisplayOrientation(0);
+        } else {
+            mCamera.setDisplayOrientation(90);
         }
-
-        frameRotate = result % 180 != 0;
-
-        frameWidth = frameRotate ? nativeHeight : nativeWidth;
-        frameHeight = frameRotate ? nativeWidth : nativeHeight;
+        frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
+        frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
     }
 
     /// 停止预览
@@ -765,18 +762,20 @@ public class MediaStream {
         if (data == null)
             return;
 
-        int result;
-        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (camInfo.orientation + displayRotationDegree) % 360;
-        } else {  // back-facing
-            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+        int oritation =0;
+        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+            oritation = 0;
+        } else {
+            if (mCameraId ==CAMERA_FACING_FRONT) {
+                oritation = 270;
+            }else {
+                oritation = 90;
+            }
         }
-
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
-
-        JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight, result % 360, 2);
+        JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight, oritation, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
         if (mRecordVC != null) {

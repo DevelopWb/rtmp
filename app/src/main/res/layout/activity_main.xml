@@ -135,7 +135,7 @@
                 android:id="@+id/first_live_iv"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="50dp"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/bilibili_off" />
 
