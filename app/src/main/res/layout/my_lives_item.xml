@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="5dp"
+    android:layout_height="30dp">
+
+    <TextView
+        android:id="@+id/live_item_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sp_squre_gray"
+        android:paddingLeft="10dp"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:text="fjdfjlasd"
+        app:layout_constraintEnd_toStartOf="@+id/select_status_iv"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
+
+    <ImageView
+        android:id="@+id/select_status_iv"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/video_record_press"
+        app:layout_constraintBottom_toBottomOf="@+id/live_item_name_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/live_item_name_tv"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+    <android.support.constraint.Group
+        android:id="@+id/live_item_gp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="live_item_name_tv,select_status_iv"></android.support.constraint.Group>
+
+    <ImageView
+        android:id="@+id/add_live_iv"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/video_record_press"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+</android.support.constraint.ConstraintLayout>

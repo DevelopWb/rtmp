@@ -466,27 +466,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
 
                 break;
-            case SettingActivity.LIVE_TYPE_NOW:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.now_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.now_live_off);
-                }
-
-                break;
             case SettingActivity.LIVE_TYPE_DOUYU:
                 if (isOn) {
                     imageView.setImageResource(R.mipmap.douyu_live_on);
                 } else {
                     imageView.setImageResource(R.mipmap.douyu_live_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_ZHANQI:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.zhanqi_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.zhanqi_live_off);
                 }
 
                 break;
@@ -505,13 +489,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //                    imageView.setImageResource(R.mipmap.yingke_live_off);
             //                }
             //                break;
-            case SettingActivity.LIVE_TYPE_CUSTOM:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.cc_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.cc_live_off);
-                }
-                break;
             default:
                 break;
         }

@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,14 +56,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_BILI = "哔哩哔哩";
     public static final String LIVE_TYPE_HUYA = "虎牙直播";
     public static final String LIVE_TYPE_YI = "一直播";
-    public static final String LIVE_TYPE_NOW = "NOW直播";
     public static final String LIVE_TYPE_DOUYU = "斗鱼直播";
-    public static final String LIVE_TYPE_ZHANQI = "战旗TV";
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
-    //    public static final String LIVE_TYPE_YINGKE = "映客直播";
-    public static final String LIVE_TYPE_CUSTOM = "自定义";
-    private CharSequence[] lives = new CharSequence[]{LIVE_TYPE_BILI, LIVE_TYPE_HUYA, LIVE_TYPE_DOUYU, LIVE_TYPE_YI, LIVE_TYPE_NOW, LIVE_TYPE_ZHANQI, LIVE_TYPE_XIGUA, LIVE_TYPE_CUSTOM};
-    private boolean[] selectStatus = new boolean[]{true, true, false, true, true, false, false, false, false};
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
     ;
@@ -90,36 +85,41 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         setSupportActionBar(binding.mainToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.mainToolbar.setOnMenuItemClickListener(this);
-        // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
-        binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
-        binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
-        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
-        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
-        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
-        binding.fourthLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FOURTH_URL, ""));
-        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, ""));
-        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
-        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
-
-        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CUSTOM));
-        binding.firstLiveScanIv.setOnClickListener(this);
-        binding.quitAppBt.setOnClickListener(this);
-        binding.secendLiveScanIv.setOnClickListener(this);
-        binding.thirdLiveScanIv.setOnClickListener(this);
-        binding.fourthLiveScanIv.setOnClickListener(this);
-        binding.firstLiveKey.setOnClickListener(this);
-        binding.secendLiveKey.setOnClickListener(this);
-        binding.thirdLiveKey.setOnClickListener(this);
-        binding.fourthLiveKey.setOnClickListener(this);
-        binding.openRecordLocalBt.setOnClickListener(this);
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            binding.leftLiveGp.setVisibility(View.VISIBLE);
-        }else {
-            binding.leftLiveGp.setVisibility(View.GONE);
-        }
+        MyLivesAdapter adapter = new MyLivesAdapter(R.layout.my_lives_item);
+        GridLayoutManager manager = new GridLayoutManager(mContext,3);
+        binding.livePlatformRv.setAdapter(adapter);
+        binding.livePlatformRv.setLayoutManager(manager);
+        adapter.setNewData(getAdapterData());
+//        // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
+//        binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
+//        binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
+//        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
+//        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
+//        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
+//        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
+//        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
+//        binding.fourthLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FOURTH_URL, ""));
+//        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, ""));
+//        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
+//        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
+//        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
+//
+//        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CUSTOM));
+//        binding.firstLiveScanIv.setOnClickListener(this);
+//        binding.quitAppBt.setOnClickListener(this);
+//        binding.secendLiveScanIv.setOnClickListener(this);
+//        binding.thirdLiveScanIv.setOnClickListener(this);
+//        binding.fourthLiveScanIv.setOnClickListener(this);
+//        binding.firstLiveKey.setOnClickListener(this);
+//        binding.secendLiveKey.setOnClickListener(this);
+//        binding.thirdLiveKey.setOnClickListener(this);
+//        binding.fourthLiveKey.setOnClickListener(this);
+//        binding.openRecordLocalBt.setOnClickListener(this);
+//        if (PublicUtil.isMoreThanTheAndroid10()) {
+//            binding.leftLiveGp.setVisibility(View.VISIBLE);
+//        }else {
+//            binding.leftLiveGp.setVisibility(View.GONE);
+//        }
         // 使能摄像头后台采集
         onPushBackground();
 //        onEncodeType();
@@ -128,6 +128,19 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         onAutoRun();
     }
 
+    private List<LiveBean> getAdapterData(){
+        List<LiveBean> arrays = new ArrayList<>();
+        arrays.add(new LiveBean(LIVE_TYPE_BILI,R.mipmap.bilibili_off,true));
+        arrays.add(new LiveBean(LIVE_TYPE_HUYA,R.mipmap.huya_off,true));
+//        if (PublicUtil.isMoreThanTheAndroid10()) {
+            arrays.add(new LiveBean(LIVE_TYPE_DOUYU,R.mipmap.douyu_live_off,true));
+            arrays.add(new LiveBean(LIVE_TYPE_XIGUA,R.mipmap.xigua_live_off,true));
+            arrays.add(new LiveBean(LIVE_TYPE_YI,R.mipmap.yi_live_off,true));
+//        }
+        return arrays;
+    }
+    
+    
     /**
      * 自启动
      */
@@ -292,41 +305,41 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
 
     @Override
     public void onBackPressed() {
-        if (!isPushingStream) {
-            String text = binding.pushServerIpEt.getText().toString().trim();
-            if (text.contains("//")) {
-                text = text.substring(text.indexOf("//") + 2, text.length());
-            }
-            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
-            String textPort = binding.pushServerPortEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT, textPort);
-            String tag = binding.liveTagEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
-        } else {
-            ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
-        }
-        if (!isPushingFirstStream) {
-            String bilibili = binding.firstLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_FIRST_URL, bilibili);
-
-        }
-        if (!isPushingSecendStream) {
-            String huya = binding.secendLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_SECEND_URL, huya);
-        }
-        if (!isPushingThirdStream) {
-            String url = binding.thirdLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_THIRD_URL, url);
-
-        }
-        if (!isPushingFourthStream) {
-            String url = binding.fourthLiveValueEt.getText().toString().trim();
-            Hawk.put(HawkProperty.KEY_FOURTH_URL, url);
-
-        }
-
-        String registCode = binding.registCodeValue.getText().toString().trim();
-        Hawk.put(HawkProperty.KEY_REGIST_CODE, registCode);
+//        if (!isPushingStream) {
+//            String text = binding.pushServerIpEt.getText().toString().trim();
+//            if (text.contains("//")) {
+//                text = text.substring(text.indexOf("//") + 2, text.length());
+//            }
+//            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_IP, text);
+//            String textPort = binding.pushServerPortEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_PORT, textPort);
+//            String tag = binding.liveTagEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
+//        } else {
+//            ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
+//        }
+//        if (!isPushingFirstStream) {
+//            String bilibili = binding.firstLiveValueEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_FIRST_URL, bilibili);
+//
+//        }
+//        if (!isPushingSecendStream) {
+//            String huya = binding.secendLiveValueEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_SECEND_URL, huya);
+//        }
+//        if (!isPushingThirdStream) {
+//            String url = binding.thirdLiveValueEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_THIRD_URL, url);
+//
+//        }
+//        if (!isPushingFourthStream) {
+//            String url = binding.fourthLiveValueEt.getText().toString().trim();
+//            Hawk.put(HawkProperty.KEY_FOURTH_URL, url);
+//
+//        }
+//
+//        String registCode = binding.registCodeValue.getText().toString().trim();
+//        Hawk.put(HawkProperty.KEY_REGIST_CODE, registCode);
         super.onBackPressed();
     }
 
@@ -355,28 +368,29 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                     backgroundPushing.setChecked(false);
                 }
             }
-        } else if (requestCode == REQUEST_SCAN_TEXT_URL_BILI) {
-            if (resultCode == RESULT_OK) {
-                String url = data.getStringExtra("result");
-                this.binding.firstLiveValueEt.setText(url);
-            }
-
-        } else if (requestCode == REQUEST_SCAN_TEXT_URL_HUYA) {
-            if (resultCode == RESULT_OK) {
-                String url = data.getStringExtra("result");
-                this.binding.secendLiveValueEt.setText(url);
-            }
-        } else if (requestCode == REQUEST_SCAN_TEXT_URL_YI) {
-            if (resultCode == RESULT_OK) {
-                String url = data.getStringExtra("result");
-                this.binding.thirdLiveValueEt.setText(url);
-            }
-        } else if (requestCode == REQUEST_SCAN_TEXT_URL_NOW) {
-            if (resultCode == RESULT_OK) {
-                String url = data.getStringExtra("result");
-                this.binding.fourthLiveValueEt.setText(url);
-            }
         }
+//        else if (requestCode == REQUEST_SCAN_TEXT_URL_BILI) {
+//            if (resultCode == RESULT_OK) {
+//                String url = data.getStringExtra("result");
+//                this.binding.firstLiveValueEt.setText(url);
+//            }
+//
+//        } else if (requestCode == REQUEST_SCAN_TEXT_URL_HUYA) {
+//            if (resultCode == RESULT_OK) {
+//                String url = data.getStringExtra("result");
+//                this.binding.secendLiveValueEt.setText(url);
+//            }
+//        } else if (requestCode == REQUEST_SCAN_TEXT_URL_YI) {
+//            if (resultCode == RESULT_OK) {
+//                String url = data.getStringExtra("result");
+//                this.binding.thirdLiveValueEt.setText(url);
+//            }
+//        } else if (requestCode == REQUEST_SCAN_TEXT_URL_NOW) {
+//            if (resultCode == RESULT_OK) {
+//                String url = data.getStringExtra("result");
+//                this.binding.fourthLiveValueEt.setText(url);
+//            }
+//        }
     }
 
     @Override
@@ -426,30 +440,30 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                             }
                         }).show();
                 break;
-            case R.id.first_live_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_BILI);
-                break;
-            case R.id.secend_live_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_HUYA);
-                break;
-            case R.id.third_live_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_YI);
-                break;
-            case R.id.fourth_live_scan_iv:
-                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_NOW);
-                break;
-            case R.id.first_live_key:
-                selectLiveType(1);
-                break;
-            case R.id.secend_live_key:
-                selectLiveType(2);
-                break;
-            case R.id.third_live_key:
-                selectLiveType(3);
-                break;
-            case R.id.fourth_live_key:
-                selectLiveType(4);
-                break;
+//            case R.id.first_live_scan_iv:
+//                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_BILI);
+//                break;
+//            case R.id.secend_live_scan_iv:
+//                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_HUYA);
+//                break;
+//            case R.id.third_live_scan_iv:
+//                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_YI);
+//                break;
+//            case R.id.fourth_live_scan_iv:
+//                startActivityForResult(new Intent(this, QRScanActivity.class), REQUEST_SCAN_TEXT_URL_NOW);
+//                break;
+//            case R.id.first_live_key:
+//                selectLiveType(1);
+//                break;
+//            case R.id.secend_live_key:
+//                selectLiveType(2);
+//                break;
+//            case R.id.third_live_key:
+//                selectLiveType(3);
+//                break;
+//            case R.id.fourth_live_key:
+//                selectLiveType(4);
+//                break;
             default:
                 break;
         }
@@ -476,41 +490,36 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.THIRD_LIVE,LIVE_TYPE_YI)+"直播，无法更改地址");
                 return;
             }
-        } else {
-            if (isPushingFourthStream) {
-                ToastUtils.toast(mContext, "正在推送"+Hawk.get(HawkProperty.FOURTH_LIVE,LIVE_TYPE_NOW)+"直播，无法更改地址");
-                return;
-            }
         }
 
 
-        new AlertDialog.Builder(mContext).setSingleChoiceItems(getCharSequence(), -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                CharSequence name = getCharSequence()[which];
-                switch (type) {
-                    case 1:
-                        binding.firstLiveKey.setText(name);
-                        Hawk.put(HawkProperty.FIRST_LIVE, name);
-                        break;
-                    case 2:
-                        binding.secendLiveKey.setText(name);
-                        Hawk.put(HawkProperty.SECENDLIVE, name);
-                        break;
-                    case 3:
-                        binding.thirdLiveKey.setText(name);
-                        Hawk.put(HawkProperty.THIRD_LIVE, name);
-                        break;
-                    case 4:
-                        binding.fourthLiveKey.setText(name);
-                        Hawk.put(HawkProperty.FOURTH_LIVE, name);
-                        break;
-                    default:
-                        break;
-                }
-                dialog.dismiss();
-            }
-        }).show();
+//        new AlertDialog.Builder(mContext).setSingleChoiceItems(getCharSequence(), -1, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                CharSequence name = getCharSequence()[which];
+//                switch (type) {
+//                    case 1:
+//                        binding.firstLiveKey.setText(name);
+//                        Hawk.put(HawkProperty.FIRST_LIVE, name);
+//                        break;
+//                    case 2:
+//                        binding.secendLiveKey.setText(name);
+//                        Hawk.put(HawkProperty.SECENDLIVE, name);
+//                        break;
+//                    case 3:
+//                        binding.thirdLiveKey.setText(name);
+//                        Hawk.put(HawkProperty.THIRD_LIVE, name);
+//                        break;
+//                    case 4:
+//                        binding.fourthLiveKey.setText(name);
+//                        Hawk.put(HawkProperty.FOURTH_LIVE, name);
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                dialog.dismiss();
+//            }
+//        }).show();
     }
 
     //"哔哩哔哩", "虎牙直播", "斗鱼直播", "一直播  ", "NOW直播",
@@ -523,14 +532,4 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         return arrays;
     }
 
-    private CharSequence[] getCharSequence() {
-        List<CharSequence> charSequences = new ArrayList<>();
-        for (int i = 0; i < lives.length; i++) {
-            CharSequence life = lives[i];
-            if (!getLives().contains(life)) {
-                charSequences.add(life);
-            }
-        }
-        return charSequences.toArray(new CharSequence[charSequences.size()]);
-    }
 }
