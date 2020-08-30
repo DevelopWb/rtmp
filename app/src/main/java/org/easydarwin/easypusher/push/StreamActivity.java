@@ -648,6 +648,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream = ms;
             startCamera();
             mService.setMediaStream(ms);
+            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
+                int orientation = getRequestedOrientation();
+
+                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
         }
     }
 
