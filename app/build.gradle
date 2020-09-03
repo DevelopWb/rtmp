@@ -78,10 +78,11 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation(name: 'update-release', ext: 'aar'){
-        exclude group:'com.google.zxing'
+    implementation(name: 'update-release', ext: 'aar') {
+        exclude group: 'com.google.zxing'
     }
 
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
 
     implementation 'com.android.support:preference-v7:26.1.0'

@@ -13,9 +13,11 @@
         android:paddingLeft="10dp"
         app:layout_constraintHorizontal_chainStyle="packed"
         android:paddingTop="5dp"
+        android:minWidth="80dp"
+        android:gravity="center"
         android:paddingRight="10dp"
         android:paddingBottom="5dp"
-        android:text="fjdfjlasd"
+        android:text=""
         app:layout_constraintEnd_toStartOf="@+id/select_status_iv"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,27 +27,27 @@
         android:id="@+id/select_status_iv"
         android:layout_width="30dp"
         android:layout_height="20dp"
-        android:src="@mipmap/video_record_press"
+        android:src="@mipmap/selected_icon"
         app:layout_constraintBottom_toBottomOf="@+id/live_item_name_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/live_item_name_tv"
         app:layout_constraintTop_toTopOf="parent"></ImageView>
 
-    <android.support.constraint.Group
-        android:id="@+id/live_item_gp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="live_item_name_tv,select_status_iv"></android.support.constraint.Group>
+<!--    <android.support.constraint.Group-->
+<!--        android:id="@+id/live_item_gp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:constraint_referenced_ids="live_item_name_tv,select_status_iv"></android.support.constraint.Group>-->
 
-    <ImageView
-        android:id="@+id/add_live_iv"
-        android:layout_width="30dp"
-        android:layout_height="20dp"
-        android:src="@mipmap/video_record_press"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageView>
+<!--    <ImageView-->
+<!--        android:id="@+id/add_live_iv"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:src="@mipmap/selected_icon"-->
+<!--        android:visibility="gone"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"></ImageView>-->
 </android.support.constraint.ConstraintLayout>

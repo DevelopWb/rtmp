@@ -13,12 +13,22 @@ public class LiveBean {
     private String pushUrl;//推流地址
     private String liveTag;//直播标识
     private int liveImage;//
+    private int itemType;//0是正常平台 1是添加平台
     private boolean isSelect;//
 
-    public LiveBean(String liveName, int liveImage, boolean isSelect) {
+    public LiveBean(String liveName, int liveImage, boolean isSelect,int itemType) {
         this.liveName = liveName;
         this.liveImage = liveImage;
         this.isSelect = isSelect;
+        this.itemType = itemType;
+    }
+
+    public int getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
     }
 
     public String getLiveName() {
