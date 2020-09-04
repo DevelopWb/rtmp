@@ -22,9 +22,14 @@ import com.regmode.bean.AppInfoBean;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import org.easydarwin.easypusher.mine.LiveBean;
+import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -54,6 +59,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
+        initPlatform();
         present = new RegLatestPresent();
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -91,6 +97,24 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
 
 
+    }
+
+    /**
+     * 初始化平台数据
+     */
+    private void initPlatform() {
+        List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
+        if (arrays == null) {
+            arrays = new ArrayList<>();
+            arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_BILI, R.mipmap.bilibili_off, true, 0));
+            arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_HUYA, R.mipmap.huya_off, true, 0));
+            if (PublicUtil.isMoreThanTheAndroid10()) {
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0));
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0));
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0));
+            }
+            Hawk.put(HawkProperty.PLATFORMS,arrays);
+        }
     }
 
     @Override

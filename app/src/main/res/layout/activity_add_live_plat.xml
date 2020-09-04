@@ -3,40 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="15dp"
     android:layout_height="match_parent"
     tools:context="org.easydarwin.easypusher.mine.AddLivePlatActivity">
 
 
     <TextView
-        android:id="@+id/first_live_key"
+        android:id="@+id/plat_name_key_tv"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:layout_marginTop="10dp"
-        android:drawableRight="@mipmap/arrow_down_icon"
+        android:gravity="center"
+        android:text="平台名称："
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/plat_name_value_et"
+        style="@style/set_url_editText"
+        android:minHeight="25dp"
+        app:layout_constraintBottom_toBottomOf="@+id/plat_name_key_tv"
+        app:layout_constraintLeft_toRightOf="@+id/plat_name_key_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/plat_name_key_tv" />
+
+    <TextView
+        android:id="@+id/push_url_key_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="15dp"
         android:drawablePadding="5dp"
         android:gravity="center"
-        android:inputType="number"
-        android:text="哔哩"
-        app:layout_constraintRight_toRightOf="@+id/regist_code_key"
-        app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
+        android:text="推流地址"
+        app:layout_constraintLeft_toLeftOf="@+id/plat_name_key_tv"
+        app:layout_constraintTop_toBottomOf="@+id/plat_name_key_tv" />
 
     <ImageView
-        android:id="@+id/first_live_scan_iv"
+        android:id="@+id/push_scan_iv"
         android:layout_width="30dp"
         android:layout_height="35dp"
         android:padding="5dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/scan_icon"
-        app:layout_constraintRight_toRightOf="@+id/first_live_key"
-        app:layout_constraintTop_toBottomOf="@+id/first_live_key"></ImageView>
+        app:layout_constraintRight_toRightOf="@+id/push_url_key_tv"
+        app:layout_constraintTop_toBottomOf="@+id/push_url_key_tv"></ImageView>
 
     <EditText
-        android:id="@+id/first_live_value_et"
+        android:id="@+id/push_url_value_et"
         style="@style/set_url_editText"
         android:layout_marginLeft="15dp"
-        app:layout_constraintLeft_toRightOf="@+id/first_live_key"
+        app:layout_constraintLeft_toRightOf="@+id/push_url_key_tv"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/first_live_key" />
+        app:layout_constraintTop_toTopOf="@+id/push_url_key_tv" />
 
+
+    <TextView
+        android:id="@+id/add_plat_confirm_tv"
+        style="@style/bt_style"
+        android:background="@drawable/sp_filled_blue"
+        android:text="确定"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_url_value_et"></TextView>
 
 </android.support.constraint.ConstraintLayout>

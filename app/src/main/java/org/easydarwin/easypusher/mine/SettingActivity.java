@@ -27,6 +27,7 @@ import android.widget.RadioGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
+import com.juntai.wisdom.basecomponent.utils.PubUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 
@@ -63,6 +64,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
+    private MyLivesAdapter adapter;
     ;
 
     @Override
@@ -88,53 +90,39 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         setSupportActionBar(binding.mainToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.mainToolbar.setOnMenuItemClickListener(this);
-        MyLivesAdapter adapter = new MyLivesAdapter(R.layout.my_lives_item);
+        adapter = new MyLivesAdapter(R.layout.my_lives_item);
         GridLayoutManager manager = new GridLayoutManager(mContext, 3);
         binding.livePlatformRv.setAdapter(adapter);
         binding.livePlatformRv.setLayoutManager(manager);
-        adapter.setNewData(getAdapterData());
+
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LiveBean liveBean = (LiveBean) adapter.getData().get(position);
                 if (0 == liveBean.getItemType()) {
-                    liveBean.setSelect(!liveBean.isSelect());
+                    boolean isSelect = liveBean.isSelect();
+                    if (!isSelect) {
+                        //查看被选中的个数
+                        int size =  getSelectedAmount(adapter);
+                        if (PublicUtil.isMoreThanTheAndroid10()) {
+                            if (5==size) {
+                                ToastUtils.toast(mContext,"最多只能选择5个");
+                                return;
+                            }
+                        }else {
+                            if (2==size) {
+                                ToastUtils.toast(mContext,"最多只能选择2个");
+                                return;
+                            }
+                        }
+                    }
+                    liveBean.setSelect(!isSelect);
                     adapter.notifyItemChanged(position);
                 } else {
-                    ToastUtils.toast(mContext, "添加");
+                   startActivity(new Intent(mContext,AddLivePlatActivity.class));
                 }
             }
         });
-        //        // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
-        //        binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
-        //        binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        //        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
-        //        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
-        //        binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
-        //        binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
-        //        binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
-        //        binding.fourthLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FOURTH_URL, ""));
-        //        binding.liveTagEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, ""));
-        //        binding.firstLiveKey.setText(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
-        //        binding.secendLiveKey.setText(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-        //        binding.thirdLiveKey.setText(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
-        //
-        //        binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CUSTOM));
-        //        binding.firstLiveScanIv.setOnClickListener(this);
-        //        binding.quitAppBt.setOnClickListener(this);
-        //        binding.secendLiveScanIv.setOnClickListener(this);
-        //        binding.thirdLiveScanIv.setOnClickListener(this);
-        //        binding.fourthLiveScanIv.setOnClickListener(this);
-        //        binding.firstLiveKey.setOnClickListener(this);
-        //        binding.secendLiveKey.setOnClickListener(this);
-        //        binding.thirdLiveKey.setOnClickListener(this);
-        //        binding.fourthLiveKey.setOnClickListener(this);
-        //        binding.openRecordLocalBt.setOnClickListener(this);
-        //        if (PublicUtil.isMoreThanTheAndroid10()) {
-        //            binding.leftLiveGp.setVisibility(View.VISIBLE);
-        //        }else {
-        //            binding.leftLiveGp.setVisibility(View.GONE);
-        //        }
         // 使能摄像头后台采集
         onPushBackground();
         //        onEncodeType();
@@ -143,19 +131,33 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         onAutoRun();
     }
 
-    private List<LiveBean> getAdapterData() {
-        List<LiveBean> arrays = new ArrayList<>();
-        arrays.add(new LiveBean(LIVE_TYPE_BILI, R.mipmap.bilibili_off, true, 0));
-        arrays.add(new LiveBean(LIVE_TYPE_HUYA, R.mipmap.huya_off, true, 0));
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            arrays.add(new LiveBean(LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0));
-            arrays.add(new LiveBean(LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0));
-            arrays.add(new LiveBean(LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0));
+    /**
+     * 获取选中的个数
+     * @param adapter
+     * @return
+     */
+    private int getSelectedAmount(BaseQuickAdapter adapter) {
+        List<LiveBean> arrays = adapter.getData();
+        List<LiveBean> a = new ArrayList<>();
+        for (LiveBean array : arrays) {
+            if (array.isSelect()) {
+                a.add(array);
+            }
         }
+        return a.size();
+    }
+
+    private List<LiveBean> getAdapterData() {
+        List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
         arrays.add(new LiveBean("", R.mipmap.cc_live_off, false, 1));
         return arrays;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.setNewData(getAdapterData());
+    }
 
     /**
      * 自启动
