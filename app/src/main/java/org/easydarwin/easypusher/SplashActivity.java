@@ -23,7 +23,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import org.easydarwin.easypusher.push.StreamActivity;
-import org.easydarwin.easypusher.push.UVCCameraService;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.concurrent.TimeUnit;

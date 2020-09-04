@@ -303,9 +303,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         setPushLiveIv();
         if (PublicUtil.isMoreThanTheAndroid10()) {
-            setViewsVisible(mSecendLiveIv, mThirdLiveIv, mFourthLiveIv);
+            setViewsVisible( mThirdLiveIv, mFourthLiveIv);
         } else {
-            setViewsInvisible(true, mSecendLiveIv, mThirdLiveIv, mFourthLiveIv);
+            setViewsInvisible(true, mThirdLiveIv, mFourthLiveIv);
         }
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(new Intent(this, BackgroundService.class));
@@ -666,6 +666,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream = ms;
             startCamera();
             mService.setMediaStream(ms);
+            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
+                int orientation = getRequestedOrientation();
+
+                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
         }
     }
 
@@ -751,8 +760,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     @Subscribe
     public void onStreamStat(final StreamStat stat) {
-        streamStat.post(() -> streamStat.setText(getString(R.string.stream_stat, stat.framePerSecond,
-                stat.bytesPerSecond * 8 / 1024)));
+//        streamStat.post(() -> streamStat.setText(getString(R.string.stream_stat, stat.framePerSecond,
+//                stat.bytesPerSecond * 8 / 1024)));
     }
 
 //        /*
@@ -984,7 +993,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 new AlertDialog.Builder(this)
                         .setCancelable(false)
-                        .setMessage("由于抖音快手录屏要求限制，当开启录屏直播后，会停止所有推流直播，并且请保持屏幕处于亮屏和非锁屏状态！")
+                        .setMessage("录屏直播前需先打开抖音快手的录屏直播按钮，由于抖音快手录屏要求的限制，请保持手机屏幕处于亮屏和非锁屏状态！")
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
