@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * AudioRecord音频采集、MediaCodec硬编码
- * */
+ */
 public class AudioStream {
     private static final String TAG = "AudioStream";
 
@@ -94,8 +94,8 @@ public class AudioStream {
     }
 
     /*
-    * 添加推流器
-    * */
+     * 添加推流器
+     * */
     public void addPusher(Pusher pusher) {
         boolean shouldStart = false;
 
@@ -111,12 +111,12 @@ public class AudioStream {
     }
 
     /*
-    * 删除推流器
-    * */
-    public void removePusher(Pusher pusher){
+     * 删除推流器
+     * */
+    public void removePusher(Pusher pusher) {
         boolean shouldStop = false;
 
-        synchronized (this){
+        synchronized (this) {
             sets.remove(pusher);
 
             if (sets.isEmpty())
@@ -128,8 +128,8 @@ public class AudioStream {
     }
 
     /*
-    * 设置音频录像器
-    * */
+     * 设置音频录像器
+     * */
     public synchronized void setMuxer(EasyMuxer muxer) {
         if (muxer != null) {
             if (newFormat != null)
@@ -164,13 +164,13 @@ public class AudioStream {
                             AudioFormat.ENCODING_PCM_16BIT);
 
                     /*
-                    * 1、配置参数，初始化AudioRecord构造函数
-                    * audioSource：音频采集的输入源，DEFAULT（默认），VOICE_RECOGNITION（用于语音识别，等同于DEFAULT），MIC（由手机麦克风输入），VOICE_COMMUNICATION（用于VoIP应用）等等
-                    * sampleRateInHz：采样率，注意，目前44.1kHz是唯一可以保证兼容所有Android手机的采样率。
-                    * channelConfig：通道数的配置，CHANNEL_IN_MONO（单通道），CHANNEL_IN_STEREO（双通道）
-                    * audioFormat：配置“数据位宽”的,ENCODING_PCM_16BIT（16bit），ENCODING_PCM_8BIT（8bit）
-                    * bufferSizeInBytes：配置的是 AudioRecord 内部的音频缓冲区的大小，该缓冲区的值不能低于一帧“音频帧”（Frame）的大小
-                    * */
+                     * 1、配置参数，初始化AudioRecord构造函数
+                     * audioSource：音频采集的输入源，DEFAULT（默认），VOICE_RECOGNITION（用于语音识别，等同于DEFAULT），MIC（由手机麦克风输入），VOICE_COMMUNICATION（用于VoIP应用）等等
+                     * sampleRateInHz：采样率，注意，目前44.1kHz是唯一可以保证兼容所有Android手机的采样率。
+                     * channelConfig：通道数的配置，CHANNEL_IN_MONO（单通道），CHANNEL_IN_STEREO（双通道）
+                     * audioFormat：配置“数据位宽”的,ENCODING_PCM_16BIT（16bit），ENCODING_PCM_8BIT（8bit）
+                     * bufferSizeInBytes：配置的是 AudioRecord 内部的音频缓冲区的大小，该缓冲区的值不能低于一帧“音频帧”（Frame）的大小
+                     * */
                     mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
                             samplingRate,
                             AudioFormat.CHANNEL_IN_MONO,
@@ -178,8 +178,8 @@ public class AudioStream {
                             bufferSize);
 
                     /*
-                    * mp3为audio/mpeg, aac为audio/mp4a-latm, mp4为video/mp4v-es
-                    * */
+                     * mp3为audio/mpeg, aac为audio/mp4a-latm, mp4为video/mp4v-es
+                     * */
                     String encodeType = "audio/mp4a-latm";
 
                     // 初始化编码器
@@ -219,11 +219,11 @@ public class AudioStream {
                             inputBuffers[bufferIndex].clear();
 
                             /*
-                            * 不断的读取采集到的声音数据，放进编码器的输入缓存inputBuffers中 进行编码
-                            *   audioBuffer 存储写入音频录制数据的缓冲区。
-                            *   sizeInBytes 请求的最大字节数。
-                            * public int read (ByteBuffer audioBuffer, int sizeInBytes)
-                            *  */
+                             * 不断的读取采集到的声音数据，放进编码器的输入缓存inputBuffers中 进行编码
+                             *   audioBuffer 存储写入音频录制数据的缓冲区。
+                             *   sizeInBytes 请求的最大字节数。
+                             * public int read (ByteBuffer audioBuffer, int sizeInBytes)
+                             *  */
                             len = mAudioRecord.read(inputBuffers[bufferIndex], BUFFER_SIZE);
 
                             long timeUs = System.nanoTime() / 1000;
@@ -278,7 +278,7 @@ public class AudioStream {
 
     /**
      * 不断的从输出缓存中取出编码后的数据，然后push出去
-     * */
+     */
     private class WriterThread extends Thread {
         public WriterThread() {
             super("WriteAudio");
@@ -297,10 +297,10 @@ public class AudioStream {
 
             do {
                 /*
-                * 从output缓冲区队列申请编解码的buffer
-                * BufferInfo：用于存储ByteBuffer的信息
-                * TIMES_OUT：超时时间（在一个单独的线程专门取输出数据，为了避免CPU资源的浪费，需设置合适的值）
-                * */
+                 * 从output缓冲区队列申请编解码的buffer
+                 * BufferInfo：用于存储ByteBuffer的信息
+                 * TIMES_OUT：超时时间（在一个单独的线程专门取输出数据，为了避免CPU资源的浪费，需设置合适的值）
+                 * */
                 index = mMediaCodec.dequeueOutputBuffer(mBufferInfo, 10000);
 
                 if (index >= 0) {
@@ -341,7 +341,7 @@ public class AudioStream {
                         ps.push(mBuffer.array(),
                                 0,
                                 mBufferInfo.size + 7,
-                                0,// mBufferInfo.presentationTimeUs / 1000,
+                                0,
                                 0);
                     }
 
