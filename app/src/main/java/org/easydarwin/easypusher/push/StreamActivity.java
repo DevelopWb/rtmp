@@ -636,7 +636,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mService.inActivePreview();
             ms.setSurfaceTexture(surface);
             ms.startPreview();
-
             mMediaStream = ms;
 
             if (isStreaming()) {
@@ -1494,6 +1493,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //横屏
         if (surfaceView.isAvailable()) {
             if (!UVCCameraService.uvcConnected) {
+                Display mDisplay = getWindowManager().getDefaultDisplay();
+                int W = mDisplay.getWidth();
+                int H = mDisplay.getHeight();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+                params.height =H;
+                params.width = W;
+                surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+                mSwitchOritation.setVisibility(View.VISIBLE);
                 goonWithAvailableTexture(surfaceView.getSurfaceTexture());
             } else {
                 initUvcLayout();

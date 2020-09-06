@@ -205,71 +205,6 @@ public class MediaStream {
             });
             Log.i(TAG, "open Camera");
 
-            parameters = mCamera.getParameters();
-
-            if (Util.getSupportResolution(context).size() == 0) {
-                StringBuilder stringBuilder = new StringBuilder();
-
-                // 查看支持的预览尺寸
-                List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
-
-                for (Camera.Size str : supportedPreviewSizes) {
-                    stringBuilder.append(str.width + "x" + str.height).append(";");
-                }
-
-                Util.saveSupportResolution(context, stringBuilder.toString());
-            }
-
-            BUSUtil.BUS.post(new SupportResolution());
-
-            camInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(mCameraId, camInfo);
-            int cameraRotationOffset = camInfo.orientation;
-
-            if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT)
-                cameraRotationOffset += 180;
-
-            int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
-            parameters.setRotation(rotate); // 设置Camera预览方向
-            //            parameters.setRecordingHint(true);
-
-            ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC);
-
-            if (!infos.isEmpty()) {
-                CodecInfo ci = infos.get(0);
-                info.mName = ci.mName;
-                info.mColorFormat = ci.mColorFormat;
-            } else {
-                mSWCodec = true;
-            }
-            nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
-            nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
-            //            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            parameters.setPreviewSize(nativeWidth, nativeHeight);// 设置预览尺寸
-
-            int[] ints = determineMaximumSupportedFramerate(parameters);
-            parameters.setPreviewFpsRange(ints[0], ints[1]);
-
-            List<String> supportedFocusModes = parameters.getSupportedFocusModes();
-
-            if (supportedFocusModes == null)
-                supportedFocusModes = new ArrayList<>();
-
-            // 自动对焦
-            if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-            } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-            }
-
-
-            mCamera.setParameters(parameters);
-            Log.i(TAG, "setParameters");
-
-            int displayRotation;
-            displayRotation = (cameraRotationOffset - displayRotationDegree + 360) % 360;
-            mCamera.setDisplayOrientation(displayRotation);
-
             Log.i(TAG, "setDisplayOrientation");
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -433,6 +368,72 @@ public class MediaStream {
     }
 
     private void startCameraPreview() {
+
+        parameters = mCamera.getParameters();
+
+        if (Util.getSupportResolution(context).size() == 0) {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            // 查看支持的预览尺寸
+            List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+
+            for (Camera.Size str : supportedPreviewSizes) {
+                stringBuilder.append(str.width + "x" + str.height).append(";");
+            }
+
+            Util.saveSupportResolution(context, stringBuilder.toString());
+        }
+
+        BUSUtil.BUS.post(new SupportResolution());
+
+        camInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(mCameraId, camInfo);
+        int cameraRotationOffset = camInfo.orientation;
+
+        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT)
+            cameraRotationOffset += 180;
+
+        int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
+        parameters.setRotation(rotate); // 设置Camera预览方向
+        //            parameters.setRecordingHint(true);
+
+        ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC);
+
+        if (!infos.isEmpty()) {
+            CodecInfo ci = infos.get(0);
+            info.mName = ci.mName;
+            info.mColorFormat = ci.mColorFormat;
+        } else {
+            mSWCodec = true;
+        }
+        nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
+        nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
+        //            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        parameters.setPreviewSize(nativeWidth, nativeHeight);// 设置预览尺寸
+
+        int[] ints = determineMaximumSupportedFramerate(parameters);
+        parameters.setPreviewFpsRange(ints[0], ints[1]);
+
+        List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+
+        if (supportedFocusModes == null)
+            supportedFocusModes = new ArrayList<>();
+
+        // 自动对焦
+        if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        }
+
+
+        mCamera.setParameters(parameters);
+        Log.i(TAG, "setParameters");
+
+        int displayRotation;
+        displayRotation = (cameraRotationOffset - displayRotationDegree + 360) % 360;
+        mCamera.setDisplayOrientation(displayRotation);
+
         int previewFormat = parameters.getPreviewFormat();
 
         Camera.Size previewSize = parameters.getPreviewSize();
