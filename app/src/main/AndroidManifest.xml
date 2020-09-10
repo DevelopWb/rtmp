@@ -60,6 +60,7 @@
         </provider> <!-- 全面屏 -->
         <activity
             android:name=".push.StreamActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance"
             android:configChanges="orientation|keyboard|screenSize"
             ></activity>

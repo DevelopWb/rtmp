@@ -22,7 +22,6 @@ import java.io.File;
 public class Config {
 
     private static final String SERVER_URL = "serverUrl";
-
     public static UsbDevice usbDevice = null;
 
 //    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
