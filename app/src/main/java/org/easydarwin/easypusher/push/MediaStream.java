@@ -643,15 +643,7 @@ public class MediaStream {
         if (uvcCamera != null) {
             mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         } else {
-            boolean frameRotate;
-            int result;
-            if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                result = (camInfo.orientation + displayRotationDegree) % 360;
-            } else {  // back-facing
-                result = (camInfo.orientation - displayRotationDegree + 360) % 360;
-            }
-            frameRotate = result % 180 != 0;
-            mRecordVC.onVideoStart(frameRotate ? nativeHeight : nativeWidth, frameRotate ? nativeWidth : nativeHeight);
+            mRecordVC.onVideoStart(StreamActivity.IS_VERTICAL_SCREEN  ? nativeHeight : nativeWidth, StreamActivity.IS_VERTICAL_SCREEN  ? nativeWidth : nativeHeight);
         }
         if (audioStream != null) {
             audioStream.setMuxer(mMuxer);
