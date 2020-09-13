@@ -152,6 +152,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         default:
                             break;
                     }
+
+                    String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
+                    mScreenResTv.setText(String.format("分辨率:%s", title));
                     break;
                 default:
                     break;
@@ -192,14 +195,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         Display mDisplay = getWindowManager().getDefaultDisplay();
         int screenWidth = mDisplay.getWidth();
         int screenHeight = mDisplay.getHeight();
-        if (0==type) {
-            Log.e(TAG,"layout   原生摄像头");
+        if (0 == type) {
+            Log.e(TAG, "layout   原生摄像头");
             int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
             int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
             width = IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
             height = IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
-        }else {
-            Log.e(TAG,"layout   OTG摄像头");
+        } else {
+            Log.e(TAG, "layout   OTG摄像头");
 
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
@@ -210,17 +213,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (IS_VERTICAL_SCREEN) {
             //竖屏模式 宽度固定
             params.width = screenWidth;
-            if (0==type) {
+            if (0 == type) {
                 if (width < screenWidth) {
                     params.height = height * screenWidth / width;
-                }else {
+                } else {
                     params.height = height * width / screenWidth;
                 }
-            }else {
+            } else {
                 if (width < screenWidth) {
-                    params.height = height * screenWidth / width*2/5;
-                }else {
-                    params.height = height * width / screenWidth/3;
+                    params.height = height * screenWidth / width * 2 / 5;
+                } else {
+                    params.height = height * width / screenWidth / 3;
                 }
             }
 
@@ -230,7 +233,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             params.height = screenHeight;
             if (height < screenHeight) {
                 params.width = width * screenHeight / height;
-            }else {
+            } else {
                 params.width = width * height / screenHeight;
             }
         }
@@ -333,7 +336,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
-        String title = resDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_RES_INDEX, 2)].toString();
+        String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
 
@@ -352,6 +355,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     }
 
+    /**
+     * 获取索引
+     * @param arrays
+     * @param height
+     */
+    public int getIndex(CharSequence[] arrays ,int height){
+        int index = 0;
+        for (int i = 0; i < arrays.length; i++) {
+            CharSequence str = arrays[i];
+            if (str.toString().contains(String.valueOf(height))) {
+                index =  i;
+               break;
+            }
+        }
+        return index;
+    }
     @Override
     protected void onPause() {
 //        if (mMediaStream != null) {
@@ -942,7 +961,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (2 == which && !UVCCameraService.uvcConnected) {
+                                if (2 == which ) {
                                     mUvcService.reRequestOtg();
                                     try {
                                         Thread.sleep(200);
@@ -1140,7 +1159,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             return "前置";
         }
         if (2 == position) {
-            return "外置";
+            if (UVCCameraService.uvcConnected) {
+                return "外置";
+            }else{
+                SPUtil.setScreenPushingCameraIndex(this,0);
+                return "后置";
+            }
+
         }
         return "";
     }
@@ -1419,6 +1444,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         stopAllPushStream();
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
+            int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
+            int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
+            mScreenResTv.setText(String.format("%s%s%s%s","分辨率:",uvcWidth,"x",uvcHeight));
         }
         try {
             Thread.sleep(500);
