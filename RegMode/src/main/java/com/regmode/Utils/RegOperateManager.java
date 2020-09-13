@@ -127,40 +127,40 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     }
 
 
-//    /**
-//     * 保存注册码状态
-//     *
-//     * @param str 状态描述
-//     */
-//    private void SaveRegStatus(String str) {
-//        SharedPreferences.Editor editor = sp.edit();
-//        editor.putString("REGSTATUS", str);
-//        editor.commit();
-//    }
+    //    /**
+    //     * 保存注册码状态
+    //     *
+    //     * @param str 状态描述
+    //     */
+    //    private void SaveRegStatus(String str) {
+    //        SharedPreferences.Editor editor = sp.edit();
+    //        editor.putString("REGSTATUS", str);
+    //        editor.commit();
+    //    }
 
-//    /**
-//     * 检查有没有未减掉的注册码次数
-//     */
-//    public void CheckUnMinusedRegSizeToMinus() {
-//        if (isTheRegStatusOkNoToast(context)) {
-//            if (sp.getInt("UNMINUSEDSIZE", 0) > 0) {
-//                if (isNumberLimit) {
-//                    present.setRegisCodeNumber(strreg, sp.getInt("UNMINUSEDSIZE", 0), this);
-//                    sp.edit().putInt("UNMINUSEDSIZE", 0).commit();
-//                }
-//
-//            }
-//        }
-//
-//    }
+    //    /**
+    //     * 检查有没有未减掉的注册码次数
+    //     */
+    //    public void CheckUnMinusedRegSizeToMinus() {
+    //        if (isTheRegStatusOkNoToast(context)) {
+    //            if (sp.getInt("UNMINUSEDSIZE", 0) > 0) {
+    //                if (isNumberLimit) {
+    //                    present.setRegisCodeNumber(strreg, sp.getInt("UNMINUSEDSIZE", 0), this);
+    //                    sp.edit().putInt("UNMINUSEDSIZE", 0).commit();
+    //                }
+    //
+    //            }
+    //        }
+    //
+    //    }
 
     //查看注册码未减的次数
     public void UnMinusedRegSizeToCommit() {
-//        if (REGSIZE > 1) {
-//            SharedPreferences.Editor et = sp.edit();
-//            et.putInt("UNMINUSEDSIZE", REGSIZE - 1);
-//            et.commit();
-//        }
+        //        if (REGSIZE > 1) {
+        //            SharedPreferences.Editor et = sp.edit();
+        //            et.putInt("UNMINUSEDSIZE", REGSIZE - 1);
+        //            et.commit();
+        //        }
     }
 
     /**
@@ -171,19 +171,19 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public boolean isTheRegStatusOk(String reg_status) {
         //  "注册码已经禁用"
         if (reg_status.contains("已禁用")) {
-            warnRegStatus("注册码不可用，请联系管理员","");
+            warnRegStatus("注册码不可用，请联系管理员", "");
             return false;
         } else if (reg_status.contains("次数用尽")) {
-            warnRegStatus("注册码次数已用完，请联系管理员","");
+            warnRegStatus("注册码次数已用完，请联系管理员", "");
             return false;
         } else if (reg_status.contains("已过期")) {
-            warnRegStatus("注册码已过期，请联系管理员","");
+            warnRegStatus("注册码已过期，请联系管理员", "");
             return false;
         } else if (reg_status.contains("不存在")) {
-            warnRegStatus("注册码不存在，请联系管理员","");
+            warnRegStatus("注册码不存在，请联系管理员", "");
             return false;
         } else {
-            warnRegStatus(reg_status,"");
+            warnRegStatus(reg_status, "");
             return true;
         }
     }
@@ -222,7 +222,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                     .show();
             return;
         }
-        present.checkReg((String) Hawk.get(HawkProperty.REG_CODE), APP_MARK, RegLatestContact.CHECK_REG_EVERYTIME, RegOperateManager.this);
+        present.checkReg((String) Hawk.get(HawkProperty.REG_CODE), APP_MARK, RegLatestContact.CHECK_REG_EVERYTIME,
+                RegOperateManager.this);
     }
 
     /**
@@ -285,13 +286,14 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             @Override
             public void onClick(View v) {
                 if (text != null && !TextUtils.isEmpty(text)) {
-                    if (text.contains("不存在")||text.contains("已过期")||text.contains("已用完")||text.contains("不可用")||text.contains("不匹配")) {
+                    if (text.contains("不存在") || text.contains("已过期") || text.contains("已用完") || text.contains("不可用") || text.contains("不匹配")) {
                         if (cancelCallBack != null) {
                             cancelCallBack.toFinishActivity();
                         }
                     } else {
                         String nextTime = GetNextWarnTime(1);
-                        SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME",
+                                MODE_PRIVATE);
                         SharedPreferences.Editor et = sharedPreferences.edit();
                         et.putString("nextRegStatusTime" + status, nextTime);
                         et.commit();
@@ -315,9 +317,6 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
         String time = new SimpleDateFormat("yyyy-MM-dd").format(date);
         return time;
     }
-
-
-
 
 
     /**
@@ -371,15 +370,18 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                             if ("正常".equals(regStatus)) {
                                 //注册码正常
                                 Hawk.put(HawkProperty.REG_CODE, input);
+                                if (!RegPubUtils.PUBLIC_REGCODE.equals(input)) {
+                                    //如果不是通用注册码 需要校验本地
+                                    if (!checkImei(modelBean)) {
+                                        return;
+                                    }
+                                }
 
-                                if (!checkImei(modelBean)) {
-                                    return;
-                                }
-                                String mac = modelBean.getMAC();
-                                if (mac != null && !TextUtils.isEmpty(mac)) {
-                                    //保存mac信息
-                                    Hawk.put(HawkProperty.MAC_CODE, mac);
-                                }
+                                //                                String mac = modelBean.getMAC();
+                                //                                if (mac != null && !TextUtils.isEmpty(mac)) {
+                                //                                    //保存mac信息
+                                //                                    Hawk.put(HawkProperty.MAC_CODE, mac);
+                                //                                }
                                 ToastUtils.toast(context, "注册码验证成功");
                                 if (dialog_Reg != null && dialog_Reg.isShowing()) {
                                     dialog_Reg.dismiss();
@@ -408,9 +410,13 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                             String regStatus = modelBean.getRegisCodeState();
 
                             if ("正常".equals(regStatus)) {
-                                if (!checkImei(modelBean)) {
-                                    return;
+                                if (!RegPubUtils.PUBLIC_REGCODE.equals(input)) {
+                                    //如果不是通用注册码 需要校验本地
+                                    if (!checkImei(modelBean)) {
+                                        return;
+                                    }
                                 }
+                                //自动升级
                                 String isAutoUpdate = modelBean.getIsAutoUpdate();
                                 if (isAutoUpdate != null && !TextUtils.isEmpty(isAutoUpdate)) {
                                     if (isAutoUpdate.equals("1")) {//允许自动升级
@@ -418,6 +424,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         return;
                                     }
                                 }
+                                //有效期限制
                                 String isValid = modelBean.getIsValid();
                                 if (isValid != null && !TextUtils.isEmpty(isValid)) {
                                     if (isValid.equals("0")) {//注册码限制时间
@@ -426,7 +433,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         if (RegPubUtils.TheDayToNextDay(time) > 0 && RegPubUtils.TheDayToNextDay(time) < 8) {
 
                                             if (IsTheRegStatusTime("isValid")) {
-                                                warnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) + "天，请联系管理员", "isValid");
+                                                warnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) +
+                                                        "天，请联系管理员", "isValid");
                                             }
 
                                         } else {//重置下次提醒的时间
@@ -434,6 +442,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         }
                                     }
                                 }
+                                //次数限制
                                 String isNumber = modelBean.getIsNumber();
                                 if (isNumber != null && !TextUtils.isEmpty(isNumber)) {
                                     if (isNumber.equals("0")) {//注册码有次数限制
@@ -466,7 +475,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             case RegLatestContact.SET_IMEI:
 
                 break;
-            case RegLatestContact.GET_APP_VERSION_INFO :
+            case RegLatestContact.GET_APP_VERSION_INFO:
                 AppInfoBean appInfoBean = (AppInfoBean) o;
                 if (appInfoBean != null) {
                     if (appInfoBean.getModel() != null && appInfoBean.getModel().size() > 0) {
@@ -475,16 +484,17 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                         String down_url = dataBean.getSoftDownloadUrl();
                         if (updateableSoftVersion(getAPPVersion(), nearestVersion)) {
                             if (IsTheTime()) {
-                                warnUpgradeDialog(AppHttpUrl.BASE_URL+down_url);
+                                warnUpgradeDialog(AppHttpUrl.BASE_URL + down_url);
                             }
 
                         }
-//                        else {//将
-//                            SharedPreferences sharedPreferences = context.getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
-//                            SharedPreferences.Editor et = sharedPreferences.edit();
-//                            et.putString("nextTime", "");
-//                            et.commit();
-//                        }
+                        //                        else {//将
+                        //                            SharedPreferences sharedPreferences = context
+                        //                            .getSharedPreferences("NEXTWARNTIME", MODE_PRIVATE);
+                        //                            SharedPreferences.Editor et = sharedPreferences.edit();
+                        //                            et.putString("nextTime", "");
+                        //                            et.commit();
+                        //                        }
                     }
                 }
                 break;
@@ -522,7 +532,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                 //将注册码用md5加密并保存本地
                 FileUtils.writeToTxtFile((String) Hawk.get(HawkProperty.REG_CODE), "property.txt");
                 //将加密过的注册码上传到服务器
-                present.setImei((String) Hawk.get(HawkProperty.REG_CODE), FileUtils.getFileContent("property.txt"), RegLatestContact.SET_IMEI, this);
+                present.setImei((String) Hawk.get(HawkProperty.REG_CODE), FileUtils.getFileContent("property.txt"),
+                        RegLatestContact.SET_IMEI, this);
             }
             return true;
         }
@@ -542,6 +553,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public void setRegistCodeNumber(int size) {
         present.setRegisCodeNumber((String) Hawk.get(HawkProperty.REG_CODE), size, this);
     }
+
     /**
      * 从服务器获取最新的版本
      */
@@ -595,7 +607,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
      * 判定是否提醒升级
      */
     private boolean IsTheTime() {
-        final String time =   Hawk.get(HawkProperty.NEXT_WARN_UPDATE);
+        final String time = Hawk.get(HawkProperty.NEXT_WARN_UPDATE);
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
         String time2 = new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -611,6 +623,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 
 
     }
+
     /**
      * 比较两个时间串的大小
      *
@@ -636,6 +649,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 
     /**
      * 提醒升级的对话框
+     *
      * @param url
      */
     private void warnUpgradeDialog(final String url) {
@@ -651,10 +665,11 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         String nextTime = GetNextWarnTime(7);
-                        Hawk.put(HawkProperty.NEXT_WARN_UPDATE,nextTime);
+                        Hawk.put(HawkProperty.NEXT_WARN_UPDATE, nextTime);
                     }
                 }).show();
     }
+
     private class DownloadTask extends AsyncTask<String, Integer, String> {
 
         private Context context;
@@ -675,7 +690,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
         @Override
         protected String doInBackground(String... params) {
             int i = 0;
-            String uri =params[0];
+            String uri = params[0];
             InputStream input = null;
             OutputStream output = null;
             HttpURLConnection connection = null;
@@ -709,12 +724,12 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                     }
                     total += count;
                     // publishing the progress....
-//					if (fileLength > 0) // only if total length is known
-//					{
-//						i = (int) (total * 100 / fileLength);
-//					}
+                    //					if (fileLength > 0) // only if total length is known
+                    //					{
+                    //						i = (int) (total * 100 / fileLength);
+                    //					}
                     mProgressDialog.setProgress(total);
-//					publishProgress(i);
+                    //					publishProgress(i);
                     output.write(data, 0, count);
                 }
             } catch (Exception e) {
@@ -884,15 +899,17 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
      */
     private AMapLocationClientOption getDefaultOption() {
         AMapLocationClientOption mOption = new AMapLocationClientOption();
-        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
+        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
         mOption.setGpsFirst(false);//可选，设置是否gps优先，只在高精度模式下有效。默认关闭
         mOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
         mOption.setInterval(2000);//可选，设置定位间隔。默认为2秒
         mOption.setNeedAddress(true);//可选，设置是否返回逆地理地址信息。默认是true
         mOption.setOnceLocation(true);//可选，设置是否单次定位。默认是false
-//		mOption.setOnceLocationLatest(false);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
-//		AMapLocationClientOption.setLocationProtocol(AMapLocationProtocol.HTTP);//可选， 设置网络请求的协议。可选HTTP或者HTTPS。默认为HTTP
-//		mOption.setSensorEnable(false);//可选，设置是否使用传感器。默认是false
+        //		mOption.setOnceLocationLatest(false);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
+        //		AMapLocationClientOption.setLocationProtocol(AMapLocationProtocol.HTTP);//可选，
+        //		设置网络请求的协议。可选HTTP或者HTTPS。默认为HTTP
+        //		mOption.setSensorEnable(false);//可选，设置是否使用传感器。默认是false
         return mOption;
     }
 
@@ -903,8 +920,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
      * @since 2.8.0
      */
     private void startLocation() {
-//		//根据控件的选择，重新设置定位参数
-//		resetOption();
+        //		//根据控件的选择，重新设置定位参数
+        //		resetOption();
         // 设置定位参数
         locationClient.setLocationOption(getDefaultOption());
         // 启动定位
@@ -956,23 +973,23 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
         }
     };
 
-//    /**
-//     * 获取运营商sim卡的ICCID号
-//     *
-//     * @return ICCID号
-//     */
-//    public String getRegImeiIccid() {
-//        String msg = "";
-//        TelephonyManager tm = (TelephonyManager) context
-//                .getSystemService(Context.TELEPHONY_SERVICE);
-//        if (TextUtils.isEmpty(tm.getDeviceId())) {
-//            // 获取sim卡的ICCID号
-//            return tm.getSimSerialNumber();
-//        } else {
-//            return tm.getDeviceId();
-//        }
-//
-//    }
+    //    /**
+    //     * 获取运营商sim卡的ICCID号
+    //     *
+    //     * @return ICCID号
+    //     */
+    //    public String getRegImeiIccid() {
+    //        String msg = "";
+    //        TelephonyManager tm = (TelephonyManager) context
+    //                .getSystemService(Context.TELEPHONY_SERVICE);
+    //        if (TextUtils.isEmpty(tm.getDeviceId())) {
+    //            // 获取sim卡的ICCID号
+    //            return tm.getSimSerialNumber();
+    //        } else {
+    //            return tm.getDeviceId();
+    //        }
+    //
+    //    }
 
     private String getPhoneMessage() {
         String lac = "";
@@ -1018,7 +1035,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                 }
 
             }
-            phoneInfo_sb.append("Lat:" + Lat + "," + "Log:" + Lng + "," + "Lac:" + lac + "," + "Cid:" + cid + "," + "Nid:" + nid + "," + "Addr:" + Addr);
+            phoneInfo_sb.append("Lat:" + Lat + "," + "Log:" + Lng + "," + "Lac:" + lac + "," + "Cid:" + cid + "," +
+                    "Nid:" + nid + "," + "Addr:" + Addr);
         }
         return phoneInfo_sb.toString();
     }
@@ -1071,54 +1089,54 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     }
 
 
-//    /**
-//     * 注册码验证成功后
-//     */
-//    private void RegSuccess(String input, String guestName, String isToolTip, String isNumber) {
-//        SharedPreferences.Editor editor = sp.edit();
-//        if (input != null && guestName != null) {
-//            Toast.makeText(context, "注册码验证成功",
-//                    Toast.LENGTH_LONG).show();
-//            strreg = input;
-//            editor.putString("OBJREG", input);
-//            editor.putString("GUESTNAME", guestName);
-//        }
-//
-//        if (isToolTip.equals("0")) {//0代表不提示
-//            istoolTip = false;
-//            editor.putBoolean("ISTOOLTIP", false);
-//        } else {
-//            istoolTip = true;
-//            editor.putBoolean("ISTOOLTIP", true);
-//        }
-//        if (isNumber.equals("0")) {//0代表有次数限制
-//            isNumberLimit = true;
-//            editor.putBoolean("ISNUMBER", true);
-//        } else {
-//            isNumberLimit = false;
-//            editor.putBoolean("ISNUMBER", false);
-//        }
-//        editor.commit();
-//        if (dialog_Reg != null && dialog_Reg.isShowing()) {
-//            dialog_Reg.dismiss();
-//        }
-//
-//        if (cancelCallBack != null) {
-//            cancelCallBack.toDoNext();
-//        }
-//
-//    }
+    //    /**
+    //     * 注册码验证成功后
+    //     */
+    //    private void RegSuccess(String input, String guestName, String isToolTip, String isNumber) {
+    //        SharedPreferences.Editor editor = sp.edit();
+    //        if (input != null && guestName != null) {
+    //            Toast.makeText(context, "注册码验证成功",
+    //                    Toast.LENGTH_LONG).show();
+    //            strreg = input;
+    //            editor.putString("OBJREG", input);
+    //            editor.putString("GUESTNAME", guestName);
+    //        }
+    //
+    //        if (isToolTip.equals("0")) {//0代表不提示
+    //            istoolTip = false;
+    //            editor.putBoolean("ISTOOLTIP", false);
+    //        } else {
+    //            istoolTip = true;
+    //            editor.putBoolean("ISTOOLTIP", true);
+    //        }
+    //        if (isNumber.equals("0")) {//0代表有次数限制
+    //            isNumberLimit = true;
+    //            editor.putBoolean("ISNUMBER", true);
+    //        } else {
+    //            isNumberLimit = false;
+    //            editor.putBoolean("ISNUMBER", false);
+    //        }
+    //        editor.commit();
+    //        if (dialog_Reg != null && dialog_Reg.isShowing()) {
+    //            dialog_Reg.dismiss();
+    //        }
+    //
+    //        if (cancelCallBack != null) {
+    //            cancelCallBack.toDoNext();
+    //        }
+    //
+    //    }
 
 
     /**
      * 检测保存本地的版本号
      */
     private void checkSavedVersion() {
-        String savedVersion = Hawk.get(HawkProperty.APP_SAVED_VERSION,"");
-//        String savedVersion = "1.0";
+        String savedVersion = Hawk.get(HawkProperty.APP_SAVED_VERSION, "");
+        //        String savedVersion = "1.0";
         String nowVersion = getAPPVersion();
         if (savedVersion.equals("")) {
-            Hawk.put(HawkProperty.APP_SAVED_VERSION,nowVersion);
+            Hawk.put(HawkProperty.APP_SAVED_VERSION, nowVersion);
             //上传版本信息
             String info = getInfoWhenVersionChanged(savedVersion, nowVersion);
             present.uploadVersionInfo((String) Hawk.get(HawkProperty.REG_CODE), info, this);
@@ -1144,7 +1162,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             Imei = mTManager.getDeviceId();
             PhoneNo = mTManager.getLine1Number();
         }
-        Info_sb.append("SoftName:" + getAPPName() + "," + "GuestName:" +Hawk.get(HawkProperty.APP_GUEST_NAME, "") + "," + "RegCode:" + Hawk.get(HawkProperty.REG_CODE) + "," + "PhoneNo:" + PhoneNo + "," + "Imei:" + Imei + "," + "Mac:" + macAddress() + "," + "Lat:" + Lat + "," + "Lng:" + Lng + "," + "Addr:" + Addr + "," + "OriginalVersion:" + originalVersion + "," + "NewestVersion:" + newestVersion + "," + "Time:" + time);
+        Info_sb.append("SoftName:" + getAPPName() + "," + "GuestName:" + Hawk.get(HawkProperty.APP_GUEST_NAME, "") +
+                "," + "RegCode:" + Hawk.get(HawkProperty.REG_CODE) + "," + "PhoneNo:" + PhoneNo + "," + "Imei:" + Imei + "," + "Mac:" + macAddress() + "," + "Lat:" + Lat + "," + "Lng:" + Lng + "," + "Addr:" + Addr + "," + "OriginalVersion:" + originalVersion + "," + "NewestVersion:" + newestVersion + "," + "Time:" + time);
 
         return Info_sb.toString();
     }
@@ -1153,7 +1172,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public void setCancelCallBack(RegLatestContact.CancelCallBack callBack) {
         this.cancelCallBack = callBack;
     }
-// 判断网络是否正常
+    // 判断网络是否正常
 
     public static boolean isConnected(Context context) {
         boolean isOk = true;
