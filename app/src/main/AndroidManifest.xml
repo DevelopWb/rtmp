@@ -63,9 +63,10 @@
         </provider> <!-- 全面屏 -->
         <activity
             android:name=".push.StreamActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboard|screenSize"
-            android:launchMode="singleInstance" />
-
+            ></activity>
         <service
             android:name=".push.BackgroundService"
             android:enabled="true" />

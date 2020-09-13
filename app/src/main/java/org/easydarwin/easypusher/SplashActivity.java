@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
+import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
@@ -81,6 +82,10 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
+                            if (!NetWorkUtil.isNetworkAvailable()) {
+                                ToastUtils.toast(mContext,"网络连接异常，请检查手机网络！");
+                               return;
+                            }
                             //获取软件的key
                             present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, SplashActivity.this);
 
