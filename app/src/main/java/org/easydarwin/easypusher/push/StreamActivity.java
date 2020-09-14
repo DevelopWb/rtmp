@@ -1103,9 +1103,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 if (mMediaStream != null) {
                     if (mMediaStream.isRecording()) {
+                        ToastUtils.toast(mContext,"已停止录像");
+
                         mMediaStream.stopRecord();
                         startRecordIv.setImageResource(R.drawable.record);
                     } else {
+                        ToastUtils.toast(mContext,"正在开始录像");
                         mMediaStream.startRecord();
                         startRecordIv.setImageResource(R.drawable.record_pressed);
                     }

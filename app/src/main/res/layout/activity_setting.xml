@@ -44,7 +44,6 @@
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_white_only_bottom_gray_shape_1px"
                     android:paddingBottom="10dp">
 
                     <TextView
@@ -61,8 +60,8 @@
                         android:id="@+id/regist_code_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="dfadfasd"
                         android:layout_marginLeft="15dp"
+                        android:text="dfadfasd"
                         app:layout_constraintBottom_toBottomOf="@+id/regist_code_key"
                         app:layout_constraintLeft_toRightOf="@+id/regist_code_key"
                         app:layout_constraintTop_toTopOf="@+id/regist_code_key" />
@@ -84,8 +83,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="15dp"
                         android:background="@drawable/setting_url_shape"
-                        android:paddingLeft="10dp"
                         android:inputType="textUri"
+                        android:paddingLeft="10dp"
                         android:textColor="#4c4c4c"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@+id/server_ip_tv"
@@ -118,6 +117,7 @@
                         app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/server_port_tv" />
+
                     <TextView
                         android:id="@+id/live_tag_tv"
                         android:layout_width="wrap_content"
@@ -139,167 +139,184 @@
                         android:paddingLeft="10dp"
                         android:textColor="#4c4c4c"
                         android:textSize="12sp"
-                        app:layout_constraintTop_toBottomOf="@+id/push_server_port_et"
                         app:layout_constraintLeft_toRightOf="@+id/live_tag_tv"
                         app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/push_server_port_et"
                         app:layout_constraintTop_toTopOf="@+id/live_tag_tv" />
 
                     <TextView
                         android:id="@+id/first_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
+                        android:layout_marginTop="10dp"
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
-                        android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:inputType="number"
                         android:text="哔哩"
                         app:layout_constraintRight_toRightOf="@+id/regist_code_key"
                         app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
+
                     <ImageView
                         android:id="@+id/first_live_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/first_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/first_live_key"
                         android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
-                        android:layout_height="35dp"></ImageView>
+                        app:layout_constraintRight_toRightOf="@+id/first_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/first_live_key"></ImageView>
 
                     <EditText
                         android:id="@+id/first_live_value_et"
                         style="@style/set_url_editText"
                         android:layout_marginLeft="15dp"
-                        app:layout_constraintTop_toTopOf="@+id/first_live_key"
                         app:layout_constraintLeft_toRightOf="@+id/first_live_key"
                         app:layout_constraintRight_toRightOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="@+id/first_live_key" />
+
                     <TextView
                         android:id="@+id/secend_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:gravity="center"
                         android:layout_marginRight="15dp"
-                        android:inputType="number"
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
+                        android:gravity="center"
+                        android:inputType="number"
                         android:text="虎牙"
                         app:layout_constraintRight_toLeftOf="@+id/secend_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/secend_live_value_et"
-                     />
+                        app:layout_constraintTop_toTopOf="@+id/secend_live_value_et" />
+
                     <ImageView
                         android:id="@+id/secend_live_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/secend_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/secend_live_key"
                         android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
-                        android:layout_height="35dp"></ImageView>
+                        app:layout_constraintRight_toRightOf="@+id/secend_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/secend_live_key"></ImageView>
+
                     <EditText
                         android:id="@+id/secend_live_value_et"
+                        style="@style/set_url_editText"
                         app:layout_constraintLeft_toLeftOf="@+id/first_live_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/first_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
-                        style="@style/set_url_editText" />
+                        app:layout_constraintTop_toBottomOf="@+id/first_live_value_et" />
+
                     <TextView
                         android:id="@+id/third_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:gravity="center"
+                        android:layout_marginRight="15dp"
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
-                        android:layout_marginRight="15dp"
+                        android:gravity="center"
                         android:inputType="number"
                         android:text="一直播"
                         app:layout_constraintRight_toLeftOf="@+id/third_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/third_live_value_et"
-                     />
+                        app:layout_constraintTop_toTopOf="@+id/third_live_value_et" />
+
                     <ImageView
                         android:id="@+id/third_live_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/third_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/third_live_key"
                         android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
-                        android:layout_height="35dp"></ImageView>
+                        app:layout_constraintRight_toRightOf="@+id/third_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/third_live_key"></ImageView>
+
                     <EditText
                         android:id="@+id/third_live_value_et"
+                        style="@style/set_url_editText"
                         app:layout_constraintLeft_toLeftOf="@+id/secend_live_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/secend_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
-                        style="@style/set_url_editText" />
+                        app:layout_constraintTop_toBottomOf="@+id/secend_live_value_et" />
+
                     <TextView
                         android:id="@+id/fourth_live_key"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:gravity="center"
+                        android:layout_marginRight="15dp"
                         android:drawableRight="@mipmap/arrow_down_icon"
                         android:drawablePadding="5dp"
-                        android:layout_marginRight="15dp"
+                        android:gravity="center"
                         android:inputType="number"
                         android:text="Now直播"
                         app:layout_constraintRight_toLeftOf="@+id/fourth_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/fourth_live_value_et"
-                     />
+                        app:layout_constraintTop_toTopOf="@+id/fourth_live_value_et" />
+
                     <ImageView
                         android:id="@+id/fourth_live_scan_iv"
-                        app:layout_constraintRight_toRightOf="@+id/fourth_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/fourth_live_key"
                         android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
                         android:src="@mipmap/scan_icon"
-                        android:layout_height="35dp"></ImageView>
+                        app:layout_constraintRight_toRightOf="@+id/fourth_live_key"
+                        app:layout_constraintTop_toBottomOf="@+id/fourth_live_key"></ImageView>
+
                     <EditText
                         android:id="@+id/fourth_live_value_et"
+                        style="@style/set_url_editText"
                         app:layout_constraintLeft_toLeftOf="@+id/third_live_value_et"
-                        app:layout_constraintTop_toBottomOf="@+id/third_live_value_et"
                         app:layout_constraintRight_toRightOf="parent"
-                        style="@style/set_url_editText" />
+                        app:layout_constraintTop_toBottomOf="@+id/third_live_value_et" />
 
                     <android.support.constraint.Group
                         android:id="@+id/left_live_gp"
-                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"
-                        ></android.support.constraint.Group>
+                        android:visibility="gone"
+                        app:constraint_referenced_ids="third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"></android.support.constraint.Group>
+
                     <android.support.constraint.Group
-                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et"
-                        ></android.support.constraint.Group>
+                        android:visibility="gone"
+                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et"></android.support.constraint.Group>
+
 
                 </android.support.constraint.ConstraintLayout>
 
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/push_notice"></TextView>
 
                 <CheckBox
                     android:id="@+id/auto_push_when_run_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="开机自动推流" />
+                    android:text="开机自动推流"
+                    android:visibility="gone" />
 
                 <CheckBox
                     android:id="@+id/enable_background_camera_pushing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="摄像头后台采集" />
+                    android:text="后台直播" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/live_background"
+                    android:layout_height="wrap_content"></TextView>
 
                 <CheckBox
                     android:id="@+id/use_x264_encode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:checked="true"
-                    android:text="使用软编码" />
-
-
+                    android:text="使用软编码"
+                    android:visibility="gone" />
 
 
                 <TextView
@@ -308,14 +325,16 @@
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:text="推送内容：" />
+                    android:text="推送内容："
+                    android:visibility="gone" />
 
                 <RadioGroup
                     android:id="@+id/push_content_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin">
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:visibility="gone">
 
                     <RadioButton
                         android:id="@+id/push_av"
@@ -344,18 +363,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@color/colorTheme"
                     android:text="打开录像文件夹"
                     android:textColor="#ffffff" />
+
                 <Button
                     android:id="@+id/quit_app_bt"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
+                    android:layout_marginRight="20dp"
                     android:background="@color/colorTheme"
                     android:text="安全退出"
                     android:textColor="#ffffff" />
