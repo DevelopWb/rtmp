@@ -69,7 +69,18 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
         SPUtil.setBitrateKbps(this, SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
-
+        if (!NetWorkUtil.isNetworkAvailable()) {
+            new AlertDialog.Builder(mContext)
+                    .setCancelable(false)
+                    .setMessage("网络连接异常，请检查手机网络或系统时间！")
+                    .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+            return;
+        }
         new RxPermissions(this)
                 .request(permissions)
                 .delay(1, TimeUnit.SECONDS)
@@ -78,18 +89,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            if (!NetWorkUtil.isNetworkAvailable()) {
-                                new AlertDialog.Builder(mContext)
-                                        .setCancelable(false)
-                                        .setMessage("网络连接异常，请检查手机网络或系统时间！")
-                                        .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                finish();
-                                            }
-                                        }).show();
-                                return;
-                            }
+
                             //获取软件的key
                             present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, SplashActivity.this);
 
