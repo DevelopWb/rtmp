@@ -115,11 +115,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.thirdLiveKey.setOnClickListener(this);
         binding.fourthLiveKey.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            binding.leftLiveGp.setVisibility(View.VISIBLE);
-        }else {
-            binding.leftLiveGp.setVisibility(View.GONE);
-        }
+//        if (PublicUtil.isMoreThanTheAndroid10()) {
+//            binding.thirdFourthLiveGp.setVisibility(View.VISIBLE);
+//        }else {
+//            binding.thirdFourthLiveGp.setVisibility(View.GONE);
+//        }
         // 使能摄像头后台采集
         onPushBackground();
 //        onEncodeType();

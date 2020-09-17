@@ -1,6 +1,7 @@
 package org.easydarwin.easypusher.util;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,4 +62,20 @@ public class PublicUtil {
     public static  boolean isMoreThanTheAndroid10(){
       return   Build.VERSION.SDK_INT>28;
     }
+
+
+    /**
+     * 判断str是否为空或者是空字符串
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isStringValueOk(String str) {
+        if (str != null && !TextUtils.isEmpty(str)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

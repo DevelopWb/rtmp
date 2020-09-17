@@ -40,6 +40,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -153,7 +154,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             break;
                     }
 
-                    String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
+                    String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight))].toString();
                     mScreenResTv.setText(String.format("分辨率:%s", title));
                     break;
                 default:
@@ -162,6 +163,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     };
     private ImageView startRecordIv;
+    private LinearLayout mRightPushIconsLl;
 
     /**
      * 停止所有的推流
@@ -319,8 +321,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
+        mRightPushIconsLl = (LinearLayout) findViewById(R.id.right_icon_ll);
         LinearLayout mRecordLl = (LinearLayout) findViewById(R.id.record_ll);
         mRecordLl.setOnClickListener(this);
+        LinearLayout bottomPushLl = (LinearLayout) findViewById(R.id.push_stream_ll);
+        bottomPushLl.setOnClickListener(this);
         LinearLayout mSetLl = (LinearLayout) findViewById(R.id.set_ll);
         mSetLl.setOnClickListener(this);
         mSwitchOritation.setOnClickListener(this);
@@ -336,15 +341,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
-        String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
+        String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight))].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
-
         setPushLiveIv();
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            setViewsVisible(mThirdLiveIv, mFourthLiveIv);
-        } else {
-            setViewsInvisible(true, mThirdLiveIv, mFourthLiveIv);
+        if (!MediaStream.isOnlyOnePush) {
+            if (PublicUtil.isMoreThanTheAndroid10()) {
+                setViewsVisible(mThirdLiveIv, mFourthLiveIv);
+            } else {
+                setViewsInvisible(true, mThirdLiveIv, mFourthLiveIv);
+            }
+        }else{
+            setViewsInvisible(true, mRightPushIconsLl);
         }
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(new Intent(this, BackgroundService.class));
@@ -357,20 +365,22 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /**
      * 获取索引
+     *
      * @param arrays
      * @param height
      */
-    public int getIndex(CharSequence[] arrays ,int height){
+    public int getIndex(CharSequence[] arrays, int height) {
         int index = 0;
         for (int i = 0; i < arrays.length; i++) {
             CharSequence str = arrays[i];
             if (str.toString().contains(String.valueOf(height))) {
-                index =  i;
-               break;
+                index = i;
+                break;
             }
         }
         return index;
     }
+
     @Override
     protected void onPause() {
 //        if (mMediaStream != null) {
@@ -961,7 +971,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (2 == which ) {
+                                if (2 == which) {
                                     mUvcService.reRequestOtg();
                                     try {
                                         Thread.sleep(200);
@@ -1003,15 +1013,25 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.first_live_iv:
                 String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 if (TextUtils.isEmpty(url_bili)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFirstPush();
                 break;
+            case R.id.push_stream_ll:
+                String serverIp = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP);
+                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT);
+                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG);
+                if (!PublicUtil.isStringValueOk(serverIp)||!PublicUtil.isStringValueOk(port)||!PublicUtil.isStringValueOk(tag)) {
+                    ToastUtils.toast(mContext, R.string.no_config_push);
+                    return;
+                }
+                startOrStopZeroPush();
+                break;
             case R.id.secend_live_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
                 if (TextUtils.isEmpty(url_huya)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopSecendPush();
@@ -1020,7 +1040,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.third_live_iv:
                 String url_yi = Hawk.get(HawkProperty.KEY_THIRD_URL);
                 if (TextUtils.isEmpty(url_yi)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopThirdPush();
@@ -1028,7 +1048,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.fourth_live_iv:
                 String url_now = Hawk.get(HawkProperty.KEY_FOURTH_URL);
                 if (TextUtils.isEmpty(url_now)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFourthPush();
@@ -1103,12 +1123,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 if (mMediaStream != null) {
                     if (mMediaStream.isRecording()) {
-                        ToastUtils.toast(mContext,"已停止录像");
+                        ToastUtils.toast(mContext, "已停止录像");
 
                         mMediaStream.stopRecord();
                         startRecordIv.setImageResource(R.drawable.record);
                     } else {
-                        ToastUtils.toast(mContext,"正在开始录像");
+                        ToastUtils.toast(mContext, "正在开始录像");
                         mMediaStream.startRecord();
                         startRecordIv.setImageResource(R.drawable.record_pressed);
                     }
@@ -1164,8 +1184,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (2 == position) {
             if (UVCCameraService.uvcConnected) {
                 return "外置";
-            }else{
-                SPUtil.setScreenPushingCameraIndex(this,0);
+            } else {
+                SPUtil.setScreenPushingCameraIndex(this, 0);
                 return "后置";
             }
 
@@ -1304,6 +1324,31 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
+    /*
+     * 推流or停止
+     * type   第0个直播
+     * */
+    public void startOrStopZeroPush() {
+
+
+        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
+            isPushingFirstStream = true;
+            try {
+                //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+                //                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("参数初始化失败");
+            }
+        } else {
+            isPushingFirstStream = false;
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            mMediaStream.stopPusherStream(0);
+            sendMessage("断开连接");
+        }
+    }
     /*
      * 推流or停止
      * type   第一个直播
@@ -1449,7 +1494,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
-            mScreenResTv.setText(String.format("%s%s%s%s","分辨率:",uvcWidth,"x",uvcHeight));
+            mScreenResTv.setText(String.format("%s%s%s%s", "分辨率:", uvcWidth, "x", uvcHeight));
         }
         try {
             Thread.sleep(500);
