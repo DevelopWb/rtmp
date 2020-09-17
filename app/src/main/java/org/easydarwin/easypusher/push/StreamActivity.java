@@ -1003,7 +1003,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.first_live_iv:
                 String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 if (TextUtils.isEmpty(url_bili)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中号输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFirstPush();
@@ -1011,7 +1011,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.secend_live_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
                 if (TextUtils.isEmpty(url_huya)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中号输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopSecendPush();
@@ -1020,7 +1020,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.third_live_iv:
                 String url_yi = Hawk.get(HawkProperty.KEY_THIRD_URL);
                 if (TextUtils.isEmpty(url_yi)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中号输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopThirdPush();
@@ -1028,7 +1028,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.fourth_live_iv:
                 String url_now = Hawk.get(HawkProperty.KEY_FOURTH_URL);
                 if (TextUtils.isEmpty(url_now)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中号输入推流地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startOrStopFourthPush();
