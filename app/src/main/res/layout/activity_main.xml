@@ -9,15 +9,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/option_bar_container"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
         <TextureView
             android:id="@+id/sv_surfaceview"
             android:layout_width="match_parent"
-            android:layout_centerInParent="true"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:keepScreenOn="true" />
     </RelativeLayout>
 
@@ -123,6 +121,13 @@
             android:paddingRight="10dp">
 
 
+            <ImageView
+                android:id="@+id/push_stream_iv"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/push_stream_off"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/first_live_iv"
@@ -155,12 +160,13 @@
                 android:layout_marginTop="5dp"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/now_live_off" />
+
             <ImageView
                 android:id="@+id/video_record_full_screen_iv"
                 android:layout_width="30dp"
-                android:padding="5dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@mipmap/video_record_normal" />
 
@@ -197,7 +203,7 @@
         android:id="@+id/option_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#88ffffff"
+        android:background="#cccccc"
         android:orientation="horizontal"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"

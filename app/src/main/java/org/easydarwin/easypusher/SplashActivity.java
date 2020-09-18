@@ -7,12 +7,15 @@
 package org.easydarwin.easypusher;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
+import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
@@ -53,7 +56,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
+        Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
         present = new RegLatestPresent();
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -62,11 +65,22 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.CAMERA,
                 Manifest.permission.ACCESS_FINE_LOCATION
-              };
-        SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
+        };
+        SPUtil.setBitrateKbps(this, SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
-
+        if (!NetWorkUtil.isNetworkAvailable()) {
+            new AlertDialog.Builder(mContext)
+                    .setCancelable(false)
+                    .setMessage("网络连接异常，请检查手机网络或系统时间！")
+                    .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+            return;
+        }
         new RxPermissions(this)
                 .request(permissions)
                 .delay(1, TimeUnit.SECONDS)
@@ -75,6 +89,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
+
                             //获取软件的key
                             present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, SplashActivity.this);
 
@@ -88,7 +103,6 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     public void accept(Throwable throwable) throws Exception {
                     }
                 });
-
 
 
     }
@@ -117,8 +131,8 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 //                    }
                     startActivity(new Intent(SplashActivity.this, StreamActivity.class));
                     finish();
-                }else {
-                    ToastUtils.toast(this,"参数初始化失败");
+                } else {
+                    ToastUtils.toast(this, "参数初始化失败");
                 }
             }
         }

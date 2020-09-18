@@ -227,14 +227,14 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                         if (Settings.canDrawOverlays(SettingActivity.this)) {
                             SPUtil.setEnableBackgroundCamera(SettingActivity.this, true);
                         } else {
-                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台上传视频").setMessage("后台上传视频需要APP出现在顶部.是否确定?").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台直播").setMessage(getResources().getString(R.string.live_bg_notice)).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
                                     final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
                                     startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
                                 }
-                            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     SPUtil.setEnableBackgroundCamera(SettingActivity.this, false);
