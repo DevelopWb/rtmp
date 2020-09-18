@@ -272,7 +272,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
-                        app:constraint_referenced_ids="first_live_key,first_live_scan_iv,first_live_value_et,secend_live_key,secend_live_scan_iv,secend_live_value_et"></android.support.constraint.Group>
+                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et,secend_live_key,secend_live_scan_iv,secend_live_value_et"></android.support.constraint.Group>
                     <android.support.constraint.Group
                         android:id="@+id/third_fourth_live_gp"
                         android:layout_width="match_parent"

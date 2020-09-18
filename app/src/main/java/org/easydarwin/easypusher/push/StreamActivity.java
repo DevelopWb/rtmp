@@ -164,6 +164,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     };
     private ImageView startRecordIv;
     private LinearLayout mRightPushIconsLl;
+    private LinearLayout mFullScreenLl;
 
     /**
      * 停止所有的推流
@@ -337,6 +338,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFourthLiveIv.setOnClickListener(this);
         mFullScreenIv = (ImageView) findViewById(R.id.video_record_full_screen_iv);
         mFullScreenIv.setOnClickListener(this);
+        mFullScreenLl = (LinearLayout) findViewById(R.id.video_record_full_screen_Ll);
+        mFullScreenLl.setOnClickListener(this);
         mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
         mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
@@ -351,7 +354,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             } else {
                 setViewsInvisible(true, mThirdLiveIv, mFourthLiveIv);
             }
-        }else{
+        } else {
             setViewsInvisible(true, mRightPushIconsLl);
         }
         if (Build.VERSION.SDK_INT >= 26) {
@@ -1022,7 +1025,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 String serverIp = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP);
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT);
                 String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG);
-                if (!PublicUtil.isStringValueOk(serverIp)||!PublicUtil.isStringValueOk(port)||!PublicUtil.isStringValueOk(tag)) {
+                if (!PublicUtil.isStringValueOk(serverIp) || !PublicUtil.isStringValueOk(port) || !PublicUtil.isStringValueOk(tag)) {
                     ToastUtils.toast(mContext, R.string.no_config_push);
                     return;
                 }
@@ -1089,7 +1092,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                         }).show();
 
                 break;
-
+            case R.id.video_record_full_screen_Ll:
+                mFullScreenIv.performClick();
+                break;
             case R.id.switch_oritation_iv:
                 /*
                  * 切换屏幕方向
@@ -1349,6 +1354,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             sendMessage("断开连接");
         }
     }
+
     /*
      * 推流or停止
      * type   第一个直播
