@@ -562,9 +562,10 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-//                url = Hawk.get(HawkProperty.KEY_FIRST_URL);
-                url = Config.getServerURL();
+                url = Hawk.get(HawkProperty.KEY_FIRST_URL);
+//                url = Config.getServerURL();
 //                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10&schdule=rtmp\n";
+
                 isFirstPushStream = true;
                 break;
             case 1:

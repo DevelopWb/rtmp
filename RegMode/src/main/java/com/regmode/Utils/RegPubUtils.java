@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class RegPubUtils {
 
-    public static String PUBLIC_REGCODE = "7stnMyTU";
+    public static String PUBLIC_REGCODE = "OVwDMX9G";
 
     // 判断网络是否正常
 

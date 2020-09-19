@@ -184,6 +184,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 startOrStopFourthPush();
             }
         }
+        mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
     }
 
     private Group mFloatViewGp;
@@ -1014,21 +1015,28 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 break;
             case R.id.first_live_iv:
+//                String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
+//                if (TextUtils.isEmpty(url_bili)) {
+//                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                startOrStopFirstPush();
+                break;
+            case R.id.push_stream_ll:
                 String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
                 if (TextUtils.isEmpty(url_bili)) {
                     Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startOrStopFirstPush();
-                break;
-            case R.id.push_stream_ll:
-                String serverIp = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP);
-                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT);
-                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG);
-                if (!PublicUtil.isStringValueOk(serverIp) || !PublicUtil.isStringValueOk(port) || !PublicUtil.isStringValueOk(tag)) {
-                    ToastUtils.toast(mContext, R.string.no_config_push);
-                    return;
-                }
+
+
+//                String serverIp = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP);
+//                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT);
+//                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG);
+//                if (!PublicUtil.isStringValueOk(serverIp) || !PublicUtil.isStringValueOk(port) || !PublicUtil.isStringValueOk(tag)) {
+//                    ToastUtils.toast(mContext, R.string.no_config_push);
+//                    return;
+//                }
                 startOrStopZeroPush();
                 break;
             case R.id.secend_live_iv:

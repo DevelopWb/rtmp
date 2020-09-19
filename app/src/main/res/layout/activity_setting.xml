@@ -48,8 +48,7 @@
 
                     <TextView
                         android:id="@+id/regist_code_key"
-                        android:layout_width="0dp"
-                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
                         android:gravity="right"
@@ -272,7 +271,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
-                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et,secend_live_key,secend_live_scan_iv,secend_live_value_et"></android.support.constraint.Group>
+                        app:constraint_referenced_ids="secend_live_key,secend_live_scan_iv,secend_live_value_et"></android.support.constraint.Group>
                     <android.support.constraint.Group
                         android:id="@+id/third_fourth_live_gp"
                         android:layout_width="match_parent"
@@ -282,6 +281,7 @@
 
                     <android.support.constraint.Group
                         android:layout_width="match_parent"
+                        android:visibility="gone"
                         android:layout_height="wrap_content"
                         app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et"></android.support.constraint.Group>
 
@@ -293,7 +293,6 @@
                     android:gravity="center"
                     android:padding="5dp"
                     android:textSize="16dp"
-                    android:visibility="gone"
                     android:textColor="@color/black"
                     android:layout_height="wrap_content"
                     android:text="直播地址输入方法"></TextView>
@@ -302,7 +301,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:visibility="gone"
                     android:textColor="@color/black"
                     android:layout_marginRight="10dp"
                     android:text="@string/push_notice"></TextView>
@@ -321,7 +319,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="后台监控" />
+                    android:text="后台直播" />
 
                 <TextView
                     android:layout_width="match_parent"
