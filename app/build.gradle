@@ -22,7 +22,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "org.easydarwin.easyrtmp"
+        applicationId "org.chuangchi.yjdb"
         minSdkVersion configs.minSdkVersion
         targetSdkVersion configs.targetSdkVersion
 //        versionCode generateVersionCode()
