@@ -410,7 +410,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                             String regStatus = modelBean.getRegisCodeState();
 
                             if ("正常".equals(regStatus)) {
-                                if (!RegPubUtils.PUBLIC_REGCODE.equals(input)) {
+                                if (!RegPubUtils.PUBLIC_REGCODE.equals(Hawk.get(HawkProperty.REG_CODE))) {
                                     //如果不是通用注册码 需要校验本地
                                     if (!checkImei(modelBean)) {
                                         return;
