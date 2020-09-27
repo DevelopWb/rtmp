@@ -17,15 +17,26 @@
 
             <TextView
                 android:id="@+id/main_title_tv"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
-                android:gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:singleLine="true"
                 android:text="设置"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
-
+            <TextView
+                android:id="@+id/title_rightTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:gravity="center"
+                android:singleLine="true"
+                android:layout_marginRight="15dp"
+                android:layout_gravity="right"
+                android:textColor="@color/white"
+                android:text="关于我们"
+                />
         </android.support.v7.widget.Toolbar>
 
         <ScrollView

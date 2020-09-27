@@ -88,6 +88,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting);
         setSupportActionBar(binding.mainToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.mainToolbar.setOnMenuItemClickListener(this);
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
@@ -107,6 +108,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.fourthLiveKey.setText(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CUSTOM));
         binding.firstLiveScanIv.setOnClickListener(this);
         binding.quitAppBt.setOnClickListener(this);
+        binding.titleRightTv.setOnClickListener(this);
         binding.secendLiveScanIv.setOnClickListener(this);
         binding.thirdLiveScanIv.setOnClickListener(this);
         binding.fourthLiveScanIv.setOnClickListener(this);
@@ -449,6 +451,10 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 break;
             case R.id.fourth_live_key:
                 selectLiveType(4);
+                break;
+            case R.id.title_rightTv:
+              //关于我们
+                startActivity(new Intent(mContext,AboutUsActivity.class));
                 break;
             default:
                 break;

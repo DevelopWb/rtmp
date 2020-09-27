@@ -121,6 +121,10 @@ public class HawkProperty {
      * mac
      */
     public static final String APP_KEY = "app_key";
+    /**
+     * 同意协议
+     */
+    public static final String AGREE_PROTOCAL = "agree_protocal";
 
     /**
      * savedVersion

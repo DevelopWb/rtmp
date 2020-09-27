@@ -11,12 +11,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.LogUtil;
+import com.juntai.wisdom.basecomponent.utils.SPTools;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -129,8 +137,13 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
-                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                    finish();
+                    boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
+                    if (!isAgree) {
+                        showAgreementAlter();
+                    }else {
+                        startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                        finish();
+                    }
                 } else {
                     ToastUtils.toast(this, "参数初始化失败");
                 }
@@ -141,5 +154,63 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     public void onError(String tag) {
 
+    }
+
+    private void showAgreementAlter() {
+        Intent intentAgreement = new Intent(this, UserAgreementActivity.class);
+        SpannableStringBuilder spannable = new SpannableStringBuilder(getString(R.string.agreement_xieyi_tag));
+        // 在设置点击事件、同时设置字体颜色
+        ClickableSpan clickableSpanOne = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                LogUtil.e("isGo", "点击了用户协议");
+                intentAgreement.putExtra("url", getString(R.string.user_xieyi_url));
+                startActivity(intentAgreement);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(getResources().getColor(R.color.colorTheme));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        ClickableSpan clickableSpanTwo = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                intentAgreement.putExtra("url", getString(R.string.secret_xieyi_url));
+                startActivity(intentAgreement);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(getResources().getColor(R.color.colorTheme));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        spannable.setSpan(clickableSpanOne, 50, 56, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(clickableSpanTwo, 57, 63, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        AgreementDialog agreementDialog = new AgreementDialog(this).builder();
+        agreementDialog.getContentTextView().setMovementMethod(LinkMovementMethod.getInstance());
+        agreementDialog.setCanceledOnTouchOutside(false)
+                .setTitle("服务协议和隐私政策")
+                .setContent(spannable)
+                .setCancelButton("暂不使用", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                })
+                .setOkButton("同意并进入", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Hawk.put(HawkProperty.AGREE_PROTOCAL,true);
+                        startActivity(new Intent(mContext, StreamActivity.class));
+                        finish();
+                    }
+                }).show();
     }
 }
