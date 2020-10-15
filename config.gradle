@@ -6,9 +6,9 @@ ext {
             compileSdkVersion: 28,
             minSdkVersion    : 21,
             targetSdkVersion : 27,
-            versionCode      : 43,
+            versionCode      : 44,
             //全面屏问题
-            versionName      : "2.0.16",
+            versionName      : "2.0.17",
             //全面屏问题  音视频不同步的问题
     ]
     libsVersion = [

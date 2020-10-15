@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
+import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.LogUtil;
 import com.juntai.wisdom.basecomponent.utils.SPTools;
@@ -84,7 +85,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
+                            ActivityManagerTool.getInstance().finishApp();
                         }
                     }).show();
             return;
