@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 
+import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivityMediaFilesBinding;
 import org.easydarwin.easypusher.databinding.FragmentMediaFileBinding;
@@ -46,9 +47,24 @@ import java.util.Collections;
 /**
  * 录像 / 抓拍
  */
-public class MediaFilesActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.OnMenuItemClickListener {
 
     private ActivityMediaFilesBinding mDataBinding;
+
+    @Override
+    public void onUvcCameraConnected() {
+
+    }
+
+    @Override
+    public void onUvcCameraAttached() {
+
+    }
+
+    @Override
+    public void onUvcCameraDisConnected() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,7 +279,7 @@ public class MediaFilesActivity extends AppCompatActivity implements Toolbar.OnM
                     intent.setAction(android.content.Intent.ACTION_VIEW);
                     if (Build.VERSION.SDK_INT >= 24) {//7.0 Android N
                         //com.xxx.xxx.fileprovider为上述manifest中provider所配置相同
-                        uri = FileProvider.getUriForFile(getContext(), "org.easydarwin.easyrtmp.fileProvider", f);
+                        uri = FileProvider.getUriForFile(getContext(), "org.chuangchi.yjzb.fileProvider", f);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//7.0以后，系统要求授予临时uri
                         // 读取权限，安装完毕以后，系统会自动收回权限，该过程没有用户交互
                     } else {//7.0以下
