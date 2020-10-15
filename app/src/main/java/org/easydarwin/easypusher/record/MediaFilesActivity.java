@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 
+import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivityMediaFilesBinding;
 import org.easydarwin.easypusher.databinding.FragmentMediaFileBinding;
@@ -46,9 +47,24 @@ import java.util.Collections;
 /**
  * 录像 / 抓拍
  */
-public class MediaFilesActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.OnMenuItemClickListener {
 
     private ActivityMediaFilesBinding mDataBinding;
+
+    @Override
+    public void onUvcCameraConnected() {
+
+    }
+
+    @Override
+    public void onUvcCameraAttached() {
+
+    }
+
+    @Override
+    public void onUvcCameraDisConnected() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
