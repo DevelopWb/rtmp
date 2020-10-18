@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -86,6 +87,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting);
+        binding.registCodeKey.setText(String.format("%s%s","注册码:",Hawk.get(HawkProperty.REG_CODE)));
         setSupportActionBar(binding.mainToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -103,23 +105,24 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                     boolean isSelect = liveBean.isSelect();
                     if (!isSelect) {
                         //查看被选中的个数
-                        int size =  getSelectedAmount(adapter);
+                        int size = getSelectedAmount(adapter);
                         if (PublicUtil.isMoreThanTheAndroid10()) {
-                            if (5==size) {
-                                ToastUtils.toast(mContext,"最多只能选择5个");
+                            if (5 == size) {
+                                ToastUtils.toast(mContext, "最多只能选择5个");
                                 return;
                             }
-                        }else {
-                            if (2==size) {
-                                ToastUtils.toast(mContext,"最多只能选择2个");
+                        } else {
+                            if (2 == size) {
+                                ToastUtils.toast(mContext, "最多只能选择2个");
                                 return;
                             }
                         }
                     }
                     liveBean.setSelect(!isSelect);
                     adapter.notifyItemChanged(position);
+                    Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
                 } else {
-                   startActivity(new Intent(mContext,AddLivePlatActivity.class));
+                    startActivity(new Intent(mContext, AddLivePlatActivity.class));
                 }
             }
         });
@@ -133,6 +136,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
 
     /**
      * 获取选中的个数
+     *
      * @param adapter
      * @return
      */
@@ -148,8 +152,18 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     }
 
     private List<LiveBean> getAdapterData() {
+        boolean hasAddTag = false;//是否有添加平台的标识
         List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
-        arrays.add(new LiveBean("", R.mipmap.cc_live_off, false, 1));
+        for (LiveBean array : arrays) {
+            if (1==array.getItemType()) {
+                hasAddTag = true;
+                break;
+            }
+        }
+        if (!hasAddTag) {
+            arrays.add(new LiveBean("", R.mipmap.cc_live_off, false, 1));
+
+        }
         return arrays;
     }
 
@@ -172,11 +186,11 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                     AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                     builder.setMessage("开启后需要手动开启软件自启动权限").setPositiveButton("知道了",
                             new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
                     builder.create().show();
                 } else {
                     Hawk.put(HawkProperty.AUTO_RUN, false);
@@ -260,9 +274,6 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                         if (Settings.canDrawOverlays(SettingActivity.this)) {
                             SPUtil.setEnableBackgroundCamera(SettingActivity.this, true);
                         } else {
-                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台上传视频").setMessage("后台上传视频需要APP" +
-                                    "出现在顶部.是否确定?").setPositiveButton(android.R.string.ok,
-                                    new DialogInterface.OnClickListener() {
                             new AlertDialog.Builder(SettingActivity.this).setTitle("后台直播").setMessage(getResources().getString(R.string.live_bg_notice)).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {

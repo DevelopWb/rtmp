@@ -42,7 +42,7 @@
                 tools:context="org.easydarwin.easypusher.mine.SettingActivity">
 
                 <TextView
-                    android:id="@+id/regist_code_key1111"
+                    android:id="@+id/regist_code_key"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"

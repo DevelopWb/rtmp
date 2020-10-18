@@ -135,6 +135,10 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0));
                 arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0));
                 arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0));
+            }else {
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, false, 0));
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, false, 0));
+                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, false, 0));
             }
             Hawk.put(HawkProperty.PLATFORMS,arrays);
         }
