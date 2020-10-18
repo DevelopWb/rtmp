@@ -22,6 +22,7 @@ import com.king.zxing.OnCaptureCallback;
 import com.king.zxing.ViewfinderView;
 import com.king.zxing.util.CodeUtils;
 
+import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.mine.SettingActivity;
 
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
 
 
 
-public class QRScanActivity extends Activity implements View.OnClickListener, OnCaptureCallback {
+public class QRScanActivity extends BaseProjectActivity implements View.OnClickListener, OnCaptureCallback {
     private SurfaceView mSurfaceView;
     private ViewfinderView mViewfinderView;
     private ImageView mZxingPic;
@@ -58,6 +59,21 @@ public class QRScanActivity extends Activity implements View.OnClickListener, On
         mCaptureHelper.playBeep(true);
     }
 
+
+    @Override
+    public void onUvcCameraConnected() {
+
+    }
+
+    @Override
+    public void onUvcCameraAttached() {
+
+    }
+
+    @Override
+    public void onUvcCameraDisConnected() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

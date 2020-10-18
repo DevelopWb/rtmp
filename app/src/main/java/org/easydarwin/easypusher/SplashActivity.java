@@ -7,14 +7,25 @@
 package org.easydarwin.easypusher;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
+import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
+import com.juntai.wisdom.basecomponent.utils.LogUtil;
+import com.juntai.wisdom.basecomponent.utils.SPTools;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -59,7 +70,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS,false);
+        Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
         initPlatform();
         present = new RegLatestPresent();
         String[] permissions = new String[]{
@@ -69,11 +80,22 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.CAMERA,
                 Manifest.permission.ACCESS_FINE_LOCATION
-              };
-        SPUtil.setBitrateKbps(this,SPUtil.BITRATEKBPS);
+        };
+        SPUtil.setBitrateKbps(this, SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
-
+        if (!NetWorkUtil.isNetworkAvailable()) {
+            new AlertDialog.Builder(mContext)
+                    .setCancelable(false)
+                    .setMessage("网络连接异常，请检查手机网络或系统时间！")
+                    .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityManagerTool.getInstance().finishApp();
+                        }
+                    }).show();
+            return;
+        }
         new RxPermissions(this)
                 .request(permissions)
                 .delay(1, TimeUnit.SECONDS)
@@ -82,10 +104,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
-                            if (!NetWorkUtil.isNetworkAvailable()) {
-                                ToastUtils.toast(mContext,"网络连接异常，请检查手机网络！");
-                               return;
-                            }
+
                             //获取软件的key
                             present.getAppVersionInfoAndKeyFromService(RegLatestContact.GET_KEY, SplashActivity.this);
 
@@ -99,7 +118,6 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     public void accept(Throwable throwable) throws Exception {
                     }
                 });
-
 
 
     }
@@ -144,10 +162,15 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
-                    startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                    finish();
-                }else {
-                    ToastUtils.toast(this,"参数初始化失败");
+                    boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
+                    if (!isAgree) {
+                        showAgreementAlter();
+                    }else {
+                        startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                        finish();
+                    }
+                } else {
+                    ToastUtils.toast(this, "参数初始化失败");
                 }
             }
         }
@@ -156,5 +179,63 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     public void onError(String tag) {
 
+    }
+
+    private void showAgreementAlter() {
+        Intent intentAgreement = new Intent(this, UserAgreementActivity.class);
+        SpannableStringBuilder spannable = new SpannableStringBuilder(getString(R.string.agreement_xieyi_tag));
+        // 在设置点击事件、同时设置字体颜色
+        ClickableSpan clickableSpanOne = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                LogUtil.e("isGo", "点击了用户协议");
+                intentAgreement.putExtra("url", getString(R.string.user_xieyi_url));
+                startActivity(intentAgreement);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(getResources().getColor(R.color.colorTheme));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        ClickableSpan clickableSpanTwo = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                intentAgreement.putExtra("url", getString(R.string.secret_xieyi_url));
+                startActivity(intentAgreement);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(getResources().getColor(R.color.colorTheme));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        spannable.setSpan(clickableSpanOne, 50, 56, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(clickableSpanTwo, 57, 63, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        AgreementDialog agreementDialog = new AgreementDialog(this).builder();
+        agreementDialog.getContentTextView().setMovementMethod(LinkMovementMethod.getInstance());
+        agreementDialog.setCanceledOnTouchOutside(false)
+                .setTitle("服务协议和隐私政策")
+                .setContent(spannable)
+                .setCancelButton("暂不使用", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                })
+                .setOkButton("同意并进入", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Hawk.put(HawkProperty.AGREE_PROTOCAL,true);
+                        startActivity(new Intent(mContext, StreamActivity.class));
+                        finish();
+                    }
+                }).show();
     }
 }

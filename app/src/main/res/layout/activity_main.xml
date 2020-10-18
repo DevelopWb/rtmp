@@ -203,7 +203,7 @@
         android:id="@+id/option_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#88ffffff"
+        android:background="#cccccc"
         android:orientation="horizontal"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"

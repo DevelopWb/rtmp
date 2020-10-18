@@ -30,6 +30,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".mine.AddLivePlatActivity"></activity>
         <!-- 程序自启动广播 -->
+        <activity android:name=".mine.AboutUsActivity"></activity>
+        <activity android:name=".UserAgreementActivity" /> <!-- 程序自启动广播 -->
         <receiver
             android:name=".mine.MyReceiver"
             android:enabled="true"
@@ -63,10 +65,10 @@
         </provider> <!-- 全面屏 -->
         <activity
             android:name=".push.StreamActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboard|screenSize"
-            ></activity>
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+
         <service
             android:name=".push.BackgroundService"
             android:enabled="true" />
