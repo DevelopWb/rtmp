@@ -118,7 +118,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private final static int UVC_CONNECT = 111;
     private final static int UVC_DISCONNECT = 112;
 
-    public static boolean IS_VERTICAL_SCREEN = true;//是否是竖屏
+        public static boolean IS_VERTICAL_SCREEN = true;//是否是竖屏
 
 
     Handler handler = new Handler() {
@@ -1465,7 +1465,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (newConfig.orientation == newConfig.ORIENTATION_LANDSCAPE) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //横屏
             IS_VERTICAL_SCREEN = false;
         } else {
