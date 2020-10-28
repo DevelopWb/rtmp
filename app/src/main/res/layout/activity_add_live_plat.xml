@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="15dp"
     android:layout_height="match_parent"
-    tools:context="org.easydarwin.easypusher.mine.AddLivePlatActivity">
+    android:padding="15dp"
+    tools:context="org.easydarwin.easypusher.mine.EditLivePlatActivity">
 
 
     <TextView
@@ -56,14 +56,80 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/push_url_key_tv" />
 
+    <RadioGroup
+        android:id="@+id/show_live_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_scan_iv">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示直播按钮："></TextView>
+
+        <RadioButton
+            android:id="@+id/show_live_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="是"></RadioButton>
+
+        <RadioButton
+            android:id="@+id/un_show_live_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:layout_marginLeft="30dp"
+            android:text="否"></RadioButton>
+    </RadioGroup>
 
     <TextView
-        android:id="@+id/add_plat_confirm_tv"
-        style="@style/bt_style"
-        android:background="@drawable/sp_filled_blue"
-        android:text="确定"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/push_url_value_et"></TextView>
+        android:id="@+id/add_plate_guide_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="直播地址输入方法"
+        app:layout_constraintTop_toBottomOf="@+id/show_live_rg"></TextView>
+
+    <TextView
+        android:id="@+id/add_plate_guide_content_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/add_plate_guide"
+        app:layout_constraintTop_toBottomOf="@+id/add_plate_guide_title_tv"></TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/add_plate_guide_content_tv">
+
+        <TextView
+            android:id="@+id/add_plat_confirm_tv"
+            style="@style/bt_style"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/sp_filled_blue"
+            android:text="保存" />
+
+        <TextView
+            android:id="@+id/del_live_tv"
+            style="@style/bt_style"
+            android:background="@drawable/sp_filled_red"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="删除" />
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

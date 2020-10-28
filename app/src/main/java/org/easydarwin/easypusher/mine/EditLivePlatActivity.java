@@ -24,7 +24,7 @@ import java.util.List;
  * @aouther tobato
  * @description 描述 添加平台
  */
-public class AddLivePlatActivity extends BaseMvpActivity implements View.OnClickListener {
+public class EditLivePlatActivity extends BaseMvpActivity implements View.OnClickListener {
 
     private EditText mPlatNameValueEt;
     private ImageView mPushScanIv;
@@ -48,7 +48,7 @@ public class AddLivePlatActivity extends BaseMvpActivity implements View.OnClick
 
     @Override
     public void initView() {
-        setTitleName("添加平台");
+        setTitleName("直播平台信息");
         mPlatNameValueEt = (EditText) findViewById(R.id.plat_name_value_et);
         mPushScanIv = (ImageView) findViewById(R.id.push_scan_iv);
         mPushScanIv.setOnClickListener(this);

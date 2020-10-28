@@ -27,7 +27,6 @@ import android.widget.RadioGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
-import com.juntai.wisdom.basecomponent.utils.PubUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 
@@ -36,7 +35,6 @@ import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
-import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
@@ -122,7 +120,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                     adapter.notifyItemChanged(position);
                     Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
                 } else {
-                    startActivity(new Intent(mContext, AddLivePlatActivity.class));
+                    startActivity(new Intent(mContext, EditLivePlatActivity.class));
                 }
             }
         });
@@ -131,7 +129,6 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         //        onEncodeType();
         // 推送内容
         onRadioGroupCheckedStatus();
-        onAutoRun();
     }
 
     /**
@@ -173,31 +170,6 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         adapter.setNewData(getAdapterData());
     }
 
-    /**
-     * 自启动
-     */
-    private void onAutoRun() {
-        //        initBitrateData();
-        binding.autoPushWhenRunCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    Hawk.put(HawkProperty.AUTO_RUN, true);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                    builder.setMessage("开启后需要手动开启软件自启动权限").setPositiveButton("知道了",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                    builder.create().show();
-                } else {
-                    Hawk.put(HawkProperty.AUTO_RUN, false);
-                }
-            }
-        });
-    }
 
     /**
      * radiogroup的选中状态

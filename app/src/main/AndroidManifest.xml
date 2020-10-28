@@ -28,7 +28,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mine.AddLivePlatActivity"></activity>
+        <activity android:name=".mine.EditLivePlatActivity"></activity>
         <!-- 程序自启动广播 -->
         <activity android:name=".mine.AboutUsActivity"></activity>
         <activity android:name=".UserAgreementActivity" /> <!-- 程序自启动广播 -->

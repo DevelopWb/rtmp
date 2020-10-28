@@ -58,54 +58,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/edit_live_tv"
-                        style="@style/bt_style"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_filled_blue"
-                        android:paddingLeft="30dp"
-                        android:paddingTop="5dp"
-                        android:paddingRight="30dp"
-                        android:paddingBottom="5dp"
-                        android:text="编辑" />
-                    <TextView
-                        android:id="@+id/del_live_tv"
-                        style="@style/bt_style"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="0dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_filled_red"
-                        android:paddingLeft="30dp"
-                        android:paddingTop="5dp"
-                        android:paddingRight="30dp"
-                        android:paddingBottom="5dp"
-                        android:text="删除" />
-                </LinearLayout>
-
-
-
-                <CheckBox
-                    android:id="@+id/auto_push_when_run_cb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="开机自动推流" />
-
                 <CheckBox
                     android:id="@+id/enable_background_camera_pushing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="摄像头后台采集" />
+                    android:text="后台直播" />
 
                 <CheckBox
                     android:id="@+id/use_x264_encode"
@@ -121,10 +79,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:paddingLeft="5dp"
+                    android:visibility="gone"
                     android:paddingRight="5dp"
                     android:text="推送内容：" />
 
                 <RadioGroup
+                    android:visibility="gone"
                     android:id="@+id/push_content_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
