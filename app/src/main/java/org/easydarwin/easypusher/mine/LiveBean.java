@@ -1,5 +1,7 @@
 package org.easydarwin.easypusher.mine;
 
+import java.io.Serializable;
+
 /**
  * @Author: tobato
  * @Description: 作用描述  直播平台对象
@@ -7,7 +9,7 @@ package org.easydarwin.easypusher.mine;
  * @UpdateUser: 更新者
  * @UpdateDate: 2020/8/30 17:17
  */
-public class LiveBean {
+public class LiveBean implements Serializable {
 
     private String liveName;//
     private String pushUrl;//推流地址

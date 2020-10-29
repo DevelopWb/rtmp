@@ -38,7 +38,6 @@ import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
-import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.ArrayList;
@@ -60,6 +59,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     public static final String LIVE_TYPE_YI = "一直播";
     public static final String LIVE_TYPE_DOUYU = "斗鱼直播";
     public static final String LIVE_TYPE_XIGUA = "西瓜视频";
+    public static final String LIVE_TYPE_CUSTOM = "ADDPLATE";
     private ActivitySettingBinding binding;
     private List<Boolean> selectArray = new ArrayList<>();
     private MyLivesAdapter adapter;
@@ -99,29 +99,30 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LiveBean liveBean = (LiveBean) adapter.getData().get(position);
-                if (0 == liveBean.getItemType()) {
-                    boolean isSelect = liveBean.isSelect();
-                    if (!isSelect) {
-                        //查看被选中的个数
-                        int size = getSelectedAmount(adapter);
-                        if (PublicUtil.isMoreThanTheAndroid10()) {
-                            if (5 == size) {
-                                ToastUtils.toast(mContext, "最多只能选择5个");
-                                return;
-                            }
-                        } else {
-                            if (2 == size) {
-                                ToastUtils.toast(mContext, "最多只能选择2个");
-                                return;
-                            }
-                        }
-                    }
-                    liveBean.setSelect(!isSelect);
-                    adapter.notifyItemChanged(position);
-                    Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
-                } else {
-                    startActivity(new Intent(mContext, EditLivePlatActivity.class));
-                }
+                startActivity(new Intent(mContext, EditLivePlatActivity.class).putExtra(EditLivePlatActivity.PLATE,liveBean));
+
+//                if (0 == liveBean.getItemType()) {
+//                    boolean isSelect = liveBean.isSelect();
+//                    if (!isSelect) {
+//                        //查看被选中的个数
+//                        int size = getSelectedAmount(adapter);
+//                        if (PublicUtil.isMoreThanTheAndroid10()) {
+//                            if (5 == size) {
+//                                ToastUtils.toast(mContext, "最多只能选择5个");
+//                                return;
+//                            }
+//                        } else {
+//                            if (2 == size) {
+//                                ToastUtils.toast(mContext, "最多只能选择2个");
+//                                return;
+//                            }
+//                        }
+//                    }
+//                    liveBean.setSelect(!isSelect);
+//                    adapter.notifyItemChanged(position);
+//                    Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
+//                } else {
+//                }
             }
         });
         // 使能摄像头后台采集
@@ -158,7 +159,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             }
         }
         if (!hasAddTag) {
-            arrays.add(new LiveBean("", R.mipmap.cc_live_off, false, 1));
+            arrays.add(new LiveBean(LIVE_TYPE_CUSTOM, R.mipmap.cc_live_off, false, 1));
 
         }
         return arrays;

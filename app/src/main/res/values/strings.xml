@@ -18,4 +18,9 @@
     <string name="agreement_xieyi_tag">请你务必审慎阅读、充分理解“服务协议”和“隐私政策”各条款，你可以在“设置”中管理你的授权，你可阅读《服务协议》和《隐私政策》了解详细信息。如你同意，请点击“同意”开始接受我们的服务。</string>
     <string name="add_plate_guide">
         \u3000\u3000直播前请先使用电脑/手机（浏览器标识切换为电脑）浏览器输入账号密码登录直播平台（以哔哩哔哩为例）后：依次点击我的直播间→开播设置→选择直播分类→开始直播按钮，并将推流地址和我的直播码依次复制粘贴（支持扫码二维码自动填写推流地址）到推流地址的文本框</string>
+    <string name="biliurl"><![CDATA[rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_522215927_72196887&key=fd79a5428de75134229897e4aa7a6bd3]]></string>
+    <string name="huyaurl">rtmp://al.direct.huya.com/huyalive/</string>
+    <string name="douyuurl">rtmp://send3a.douyu.com/live</string>
+    <string name="xiguaurl">rtmp://push-rtmp-l6.ixigua.com/game</string>
+    <string name="yiurl">rtmp://al01.xiaoka.tv/live/</string>
 </resources>

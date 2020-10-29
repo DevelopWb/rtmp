@@ -23,14 +23,14 @@ public class MyLivesAdapter extends BaseQuickAdapter<LiveBean, BaseViewHolder> {
         if (0 == type) {
             helper.setText(R.id.live_item_name_tv, item.getLiveName());
             if (item.isSelect()) {
-                helper.setGone(R.id.select_status_iv,true);
+                helper.setVisible(R.id.select_status_iv,true);
             }else {
-                helper.setGone(R.id.select_status_iv,false);
+                helper.setVisible(R.id.select_status_iv,false);
 
             }
         }else {
             helper.setText(R.id.live_item_name_tv,"+");
-            helper.setGone(R.id.select_status_iv,false);
+            helper.setVisible(R.id.select_status_iv,false);
         }
 
     }
