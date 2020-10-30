@@ -99,7 +99,9 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LiveBean liveBean = (LiveBean) adapter.getData().get(position);
-                startActivity(new Intent(mContext, EditLivePlatActivity.class).putExtra(EditLivePlatActivity.PLATE,liveBean));
+                int  selectedSize = getSelectedAmount(adapter);
+                startActivity(new Intent(mContext, EditLivePlatActivity.class).putExtra(EditLivePlatActivity.PLATE,liveBean)
+                .putExtra(EditLivePlatActivity.PLATE_LIVE_SIZE,selectedSize));
 
 //                if (0 == liveBean.getItemType()) {
 //                    boolean isSelect = liveBean.isSelect();
@@ -159,7 +161,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             }
         }
         if (!hasAddTag) {
-            arrays.add(new LiveBean(LIVE_TYPE_CUSTOM, R.mipmap.cc_live_off, false, 1));
+            arrays.add(new LiveBean().config(LIVE_TYPE_CUSTOM, 0, false, 1));
 
         }
         return arrays;

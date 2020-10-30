@@ -11,19 +11,34 @@ import java.io.Serializable;
  */
 public class LiveBean implements Serializable {
 
-    private String liveName;//
-    private String pushUrl;//推流地址
+    private String liveName;//平台名称
+    private String pushUrlHeard;//推流地址固定部分  只有默认的五个平台有固定部分
+    private String pushUrlCustom;//推流地址 自定义部分
     private String liveTag;//直播标识
     private int liveImage;//
-    private int itemType;//0是正常平台 1是添加平台
-    private boolean isSelect;//
+    private int itemType;//0是已添加平台 1是未添加平台
+    private boolean isSelect;//是否在首页显示
 
-    public LiveBean(String liveName, int liveImage, boolean isSelect,int itemType) {
+    public LiveBean config(String liveName, int liveImage, boolean isSelect, int itemType) {
         this.liveName = liveName;
         this.liveImage = liveImage;
         this.isSelect = isSelect;
         this.itemType = itemType;
+        return this;
     }
+    public LiveBean setUrlHead(String urlHead) {
+        this.pushUrlHeard = urlHead;
+        return this;
+    }
+    public LiveBean setUrlCustom(String pushUrlCustom) {
+        this.pushUrlCustom = pushUrlCustom;
+        return this;
+    }
+
+    public String getPushUrlCustom() {
+        return pushUrlCustom == null ? "" : pushUrlCustom;
+    }
+
 
     public int getItemType() {
         return itemType;
@@ -41,13 +56,10 @@ public class LiveBean implements Serializable {
         this.liveName = liveName == null ? "" : liveName;
     }
 
-    public String getPushUrl() {
-        return pushUrl == null ? "" : pushUrl;
+    public String getPushUrlHeard() {
+        return pushUrlHeard == null ? "" : pushUrlHeard;
     }
 
-    public void setPushUrl(String pushUrl) {
-        this.pushUrl = pushUrl == null ? "" : pushUrl;
-    }
 
     public String getLiveTag() {
         return liveTag == null ? "" : liveTag;

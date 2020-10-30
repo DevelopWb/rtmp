@@ -54,12 +54,12 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
     @Override
     public void onUvcCameraConnected() {
-//        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUvcCameraAttached() {
-//        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -129,18 +129,26 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
         List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
         if (arrays == null) {
             arrays = new ArrayList<>();
-            arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_BILI, R.mipmap.bilibili_off, true, 0));
-            arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_HUYA, R.mipmap.huya_off, true, 0));
+            arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_BILI, R.mipmap.bilibili_off, true, 0)
+                    .setUrlHead(getString(R.string.biliurl)));
+            arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_HUYA, R.mipmap.huya_off, true, 0)
+                    .setUrlHead(getString(R.string.huyaurl)));
             if (PublicUtil.isMoreThanTheAndroid10()) {
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0));
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0));
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0));
-            }else {
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, false, 0));
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, false, 0));
-                arrays.add(new LiveBean(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, false, 0));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0)
+                        .setUrlHead(getString(R.string.douyuurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0)
+                        .setUrlHead(getString(R.string.xiguaurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0)
+                        .setUrlHead(getString(R.string.yiurl)));
+            } else {
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, false, 0)
+                        .setUrlHead(getString(R.string.douyuurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, false, 0)
+                        .setUrlHead(getString(R.string.xiguaurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, false, 0)
+                        .setUrlHead(getString(R.string.yiurl)));
             }
-            Hawk.put(HawkProperty.PLATFORMS,arrays);
+            Hawk.put(HawkProperty.PLATFORMS, arrays);
         }
     }
 
@@ -159,17 +167,17 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
                     Hawk.put(HawkProperty.APP_KEY, key);
-//                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-//                    //所有权限通过
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    //                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
+                    //                    //所有权限通过
+                    //                    try {
+                    //                        Thread.sleep(600);
+                    //                    } catch (InterruptedException e) {
+                    //                        e.printStackTrace();
+                    //                    }
                     boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
                     if (!isAgree) {
                         showAgreementAlter();
-                    }else {
+                    } else {
                         startActivity(new Intent(SplashActivity.this, StreamActivity.class));
                         finish();
                     }
@@ -236,7 +244,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 .setOkButton("同意并进入", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Hawk.put(HawkProperty.AGREE_PROTOCAL,true);
+                        Hawk.put(HawkProperty.AGREE_PROTOCAL, true);
                         startActivity(new Intent(mContext, StreamActivity.class));
                         finish();
                     }

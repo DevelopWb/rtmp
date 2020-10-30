@@ -118,7 +118,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private final static int UVC_CONNECT = 111;
     private final static int UVC_DISCONNECT = 112;
 
-        public static boolean IS_VERTICAL_SCREEN = true;//是否是竖屏
+    public static boolean IS_VERTICAL_SCREEN = true;//是否是竖屏
 
 
     Handler handler = new Handler() {
@@ -153,7 +153,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             break;
                     }
 
-                    String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
+                    String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,
+                            MediaStream.nativeHeight))].toString();
                     mScreenResTv.setText(String.format("分辨率:%s", title));
                     break;
                 default:
@@ -336,7 +337,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mFloatViewGp = findViewById(R.id.float_views_group);
         mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
-        String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
+        String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,
+                MediaStream.nativeHeight))].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
 
@@ -357,27 +359,29 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /**
      * 获取索引
+     *
      * @param arrays
      * @param height
      */
-    public int getIndex(CharSequence[] arrays ,int height){
+    public int getIndex(CharSequence[] arrays, int height) {
         int index = 0;
         for (int i = 0; i < arrays.length; i++) {
             CharSequence str = arrays[i];
             if (str.toString().contains(String.valueOf(height))) {
-                index =  i;
-               break;
+                index = i;
+                break;
             }
         }
         return index;
     }
+
     @Override
     protected void onPause() {
-//        if (mMediaStream != null) {
-//            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-//                mService.activePreview();
-//            }
-//        }
+        //        if (mMediaStream != null) {
+        //            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+        //                mService.activePreview();
+        //            }
+        //        }
 
         super.onPause();
     }
@@ -589,9 +593,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
             };
         } else {
-//            if (!UVCCameraService.uvcConnected) {
-//                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
-//            }
+            //            if (!UVCCameraService.uvcConnected) {
+            //                goonWithAvailableTexture(surfaceView.getSurfaceTexture());
+            //            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
         startService(new Intent(this, UVCCameraService.class));
@@ -631,8 +635,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             public void onClick(View v) {
                 if (Hawk.get(HawkProperty.HIDE_FLOAT_VIEWS, false)) {
                     mFloatViewGp.setVisibility(View.VISIBLE);
-//                    //屏幕竖屏
-//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    //                    //屏幕竖屏
+                    //                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
                     Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
                 }
@@ -679,15 +683,16 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
             }
 
-//            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
-//                int orientation = getRequestedOrientation();
-//
-//                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//                } else {
-//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//                }
-//            }
+            //            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
+            //                int orientation = getRequestedOrientation();
+            //
+            //                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo
+            //                .SCREEN_ORIENTATION_PORTRAIT) {
+            //                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            //                } else {
+            //                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            //                }
+            //            }
         } else {
 
             boolean enableVideo = SPUtil.getEnableVideo(this);
@@ -710,7 +715,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     private void startCamera() {
-//        mMediaStream.updateResolution();
+        //        mMediaStream.updateResolution();
         mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();
@@ -791,30 +796,30 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     @Subscribe
     public void onStreamStat(final StreamStat stat) {
-//        streamStat.post(() -> streamStat.setText(getString(R.string.stream_stat, stat.framePerSecond,
-//                stat.bytesPerSecond * 8 / 1024)));
+        //        streamStat.post(() -> streamStat.setText(getString(R.string.stream_stat, stat.framePerSecond,
+        //                stat.bytesPerSecond * 8 / 1024)));
     }
 
-//        /*
-//         * 获取可以支持的分辨率
-//         * */
-//        @Subscribe
-//        public void onSupportResolution(SupportResolution res) {
-//            runOnUiThread(() -> {
-//                listResolution = Util.getSupportResolution(getApplicationContext());
-//                boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
-//
-//                if (!supportdefault) {
-//                    String r = listResolution.get(0);
-//                    String[] splitR = r.split("x");
-//
-//                    width = Integer.parseInt(splitR[0]);
-//                    height = Integer.parseInt(splitR[1]);
-//                }
-//
-//                initSpinner();
-//            });
-//        }
+    //        /*
+    //         * 获取可以支持的分辨率
+    //         * */
+    //        @Subscribe
+    //        public void onSupportResolution(SupportResolution res) {
+    //            runOnUiThread(() -> {
+    //                listResolution = Util.getSupportResolution(getApplicationContext());
+    //                boolean supportdefault = listResolution.contains(String.format("%dx%d", width, height));
+    //
+    //                if (!supportdefault) {
+    //                    String r = listResolution.get(0);
+    //                    String[] splitR = r.split("x");
+    //
+    //                    width = Integer.parseInt(splitR[0]);
+    //                    height = Integer.parseInt(splitR[1]);
+    //                }
+    //
+    //                initSpinner();
+    //            });
+    //        }
 
     /*
      * 得知推流的状态
@@ -938,7 +943,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (2 == which ) {
+                                if (2 == which) {
                                     mUvcService.reRequestOtg();
                                     try {
                                         Thread.sleep(200);
@@ -1080,12 +1085,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 if (mMediaStream != null) {
                     if (mMediaStream.isRecording()) {
-                        ToastUtils.toast(mContext,"已停止录像");
+                        ToastUtils.toast(mContext, "已停止录像");
 
                         mMediaStream.stopRecord();
                         startRecordIv.setImageResource(R.drawable.record);
                     } else {
-                        ToastUtils.toast(mContext,"正在开始录像");
+                        ToastUtils.toast(mContext, "正在开始录像");
                         mMediaStream.startRecord();
                         startRecordIv.setImageResource(R.drawable.record_pressed);
                     }
@@ -1117,10 +1122,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      */
     private int getSelectedCameraIndex() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
-//        if (UVCCameraService.uvcConnected) {
-//            SPUtil.setScreenPushingCameraIndex(this, 2);
-//            return 2;
-//        }
+        //        if (UVCCameraService.uvcConnected) {
+        //            SPUtil.setScreenPushingCameraIndex(this, 2);
+        //            return 2;
+        //        }
         return position;
 
     }
@@ -1141,8 +1146,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (2 == position) {
             if (UVCCameraService.uvcConnected) {
                 return "外置";
-            }else{
-                SPUtil.setScreenPushingCameraIndex(this,0);
+            } else {
+                SPUtil.setScreenPushingCameraIndex(this, 0);
                 return "后置";
             }
 
@@ -1426,7 +1431,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
-            mScreenResTv.setText(String.format("%s%s%s%s","分辨率:",uvcWidth,"x",uvcHeight));
+            mScreenResTv.setText(String.format("%s%s%s%s", "分辨率:", uvcWidth, "x", uvcHeight));
         }
         try {
             Thread.sleep(500);
@@ -1435,8 +1440,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             e.printStackTrace();
         }
 
-//        mScreenResTv.setVisibility(View.INVISIBLE);
-//        mSwitchOritation.setVisibility(View.INVISIBLE);
+        //        mScreenResTv.setVisibility(View.INVISIBLE);
+        //        mSwitchOritation.setVisibility(View.INVISIBLE);
         //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
         //        mScreenResTv.setText(String.format("分辨率:%s", title));
     }
