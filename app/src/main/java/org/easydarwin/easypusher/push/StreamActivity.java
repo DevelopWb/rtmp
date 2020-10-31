@@ -26,6 +26,8 @@ import android.provider.Settings;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -53,6 +55,7 @@ import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.SplashActivity;
+import org.easydarwin.easypusher.mine.LiveBean;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
@@ -163,6 +166,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     };
     private ImageView startRecordIv;
+    private RecyclerView mLivePlatesRv;
+    private LivePlateAdapter platAdapter;
 
     /**
      * 停止所有的推流
@@ -355,6 +360,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             startService(new Intent(this, BackgroundService.class));
         }
 
+
+        mLivePlatesRv = findViewById(R.id.live_plates_rv);
+        platAdapter = new LivePlateAdapter(R.layout.live_plate_item);
+        LinearLayoutManager manager = new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false);
+        mLivePlatesRv.setLayoutManager(manager);
+        mLivePlatesRv.setAdapter(platAdapter);
+
     }
 
     /**
@@ -395,7 +407,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mFloatViewGp.setVisibility(View.VISIBLE);
             mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
         }
+        platAdapter.setNewData(getAdapterData());
         goonWithPermissionGranted();
+    }
+
+    /**
+     * 获取适配器数据
+     * @return
+     */
+    private List<LiveBean> getAdapterData() {
+        List<LiveBean> data = new ArrayList<>();
+        List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
+        for (LiveBean array : arrays) {
+            if (array.isSelect()) {
+                data.add(array);
+            }
+        }
+        return data;
+
     }
 
     @Override

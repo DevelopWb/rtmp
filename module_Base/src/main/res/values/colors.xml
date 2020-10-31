@@ -3,6 +3,7 @@
     <!--<color name="colorPrimary">@color/orange</color>-->
     <!--<color name="colorPrimaryDark">@color/orange</color>-->
     <!--<color name="colorAccent">#D81B60</color>-->
+    <color name="green_lighter">#AA00b61e</color>
 
     <color name="gray_light">#55cccccc</color>
     <color name="background2">#22cccccc</color>
