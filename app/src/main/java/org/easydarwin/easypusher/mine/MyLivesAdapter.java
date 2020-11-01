@@ -4,6 +4,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.bean.LiveBean;
 
 /**
  * @Author: tobato

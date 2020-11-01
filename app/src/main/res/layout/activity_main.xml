@@ -127,46 +127,6 @@
 
 
             <ImageView
-                android:id="@+id/push_stream_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/push_stream_off"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/first_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="50dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/bilibili_off" />
-
-            <ImageView
-                android:id="@+id/secend_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="15dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/huya_off" />
-
-            <ImageView
-                android:id="@+id/third_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/yi_live_off" />
-
-            <ImageView
-                android:id="@+id/fourth_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/now_live_off" />
-
-            <ImageView
                 android:id="@+id/video_record_full_screen_iv"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher.mine;
+package org.easydarwin.easypusher.bean;
 
 import java.io.Serializable;
 
@@ -18,6 +18,7 @@ public class LiveBean implements Serializable {
     private int liveImage;//
     private int itemType;//0是已添加平台 1是未添加平台
     private boolean isSelect;//是否在首页显示
+    private boolean isPushing;//是否正在推送
 
     public LiveBean config(String liveName, int liveImage, boolean isSelect, int itemType) {
         this.liveName = liveName;
@@ -26,6 +27,15 @@ public class LiveBean implements Serializable {
         this.itemType = itemType;
         return this;
     }
+
+    public boolean isPushing() {
+        return isPushing;
+    }
+
+    public void setPushing(boolean pushing) {
+        isPushing = pushing;
+    }
+
     public LiveBean setUrlHead(String urlHead) {
         this.pushUrlHeard = urlHead;
         return this;

@@ -2,7 +2,6 @@ package org.easydarwin.easypusher.mine;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,11 +14,11 @@ import android.widget.TextView;
 import com.juntai.wisdom.basecomponent.base.BaseMvpActivity;
 import com.juntai.wisdom.basecomponent.mvp.BasePresenter;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
-import com.juntai.wisdom.basecomponent.utils.PubUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 
 import org.easydarwin.easypusher.R;
+import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import org.easydarwin.easypusher.util.PublicUtil;
 
