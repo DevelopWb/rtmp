@@ -23,6 +23,7 @@
         style="@style/set_url_editText"
         android:hint="请输入平台名称"
         android:minHeight="20dp"
+        android:maxLength="4"
         app:layout_constraintBottom_toBottomOf="@+id/plat_name_key_tv"
         app:layout_constraintLeft_toRightOf="@+id/plat_name_key_tv"
         app:layout_constraintRight_toRightOf="parent"
@@ -33,6 +34,7 @@
         android:text="推流地址："
         android:paddingTop="10dp"
         android:visibility="gone"
+        android:inputType="textUri"
         app:layout_constraintTop_toBottomOf="@+id/plat_name_value_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></TextView>

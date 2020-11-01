@@ -297,6 +297,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         startRecordIv = findViewById(R.id.streaming_activity_record);
         mScreenResTv = findViewById(R.id.txt_res);
         surfaceView = findViewById(R.id.sv_surfaceview);
+        mFloatViewGp = findViewById(R.id.float_views_group);
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
