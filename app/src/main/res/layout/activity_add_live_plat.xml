@@ -23,7 +23,6 @@
         style="@style/set_url_editText"
         android:hint="请输入平台名称"
         android:minHeight="20dp"
-        android:maxLength="4"
         app:layout_constraintBottom_toBottomOf="@+id/plat_name_key_tv"
         app:layout_constraintLeft_toRightOf="@+id/plat_name_key_tv"
         app:layout_constraintRight_toRightOf="parent"

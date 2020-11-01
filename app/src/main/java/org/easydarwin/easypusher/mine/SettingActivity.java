@@ -31,7 +31,6 @@ import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
-import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
@@ -236,7 +235,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
                                     final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                            Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                                            Uri.parse("package:org.chuangchi.yjdb"));
                                     startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
