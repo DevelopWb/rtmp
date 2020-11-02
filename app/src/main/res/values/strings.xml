@@ -23,4 +23,5 @@
     <string name="douyuurl">rtmp://sendtc3.douyu.com/live/</string>
     <string name="xiguaurl">rtmp://push-rtmp-l6.ixigua.com/game/</string>
     <string name="yiurl">rtmp://al01.xiaoka.tv/live/</string>
+    <string name="back_live_notice">\u3000\u3000勾选后台直播后，直播界面可切换至后台。在直播的同事不会影响你对其他软件的使用</string>
 </resources>

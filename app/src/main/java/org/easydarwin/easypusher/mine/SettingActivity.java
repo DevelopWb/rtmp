@@ -89,6 +89,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.mainToolbar.setOnMenuItemClickListener(this);
+        binding.openRecordLocalBt.setOnClickListener(this);
+        binding.quitAppBt.setOnClickListener(this);
         adapter = new MyLivesAdapter(R.layout.my_lives_item);
         GridLayoutManager manager = new GridLayoutManager(mContext, 3);
         binding.livePlatformRv.setAdapter(adapter);

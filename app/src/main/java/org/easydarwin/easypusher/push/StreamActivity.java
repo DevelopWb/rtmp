@@ -45,7 +45,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
-import com.regmode.Utils.RegOperateManager;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
@@ -344,6 +343,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     startPushStream(bean,position);
                 }
                 adapter.notifyItemChanged(position);
+                Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
             }
         });
     }

@@ -64,6 +64,10 @@
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="后台直播" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="@string/back_live_notice"
+                    android:layout_height="wrap_content"></TextView>
 
                 <CheckBox
                     android:id="@+id/use_x264_encode"
