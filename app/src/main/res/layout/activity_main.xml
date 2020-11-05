@@ -109,68 +109,25 @@
                 android:src="@drawable/ic_action_switch_oritation" />
 
         </LinearLayout>
-
-        <LinearLayout
+        <ImageView
+            android:id="@+id/video_record_full_screen_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/live_plates_rv"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/video_record_normal" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/live_plates_rv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:gravity="center"
-            android:orientation="vertical"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:paddingRight="10dp"></android.support.v7.widget.RecyclerView>
 
-
-            <ImageView
-                android:id="@+id/push_stream_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/push_stream_off"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/first_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="50dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/bilibili_off" />
-
-            <ImageView
-                android:id="@+id/secend_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="15dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/huya_off" />
-
-            <ImageView
-                android:id="@+id/third_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/yi_live_off" />
-
-            <ImageView
-                android:id="@+id/fourth_live_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/now_live_off" />
-
-            <ImageView
-                android:id="@+id/video_record_full_screen_iv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="5dp"
-                android:padding="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/video_record_normal" />
-
-        </LinearLayout>
 
 
         <TextView

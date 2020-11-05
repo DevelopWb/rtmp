@@ -8,6 +8,7 @@ package com.juntai.wisdom.basecomponent.utils;
 public class HawkProperty {
 
     public static String AUTO_RUN = "auto_run";//开机自启动
+    public static String PLATFORMS = "platform";//live平台
     public static String HIDE_FLOAT_VIEWS = "hide_views";//隐藏悬浮控件
     /**
      * 保存IP
@@ -23,26 +24,6 @@ public class HawkProperty {
      */
     public static final String KEY_SCREEN_PUSHING_TAG = "screen_pushing_tag";
     /* ============================ 屏幕直播 ============================ */
-    /**
-     * 保存注册码
-     */
-    public static final String KEY_REGIST_CODE = "key_regist_code";
-    /**
-     * 保存1
-     */
-    public static final String KEY_FIRST_URL = "key_bilibili_url";
-    /**
-     * 保存2
-     */
-    public static final String KEY_THIRD_URL = "key_yi_url";
-    /**
-     * 保存3
-     */
-    public static final String KEY_FOURTH_URL = "key_now_url";
-    /**
-     * 保存4
-     */
-    public static final String KEY_SECEND_URL = "key_huya_url";
 
 
 

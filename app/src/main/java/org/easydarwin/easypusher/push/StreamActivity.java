@@ -26,6 +26,8 @@ import android.provider.Settings;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -40,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -53,6 +56,7 @@ import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
 import org.easydarwin.easypusher.SplashActivity;
+import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
@@ -162,26 +166,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
     };
     private ImageView startRecordIv;
+    private LivePlateAdapter platAdapter;
+    private RecyclerView mLivePlatesRv;
 
     /**
      * 停止所有的推流
      */
     private void stopAllPushStream() {
         if (mMediaStream != null) {
-            if (mMediaStream.isFirstPushStream) {
-                startOrStopFirstPush();
-            }
-            if (mMediaStream.isSecendPushStream) {
-                startOrStopSecendPush();
-            }
-            if (mMediaStream.isThirdPushStream) {
-                startOrStopThirdPush();
-            }
-            if (mMediaStream.isFourthPushStream) {
-                startOrStopFourthPush();
+            List<LiveBean> arrays = platAdapter.getData();
+            for (int i = 0; i < arrays.size(); i++) {
+                LiveBean bean = arrays.get(i);
+                if (bean.isPushing()) {
+                    stopPushStream(i);
+                }
             }
         }
     }
+
 
     private Group mFloatViewGp;
 
@@ -265,11 +267,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private TextureView surfaceView;
     private ImageView mPushBgIv;
     private ImageView mSwitchOritation;
-    private ImageView mFirstLiveIv;
-    private ImageView mThirdLiveIv;
-    private ImageView mFourthLiveIv, mFullScreenIv;
+    private ImageView  mFullScreenIv;
     private ImageView mVedioPushBottomTagIv;
-    private ImageView mSecendLiveIv;
     private Intent uvcServiceIntent;
     private ServiceConnection connUVC;
 
@@ -324,28 +323,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         LinearLayout mSetLl = (LinearLayout) findViewById(R.id.set_ll);
         mSetLl.setOnClickListener(this);
         mSwitchOritation.setOnClickListener(this);
-        mFirstLiveIv = (ImageView) findViewById(R.id.first_live_iv);
-        mFirstLiveIv.setOnClickListener(this);
-        mThirdLiveIv = (ImageView) findViewById(R.id.third_live_iv);
-        mThirdLiveIv.setOnClickListener(this);
-        mFourthLiveIv = (ImageView) findViewById(R.id.fourth_live_iv);
-        mFourthLiveIv.setOnClickListener(this);
         mFullScreenIv = (ImageView) findViewById(R.id.video_record_full_screen_iv);
         mFullScreenIv.setOnClickListener(this);
-        mSecendLiveIv = (ImageView) findViewById(R.id.secend_live_iv);
         mFloatViewGp = findViewById(R.id.float_views_group);
-        mSecendLiveIv.setOnClickListener(this);
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
         String title = resDisplay[getIndex(resDisplay,Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,MediaStream.nativeHeight))].toString();
         mScreenResTv.setText(String.format("分辨率:%s", title));
         initSurfaceViewClick();
-
-        setPushLiveIv();
-        if (PublicUtil.isMoreThanTheAndroid10()) {
-            setViewsVisible(mThirdLiveIv, mFourthLiveIv);
-        } else {
-            setViewsInvisible(true, mThirdLiveIv, mFourthLiveIv);
-        }
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(new Intent(this, BackgroundService.class));
         } else {
@@ -353,6 +337,32 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             startService(new Intent(this, BackgroundService.class));
         }
 
+        mLivePlatesRv = findViewById(R.id.live_plates_rv);
+        platAdapter = new LivePlateAdapter(R.layout.live_plate_item);
+        LinearLayoutManager manager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+        mLivePlatesRv.setLayoutManager(manager);
+        mLivePlatesRv.setAdapter(platAdapter);
+        platAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                LiveBean bean = (LiveBean) adapter.getData().get(position);
+                String urlContent = bean.getPushUrlCustom();
+                if (TextUtils.isEmpty(urlContent)) {
+                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台中配置推流地址", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                boolean isPushing = bean.isPushing();
+                if (isPushing) {
+                    bean.setPushing(false);
+                    stopPushStream(position);
+                } else {
+                    bean.setPushing(true);
+                    startPushStream(bean,position);
+                }
+                adapter.notifyItemChanged(position);
+                Hawk.put(HawkProperty.PLATFORMS,adapter.getData());
+            }
+        });
     }
 
     /**
@@ -381,6 +391,35 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         super.onPause();
     }
+    /**
+     * 停止推流
+     *
+     * @param position
+     */
+    private void stopPushStream(int position) {
+        if (mMediaStream != null) {
+            mMediaStream.stopPusherStream(position);
+            sendMessage("断开连接");
+        }
+    }
+    /**
+     * 开始推流
+     *
+     * @param position
+     */
+    private void startPushStream(LiveBean bean,int position) {
+        if (mMediaStream != null) {
+            try {
+                //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mMediaStream.startPushStream(bean,position, code -> BUSUtil.BUS.post(new PushCallback(code)));
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+                //                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                sendMessage("参数初始化失败");
+            }
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -392,6 +431,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mFullScreenIv.setImageResource(R.mipmap.video_record_normal);
         }
         goonWithPermissionGranted();
+        platAdapter.setNewData(getAdapterData());
+    }
+    /**
+     * 获取适配器数据
+     *
+     * @return
+     */
+    private List<LiveBean> getAdapterData() {
+        List<LiveBean> data = new ArrayList<>();
+        List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
+        for (LiveBean array : arrays) {
+            if (array.isSelect()) {
+                data.add(array);
+            }
+        }
+        return data;
+
     }
 
     @Override
@@ -428,7 +484,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isFirstPushStream ||
+        return mMediaStream != null && (mMediaStream.isZeroPushStream ||mMediaStream.isFirstPushStream ||
                 mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
     }
 
@@ -448,129 +504,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else if (requestCode == 100) {
             //设置界面返回
-            setPushLiveIv();
 
 
         }
     }
 
-    /**
-     * 配置推送直播的图标
-     */
-    private void setPushLiveIv() {
-        String firstLiveName = Hawk.get(HawkProperty.FIRST_LIVE, SettingActivity.LIVE_TYPE_BILI);
-        String secendLiveName = Hawk.get(HawkProperty.SECENDLIVE, SettingActivity.LIVE_TYPE_HUYA);
-        String thirdLiveName = Hawk.get(HawkProperty.THIRD_LIVE, SettingActivity.LIVE_TYPE_DOUYU);
-        String fourthLiveName = Hawk.get(HawkProperty.FOURTH_LIVE, SettingActivity.LIVE_TYPE_XIGUA);
-        initLiveImage(firstLiveName, 1);
-        initLiveImage(secendLiveName, 2);
-        initLiveImage(thirdLiveName, 3);
-        initLiveImage(fourthLiveName, 4);
-    }
 
-    /**
-     * @param liveName
-     * @param index    1代表第一个live平台
-     */
-    private void initLiveImage(String liveName, int index) {
-        ImageView imageView = null;
-        boolean isOn = false;
-        switch (index) {
-            case 1:
-                imageView = mFirstLiveIv;
-                isOn = isPushingFirstStream;
-                break;
-            case 2:
-                imageView = mSecendLiveIv;
-                isOn = isPushingSecendStream;
-                break;
-            case 3:
-                imageView = mThirdLiveIv;
-                isOn = isPushingThirdStream;
-                break;
-            case 4:
-                imageView = mFourthLiveIv;
-                isOn = isPushingFourthStream;
-                break;
-            default:
-                break;
-        }
-
-        switch (liveName) {
-            case SettingActivity.LIVE_TYPE_BILI:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.bilibili_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.bilibili_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_HUYA:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.huya_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.huya_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_YI:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.yi_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.yi_live_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_NOW:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.now_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.now_live_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_DOUYU:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.douyu_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.douyu_live_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_ZHANQI:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.zhanqi_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.zhanqi_live_off);
-                }
-
-                break;
-            case SettingActivity.LIVE_TYPE_XIGUA:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.xigua_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.xigua_live_off);
-                }
-
-                break;
-            //            case SettingActivity.LIVE_TYPE_YINGKE:
-            //                if (isOn) {
-            //                    imageView.setImageResource(R.mipmap.yingke_live_on);
-            //                }else {
-            //                    imageView.setImageResource(R.mipmap.yingke_live_off);
-            //                }
-            //                break;
-            case SettingActivity.LIVE_TYPE_CUSTOM:
-                if (isOn) {
-                    imageView.setImageResource(R.mipmap.cc_live_on);
-                } else {
-                    imageView.setImageResource(R.mipmap.cc_live_off);
-                }
-                break;
-            default:
-                break;
-        }
-    }
 
     /**
      * 如果所有权限都同意之后
@@ -890,12 +829,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getPushStatusMsg() {
-        if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
+        if (mMediaStream.isZeroPushStream ||mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
             return "直播中";
         } else {
             return "";
         }
     }
+
 
     /*
      * 显示推流的状态
@@ -999,39 +939,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             }
                         }).show();
 
-                break;
-            case R.id.first_live_iv:
-                String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
-                if (TextUtils.isEmpty(url_bili)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                startOrStopFirstPush();
-                break;
-            case R.id.secend_live_iv:
-                String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
-                if (TextUtils.isEmpty(url_huya)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                startOrStopSecendPush();
-                break;
-
-            case R.id.third_live_iv:
-                String url_yi = Hawk.get(HawkProperty.KEY_THIRD_URL);
-                if (TextUtils.isEmpty(url_yi)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                startOrStopThirdPush();
-                break;
-            case R.id.fourth_live_iv:
-                String url_now = Hawk.get(HawkProperty.KEY_FOURTH_URL);
-                if (TextUtils.isEmpty(url_now)) {
-                    Toast.makeText(getApplicationContext(), "请先到设置里所对应的直播平台文本框中输入推流地址", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                startOrStopFourthPush();
                 break;
             case R.id.video_record_full_screen_iv:
                 mFullScreenIv.setImageResource(R.mipmap.video_record_press);
@@ -1304,113 +1211,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
 
-    /*
-     * 推流or停止
-     * type   第一个直播
-     * */
-    public void startOrStopFirstPush() {
-
-
-        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
-            isPushingFirstStream = true;
-            try {
-                //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                //                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("参数初始化失败");
-            }
-        } else {
-            isPushingFirstStream = false;
-            mMediaStream.stopPusherStream(0);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
-    }
-
-    /*
-     * 推流or停止
-     * type   第三个直播
-     * */
-    public void startOrStopThirdPush() {
-
-
-        if (mMediaStream != null && !mMediaStream.isThirdPushStream) {
-            isPushingThirdStream = true;
-            try {
-                //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startPushStream(2, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                //                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("激活失败，无效Key");
-            }
-        } else {
-            isPushingThirdStream = false;
-            mMediaStream.stopPusherStream(2);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
-    }
-
-    /*
-     * 推流or停止
-     * type   第四个直播
-     * */
-    public void startOrStopFourthPush() {
-
-
-        if (mMediaStream != null && !mMediaStream.isFourthPushStream) {
-            isPushingFourthStream = true;
-            try {
-                mMediaStream.startPushStream(3, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                //                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("激活失败，无效Key");
-            }
-        } else {
-            isPushingFourthStream = false;
-            mMediaStream.stopPusherStream(3);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
-    }
-
-    /*
-     * 推流or停止
-     * type   第二个直播
-     * */
-    public void startOrStopSecendPush() {
-
-        if (mMediaStream != null && !mMediaStream.isSecendPushStream) {
-            isPushingSecendStream = true;
-            try {
-                //                mMediaStream.startStream(url, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                mMediaStream.startPushStream(1, code -> BUSUtil.BUS.post(new PushCallback(code)));
-                setPushLiveIv();
-                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
-                //                txtStreamAddress.setText(url);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendMessage("参数初始化失败");
-            }
-        } else {
-            isPushingSecendStream = false;
-            mMediaStream.stopPusherStream(1);
-            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            setPushLiveIv();
-            sendMessage("断开连接");
-        }
-    }
 
 
 

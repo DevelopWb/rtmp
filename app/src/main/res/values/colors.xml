@@ -2,6 +2,7 @@
 <resources>
 
     <color name="colorTheme">#5E90FF</color>
+    <color name="green_lighter">#AA00b61e</color>
 
     <color name="colorGREEN">#2cff1c</color>
     <color name="colorYELLOW">#eee604</color>

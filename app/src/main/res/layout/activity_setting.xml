@@ -17,26 +17,15 @@
 
             <TextView
                 android:id="@+id/main_title_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="50dp"
+                android:gravity="center"
                 android:singleLine="true"
                 android:text="设置"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
-            <TextView
-                android:id="@+id/title_rightTv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:gravity="center"
-                android:singleLine="true"
-                android:layout_marginRight="15dp"
-                android:layout_gravity="right"
-                android:textColor="@color/white"
-                android:text="关于我们"
-                />
+
         </android.support.v7.widget.Toolbar>
 
         <ScrollView
@@ -52,286 +41,33 @@
                 android:padding="15dp"
                 tools:context="org.easydarwin.easypusher.mine.SettingActivity">
 
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp">
-
-                    <TextView
-                        android:id="@+id/regist_code_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginTop="5dp"
-                        android:text="注册码:"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/regist_code_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="dfadfasd"
-                        app:layout_constraintBottom_toBottomOf="@+id/regist_code_key"
-                        app:layout_constraintLeft_toRightOf="@+id/regist_code_key"
-                        app:layout_constraintTop_toTopOf="@+id/regist_code_key" />
-
-                    <TextView
-                        android:id="@+id/server_ip_tv"
-                        android:layout_width="100dp"
-                        android:layout_height="35dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center|right"
-                        android:text="服务器IP:"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
-
-                    <EditText
-                        android:id="@+id/push_server_ip_et"
-                        android:layout_width="0dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="15dp"
-                        android:background="@drawable/setting_url_shape"
-                        android:inputType="textUri"
-                        android:paddingLeft="10dp"
-                        android:textColor="#4c4c4c"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/server_ip_tv"
-                        app:layout_constraintLeft_toRightOf="@+id/server_ip_tv"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/server_ip_tv" />
-
-                    <TextView
-                        android:id="@+id/server_port_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:inputType="number"
-                        android:text="端口:"
-                        app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
-                        app:layout_constraintTop_toBottomOf="@+id/server_ip_tv" />
-
-                    <EditText
-                        android:id="@+id/push_server_port_et"
-                        android:layout_width="0dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="15dp"
-                        android:background="@drawable/setting_url_shape"
-                        android:inputType="number"
-                        android:paddingLeft="10dp"
-                        android:textColor="#4c4c4c"
-                        android:textSize="12sp"
-                        app:layout_constraintLeft_toRightOf="@+id/server_port_tv"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/server_port_tv" />
-
-                    <TextView
-                        android:id="@+id/live_tag_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:text="直播标识:"
-                        app:layout_constraintRight_toRightOf="@+id/server_port_tv"
-                        app:layout_constraintTop_toBottomOf="@+id/server_port_tv" />
-
-                    <EditText
-                        android:id="@+id/live_tag_et"
-                        android:layout_width="0dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="15dp"
-                        android:background="@drawable/setting_url_shape"
-                        android:inputType="text"
-                        android:paddingLeft="10dp"
-                        android:textColor="#4c4c4c"
-                        android:textSize="12sp"
-                        app:layout_constraintLeft_toRightOf="@+id/live_tag_tv"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/push_server_port_et"
-                        app:layout_constraintTop_toTopOf="@+id/live_tag_tv" />
-
-                    <TextView
-                        android:id="@+id/first_live_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginTop="10dp"
-                        android:drawableRight="@mipmap/arrow_down_icon"
-                        android:drawablePadding="5dp"
-                        android:gravity="center"
-                        android:inputType="number"
-                        android:text="哔哩"
-                        app:layout_constraintRight_toRightOf="@+id/regist_code_key"
-                        app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
-
-                    <ImageView
-                        android:id="@+id/first_live_scan_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:scaleType="fitCenter"
-                        android:src="@mipmap/scan_icon"
-                        app:layout_constraintRight_toRightOf="@+id/first_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/first_live_key"></ImageView>
-
-                    <EditText
-                        android:id="@+id/first_live_value_et"
-                        style="@style/set_url_editText"
-                        android:layout_marginLeft="15dp"
-                        app:layout_constraintLeft_toRightOf="@+id/first_live_key"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/first_live_key" />
-
-                    <TextView
-                        android:id="@+id/secend_live_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginRight="15dp"
-                        android:drawableRight="@mipmap/arrow_down_icon"
-                        android:drawablePadding="5dp"
-                        android:gravity="center"
-                        android:inputType="number"
-                        android:text="虎牙"
-                        app:layout_constraintRight_toLeftOf="@+id/secend_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/secend_live_value_et" />
-
-                    <ImageView
-                        android:id="@+id/secend_live_scan_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:scaleType="fitCenter"
-                        android:src="@mipmap/scan_icon"
-                        app:layout_constraintRight_toRightOf="@+id/secend_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/secend_live_key"></ImageView>
-
-                    <EditText
-                        android:id="@+id/secend_live_value_et"
-                        style="@style/set_url_editText"
-                        app:layout_constraintLeft_toLeftOf="@+id/first_live_value_et"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/first_live_value_et" />
-
-                    <TextView
-                        android:id="@+id/third_live_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginRight="15dp"
-                        android:drawableRight="@mipmap/arrow_down_icon"
-                        android:drawablePadding="5dp"
-                        android:gravity="center"
-                        android:inputType="number"
-                        android:text="一直播"
-                        app:layout_constraintRight_toLeftOf="@+id/third_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/third_live_value_et" />
-
-                    <ImageView
-                        android:id="@+id/third_live_scan_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:scaleType="fitCenter"
-                        android:src="@mipmap/scan_icon"
-                        app:layout_constraintRight_toRightOf="@+id/third_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/third_live_key"></ImageView>
-
-                    <EditText
-                        android:id="@+id/third_live_value_et"
-                        style="@style/set_url_editText"
-                        app:layout_constraintLeft_toLeftOf="@+id/secend_live_value_et"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/secend_live_value_et" />
-
-                    <TextView
-                        android:id="@+id/fourth_live_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="35dp"
-                        android:layout_marginRight="15dp"
-                        android:drawableRight="@mipmap/arrow_down_icon"
-                        android:drawablePadding="5dp"
-                        android:gravity="center"
-                        android:inputType="number"
-                        android:text="Now直播"
-                        app:layout_constraintRight_toLeftOf="@+id/fourth_live_value_et"
-                        app:layout_constraintTop_toTopOf="@+id/fourth_live_value_et" />
-
-                    <ImageView
-                        android:id="@+id/fourth_live_scan_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:scaleType="fitCenter"
-                        android:src="@mipmap/scan_icon"
-                        app:layout_constraintRight_toRightOf="@+id/fourth_live_key"
-                        app:layout_constraintTop_toBottomOf="@+id/fourth_live_key"></ImageView>
-
-                    <EditText
-                        android:id="@+id/fourth_live_value_et"
-                        style="@style/set_url_editText"
-                        app:layout_constraintLeft_toLeftOf="@+id/third_live_value_et"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/third_live_value_et" />
-
-                    <android.support.constraint.Group
-                        android:id="@+id/left_live_gp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:constraint_referenced_ids="third_live_key,third_live_scan_iv,third_live_value_et,fourth_live_key,fourth_live_scan_iv,fourth_live_value_et"></android.support.constraint.Group>
-
-                    <android.support.constraint.Group
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:constraint_referenced_ids="server_ip_tv,push_server_ip_et,server_port_tv,push_server_port_et,live_tag_tv,live_tag_et"></android.support.constraint.Group>
-
-
-                </android.support.constraint.ConstraintLayout>
-
                 <TextView
-                    android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:textSize="16dp"
-                    android:textColor="@color/black"
-                    android:layout_height="wrap_content"
-                    android:text="直播地址输入方法"></TextView>
-
-                <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/regist_code_key"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:textColor="@color/black"
-                    android:layout_marginRight="10dp"
-                    android:text="@string/push_notice"></TextView>
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="注册码:" />
 
-                <CheckBox
-                    android:id="@+id/auto_push_when_run_cb"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/live_platform_rv"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="开机自动推流"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
                 <CheckBox
                     android:id="@+id/enable_background_camera_pushing"
                     android:layout_width="match_parent"
-                    android:layout_marginLeft="5dp"
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="后台直播" />
-
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:textColor="@color/black"
-                    android:text="@string/live_background"></TextView>
+                    android:text="@string/back_live_notice"
+                    android:layout_height="wrap_content"></TextView>
 
                 <CheckBox
                     android:id="@+id/use_x264_encode"
@@ -347,17 +83,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:paddingLeft="5dp"
+                    android:visibility="gone"
                     android:paddingRight="5dp"
-                    android:text="推送内容："
-                    android:visibility="gone" />
+                    android:text="推送内容：" />
 
                 <RadioGroup
+                    android:visibility="gone"
                     android:id="@+id/push_content_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:visibility="gone">
+                    android:paddingLeft="@dimen/activity_horizontal_margin">
 
                     <RadioButton
                         android:id="@+id/push_av"

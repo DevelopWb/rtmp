@@ -73,6 +73,8 @@
 
         <activity android:name=".mine.AboutActivity" />
         <activity android:name=".mine.scan.QRScanActivity" />
+        <activity android:name=".mine.EditLivePlatActivity"></activity>
+
         <activity
             android:name=".mine.SettingActivity"
             android:screenOrientation="portrait"

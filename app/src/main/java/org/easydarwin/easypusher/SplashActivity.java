@@ -18,14 +18,12 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.LogUtil;
-import com.juntai.wisdom.basecomponent.utils.SPTools;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -34,9 +32,14 @@ import com.regmode.bean.AppInfoBean;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import org.easydarwin.easypusher.bean.LiveBean;
+import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.push.StreamActivity;
+import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -49,12 +52,12 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
     @Override
     public void onUvcCameraConnected() {
-//        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUvcCameraAttached() {
-//        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getApplicationContext(),"Attached888",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -66,6 +69,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
+        initPlatform();
         present = new RegLatestPresent();
         String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -116,6 +120,36 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
     }
 
+    /**
+     * 初始化平台数据
+     */
+    private void initPlatform() {
+        List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
+        if (arrays == null) {
+            arrays = new ArrayList<>();
+            arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_BILI, R.mipmap.bilibili_off, true, 0)
+                    .setUrlHead(getString(R.string.biliurl)));
+            arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_HUYA, R.mipmap.huya_off, true, 0)
+                    .setUrlHead(getString(R.string.huyaurl)));
+            if (PublicUtil.isMoreThanTheAndroid10()) {
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, true, 0)
+                        .setUrlHead(getString(R.string.douyuurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, true, 0)
+                        .setUrlHead(getString(R.string.xiguaurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, true, 0)
+                        .setUrlHead(getString(R.string.yiurl)));
+            } else {
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_DOUYU, R.mipmap.douyu_live_off, false, 0)
+                        .setUrlHead(getString(R.string.douyuurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_XIGUA, R.mipmap.xigua_live_off, false, 0)
+                        .setUrlHead(getString(R.string.xiguaurl)));
+                arrays.add(new LiveBean().config(SettingActivity.LIVE_TYPE_YI, R.mipmap.yi_live_off, false, 0)
+                        .setUrlHead(getString(R.string.yiurl)));
+            }
+            Hawk.put(HawkProperty.PLATFORMS, arrays);
+        }
+    }
+
     @Override
     public void onStart(String tag) {
 
@@ -131,17 +165,17 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
                     Hawk.put(HawkProperty.APP_KEY, key);
-//                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-//                    //所有权限通过
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    //                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
+                    //                    //所有权限通过
+                    //                    try {
+                    //                        Thread.sleep(600);
+                    //                    } catch (InterruptedException e) {
+                    //                        e.printStackTrace();
+                    //                    }
                     boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
                     if (!isAgree) {
                         showAgreementAlter();
-                    }else {
+                    } else {
                         startActivity(new Intent(SplashActivity.this, StreamActivity.class));
                         finish();
                     }
@@ -208,7 +242,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 .setOkButton("同意并进入", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Hawk.put(HawkProperty.AGREE_PROTOCAL,true);
+                        Hawk.put(HawkProperty.AGREE_PROTOCAL, true);
                         startActivity(new Intent(mContext, StreamActivity.class));
                         finish();
                     }

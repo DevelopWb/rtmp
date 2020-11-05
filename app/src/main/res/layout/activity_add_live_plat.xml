@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    tools:context="org.easydarwin.easypusher.mine.EditLivePlatActivity">
+
+
+    <TextView
+        android:id="@+id/plat_name_key_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="平台名称："
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/plat_name_value_et"
+        style="@style/set_url_editText"
+        android:hint="请输入平台名称"
+        android:minHeight="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/plat_name_key_tv"
+        app:layout_constraintLeft_toRightOf="@+id/plat_name_key_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/plat_name_key_tv" />
+
+    <TextView
+        android:id="@+id/push_addr_tv"
+        android:text="推流地址："
+        android:paddingTop="10dp"
+        android:visibility="gone"
+        android:inputType="textUri"
+        app:layout_constraintTop_toBottomOf="@+id/plat_name_value_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
+
+    <TextView
+        android:id="@+id/push_url_key_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="15dp"
+        android:drawablePadding="5dp"
+        android:gravity="center"
+        android:text="推流地址"
+        app:layout_constraintLeft_toLeftOf="@+id/plat_name_key_tv"
+        app:layout_constraintTop_toBottomOf="@+id/push_addr_tv" />
+
+    <ImageView
+        android:id="@+id/push_scan_iv"
+        android:layout_width="30dp"
+        android:layout_height="35dp"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/scan_icon"
+        app:layout_constraintRight_toRightOf="@+id/push_url_key_tv"
+        app:layout_constraintTop_toBottomOf="@+id/push_url_key_tv"></ImageView>
+
+    <EditText
+        android:id="@+id/push_url_value_et"
+        style="@style/set_url_editText"
+        android:layout_marginLeft="15dp"
+        android:hint="请输入推流地址"
+        app:layout_constraintLeft_toRightOf="@+id/push_url_key_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/push_url_key_tv" />
+
+    <RadioGroup
+        android:id="@+id/show_live_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/push_scan_iv">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示直播按钮："></TextView>
+
+        <RadioButton
+            android:id="@+id/show_live_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="是"></RadioButton>
+
+        <RadioButton
+            android:id="@+id/un_show_live_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:checked="true"
+            android:text="否"></RadioButton>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/add_plate_guide_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="直播地址输入方法"
+        app:layout_constraintTop_toBottomOf="@+id/show_live_rg"></TextView>
+
+    <TextView
+        android:id="@+id/add_plate_guide_content_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/add_plate_guide"
+        app:layout_constraintTop_toBottomOf="@+id/add_plate_guide_title_tv"></TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/add_plate_guide_content_tv">
+
+        <TextView
+            android:id="@+id/add_plat_confirm_tv"
+            style="@style/bt_style"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/sp_filled_blue"
+            android:text="保存" />
+
+        <TextView
+            android:id="@+id/del_live_tv"
+            style="@style/bt_style"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/sp_filled_red"
+            android:text="删除" />
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
