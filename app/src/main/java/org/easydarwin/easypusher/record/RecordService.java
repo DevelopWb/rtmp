@@ -210,7 +210,7 @@ public class RecordService extends Service {
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 15);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 20000000);
+        mediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 30000000);
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         mediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
 
