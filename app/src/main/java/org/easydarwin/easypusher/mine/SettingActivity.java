@@ -36,6 +36,7 @@ import org.easydarwin.easypusher.databinding.ActivitySettingBinding;
 import org.easydarwin.easypusher.mine.scan.QRScanActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
+import org.easydarwin.easypusher.util.Config;
 import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
@@ -67,6 +68,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     private List<Boolean> selectArray = new ArrayList<>();
     ;
 
+
     @Override
     public void onUvcCameraConnected() {
 
@@ -93,7 +95,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         // 左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
         binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
-        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com"));
+        binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP));
         binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
         binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
@@ -115,14 +117,14 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.thirdLiveKey.setOnClickListener(this);
         binding.fourthLiveKey.setOnClickListener(this);
         binding.openRecordLocalBt.setOnClickListener(this);
-//        if (PublicUtil.isMoreThanTheAndroid10()) {
-//            binding.thirdFourthLiveGp.setVisibility(View.VISIBLE);
-//        }else {
-//            binding.thirdFourthLiveGp.setVisibility(View.GONE);
-//        }
+        //        if (PublicUtil.isMoreThanTheAndroid10()) {
+        //            binding.leftLiveGp.setVisibility(View.VISIBLE);
+        //        }else {
+        //            binding.leftLiveGp.setVisibility(View.GONE);
+        //        }
         // 使能摄像头后台采集
         onPushBackground();
-//        onEncodeType();
+        //        onEncodeType();
         // 推送内容
         onRadioGroupCheckedStatus();
         onAutoRun();
@@ -189,29 +191,29 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         });
     }
 
-//    /**
-//     *
-//     */
-//    private void onEncodeType() {
-//        // 是否使用软编码
-//        CheckBox x264enc = findViewById(R.id.use_x264_encode);
-//        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, false));
-//        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked));
-//
-//        //        // 使能H.265编码
-//        //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
-//        //        enable_hevc_cb.setChecked(SPUtil.getHevcCodec(this));
-//        //        enable_hevc_cb.setOnCheckedChangeListener(
-//        //                (buttonView, isChecked) -> SPUtil.setHevcCodec(this, isChecked)
-//        //        );
-//
-//        //        // 叠加水印
-//        //        CheckBox enable_video_overlay = findViewById(R.id.enable_video_overlay);
-//        //        enable_video_overlay.setChecked(SPUtil.getEnableVideoOverlay(this));
-//        //        enable_video_overlay.setOnCheckedChangeListener(
-//        //                (buttonView, isChecked) -> SPUtil.setEnableVideoOverlay(this, isChecked)
-//        //        );
-//    }
+    //    /**
+    //     *
+    //     */
+    //    private void onEncodeType() {
+    //        // 是否使用软编码
+    //        CheckBox x264enc = findViewById(R.id.use_x264_encode);
+    //        x264enc.setChecked(Hawk.get(HawkProperty.KEY_SW_CODEC, false));
+    //        x264enc.setOnCheckedChangeListener((buttonView, isChecked) -> Hawk.put(HawkProperty.KEY_SW_CODEC, isChecked));
+    //
+    //        //        // 使能H.265编码
+    //        //        CheckBox enable_hevc_cb = findViewById(R.id.enable_hevc);
+    //        //        enable_hevc_cb.setChecked(SPUtil.getHevcCodec(this));
+    //        //        enable_hevc_cb.setOnCheckedChangeListener(
+    //        //                (buttonView, isChecked) -> SPUtil.setHevcCodec(this, isChecked)
+    //        //        );
+    //
+    //        //        // 叠加水印
+    //        //        CheckBox enable_video_overlay = findViewById(R.id.enable_video_overlay);
+    //        //        enable_video_overlay.setChecked(SPUtil.getEnableVideoOverlay(this));
+    //        //        enable_video_overlay.setOnCheckedChangeListener(
+    //        //                (buttonView, isChecked) -> SPUtil.setEnableVideoOverlay(this, isChecked)
+    //        //        );
+    //    }
 
     /**
      * 后台采集
@@ -227,14 +229,14 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                         if (Settings.canDrawOverlays(SettingActivity.this)) {
                             SPUtil.setEnableBackgroundCamera(SettingActivity.this, true);
                         } else {
-                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台直播").setMessage(getResources().getString(R.string.live_bg_notice)).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台上传视频").setMessage("后台上传视频需要APP出现在顶部.是否确定?").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
                                     final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
                                     startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
                                 }
-                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     SPUtil.setEnableBackgroundCamera(SettingActivity.this, false);
@@ -251,6 +253,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             }
         });
     }
+
 
     //    /**
     //     * 码率
@@ -455,6 +458,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         }
     }
 
+
     /**
      * 选择平台
      *
@@ -518,8 +522,8 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         List<String> arrays = new ArrayList<>();
         arrays.add(Hawk.get(HawkProperty.FIRST_LIVE, LIVE_TYPE_BILI));
         arrays.add(Hawk.get(HawkProperty.SECENDLIVE, LIVE_TYPE_HUYA));
-//        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
-//        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CC));
+        //        arrays.add(Hawk.get(HawkProperty.THIRD_LIVE, LIVE_TYPE_DOUYU));
+        //        arrays.add(Hawk.get(HawkProperty.FOURTH_LIVE, LIVE_TYPE_CC));
         return arrays;
     }
 

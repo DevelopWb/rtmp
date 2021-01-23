@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">一见直播</string>
+    <string name="app_name">手机监控系统</string>
     <string name="version">1.3</string>
     <string name="stream_stat" formatted="false">编码帧率：%d，码率：%dkbps</string>
     <string name="camera">摄像头</string>
     <string name="video_uploading_in_background">后台采集视频中</string>
 
     <string name="info_desc">。</string>
-    <string name="push_notice">\t\t\t\t获取推流地址先点击左边小三角可选择相对应的直播平台 ，再使用电脑/手机（浏览器标识设置为电脑）浏览器输入账号密码登陆直播平台(以哔哩哔哩为例 )后: 依次点击我的直播间-->开播设置-->选择直播分类-->点击开始直播按钮，并将我的RTMP地址和我的直播码两部分地址内容需要先后复制粘贴到一见直播设置里所对应的直播平台的文本框中</string>
+    <string name="push_notice">\t\t\t\t获取推流地址先点击左边小三角可选择相对应的直播平台 ，再使用电脑/手机（浏览器标识设置为电脑）浏览器输入账号密码登陆直播平台(以哔哩哔哩为例 )后: 依次点击我的直播间-->开播设置-->选择直播分类-->点击开始直播按钮，并将我的RTMP地址和我的直播码两部分地址内容需要先后复制粘贴到手机监控系统设置里所对应的直播平台的文本框中</string>
     <string name="live_background">\t\t\t\t勾选后台直播后，直播界面可切换至后台，在直播的同时不会影响你对其他软件的使用</string>
     <string name="live_bg_notice">勾选并点击确定后，在所打开的页面中开启\"在其他应用上层显示\"的开关即可，直播界面会自动切换至后台，在直播的同时而不会影响你对其他软件的使用。</string>
     <string name="no_config_push">请先到设置中填写推流信息</string>

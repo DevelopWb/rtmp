@@ -7,11 +7,9 @@
 
 package org.easydarwin.easypusher.util;
 
-import android.hardware.usb.UsbDevice;
 import android.os.Environment;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
-import com.juntai.wisdom.basecomponent.utils.PubUtil;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
@@ -22,15 +20,13 @@ import java.io.File;
 public class Config {
 
     private static final String SERVER_URL = "serverUrl";
-
-    public static UsbDevice usbDevice = null;
-
-//    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
+    public static final String DEFAULR_IP = "47.104.110.95";
+    //    private static final String DEFAULT_SERVER_URL = "rtmp://demo.easydss.com:10085/live/stream_"+String.valueOf((int) (Math.random() * 1000000 + 100000));
 
     public static String getServerURL() {
 
         String url_head = "rtmp://";
-        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, "yjyk.beidoustar.com");
+        String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, DEFAULR_IP);
         String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
         String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
         String regCode =Hawk.get(HawkProperty.REG_CODE);
@@ -39,6 +35,6 @@ public class Config {
 
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + PubUtil.APP_NAME;
+        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "手机监控系统";
     }
 }

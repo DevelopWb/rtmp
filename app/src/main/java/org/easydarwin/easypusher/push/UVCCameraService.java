@@ -94,9 +94,9 @@ public class UVCCameraService extends Service {
         }
     }
 
-    public void reRequestOtg() {
-        mUSBMonitor.requestPermission(Config.usbDevice);
-    }
+//    public void reRequestOtg() {
+//        mUSBMonitor.requestPermission(Config.usbDevice);
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -115,7 +115,7 @@ public class UVCCameraService extends Service {
             @Override
             public void onAttach(final UsbDevice device) {
                 Log.v(TAG, "onAttach:" + device);
-                Config.usbDevice = device;
+//                Config.usbDevice = device;
                 uvcAttached = true;
                 mUSBMonitor.requestPermission(device);
                 EventBus.getDefault().post("onAttach");

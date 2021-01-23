@@ -419,10 +419,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             unbindService(conn);
             conn = null;
         }
-        if (connUVC != null) {
-            unbindService(connUVC);
-            connUVC = null;
-        }
+//        if (connUVC != null) {
+//            unbindService(connUVC);
+//            connUVC = null;
+//        }
 
         handler.removeCallbacksAndMessages(null);
         if (mMediaStream != null) {
@@ -634,23 +634,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
-        startService(new Intent(this, UVCCameraService.class));
-        if (connUVC == null) {
-            connUVC = new ServiceConnection() {
-
-
-                @Override
-                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName componentName) {
-
-                }
-            };
-        }
-        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
+//        startService(new Intent(this, UVCCameraService.class));
+//        if (connUVC == null) {
+//            connUVC = new ServiceConnection() {
+//
+//
+//                @Override
+//                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
+//                }
+//
+//                @Override
+//                public void onServiceDisconnected(ComponentName componentName) {
+//
+//                }
+//            };
+//        }
+//        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
         if (mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
             textRecordTick.removeCallbacks(mRecordTickRunnable);
@@ -980,14 +980,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (2 == which) {
-                                    mUvcService.reRequestOtg();
-                                    try {
-                                        Thread.sleep(200);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+//                                if (2 == which) {
+//                                    mUvcService.reRequestOtg();
+//                                    try {
+//                                        Thread.sleep(200);
+//                                    } catch (InterruptedException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
 
                                 if (2 != which) {
                                     SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
@@ -1029,22 +1029,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 //                startOrStopFirstPush();
                 break;
             case R.id.push_stream_ll:
-                String url_bili = Hawk.get(HawkProperty.KEY_FIRST_URL);
-                if (TextUtils.isEmpty(url_bili)) {
-                    Toast.makeText(getApplicationContext(), R.string.no_config_push, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-                //                String serverIp = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP);
-                //                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT);
-                //                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG);
-                //                if (!PublicUtil.isStringValueOk(serverIp) || !PublicUtil.isStringValueOk(port) ||
-                //                !PublicUtil.isStringValueOk(tag)) {
-                //                    ToastUtils.toast(mContext, R.string.no_config_push);
-                //                    return;
-                //                }
-                startOrStopZeroPush();
+                startOrStopPush();
                 break;
             case R.id.secend_live_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
@@ -1162,7 +1147,50 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
         }
     }
+    /*
+     * 推流or停止
+     * type   推流
+     * */
+    public void startOrStopPush() {
 
+        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
+            isPushingStream = true;
+            try {
+                String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP);
+                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
+                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+                if (TextUtils.isEmpty(ip)) {
+                    ToastUtils.toast(this, "请在设置中输入IP地址");
+                    return;
+                }
+                if (TextUtils.isEmpty(port)) {
+                    ToastUtils.toast(this, "请在设置中输入端口号");
+                    return;
+                }
+                if (TextUtils.isEmpty(tag)) {
+                    ToastUtils.toast(this, "请在设置中输入标识");
+                    return;
+                }
+                mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
+//                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
+                //                txtStreamAddress.setText(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+                isPushingStream = false;
+                mMediaStream.stopPusherStream(0);
+                //                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+                mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+                sendMessage("推流鉴权失败，请联系管理员！");
+            }
+        } else {
+            isPushingStream = false;
+            mMediaStream.stopPusherStream(0);
+            //            mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
+            mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
+            sendMessage("断开链接");
+        }
+    }
     /**
      * 获取摄像头数据
      *
@@ -1325,13 +1353,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             }
                             initSurfaceViewLayout(0);
                         } else {
-                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
-                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
-                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
-                            if (mMediaStream != null) {
-                                mMediaStream.updateResolution();
-                            }
-                            mUvcService.reRequestOtg();
+//                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
+//                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
+//                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
+//                            if (mMediaStream != null) {
+//                                mMediaStream.updateResolution();
+//                            }
+//                            mUvcService.reRequestOtg();
                         }
                         mScreenResTv.setText("分辨率:" + title);
 
