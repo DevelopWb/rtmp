@@ -441,14 +441,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         super.onDestroy();
     }
 
+
     /**
      * 是否正在推流
      */
     private boolean isStreaming() {
-        return mMediaStream != null && (mMediaStream.isFirstPushStream ||
+        return mMediaStream != null && (mMediaStream.isZeroPushStream || mMediaStream.isFirstPushStream ||
                 mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -908,11 +908,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * @return
      */
     private String getPushStatusMsg() {
-        if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream || mMediaStream.isThirdPushStream || mMediaStream.isFourthPushStream) {
+        if (mMediaStream.isZeroPushStream) {
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
+                return "直播中";
+            }
             return "直播中";
         } else {
-            return "";
+            if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
+                return "直播中";
+            }
         }
+        return "";
     }
 
     /*
@@ -1153,7 +1159,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * */
     public void startOrStopPush() {
 
-        if (mMediaStream != null && !mMediaStream.isFirstPushStream) {
+        if (mMediaStream != null && !mMediaStream.isZeroPushStream) {
             isPushingStream = true;
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP);

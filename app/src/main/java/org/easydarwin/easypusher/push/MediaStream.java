@@ -74,6 +74,7 @@ public class MediaStream {
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
 
     private String recordPath;          // 录像地址
+    protected boolean isZeroPushStream = false;       // 是否要推送数据
     protected boolean isFirstPushStream = false;       // 是否要推送bili数据
     protected boolean isSecendPushStream = false;       // 是否要推送huya数据
     protected boolean isThirdPushStream = false;       // 是否要推送huya数据
@@ -553,33 +554,37 @@ public class MediaStream {
     }
 
 
+
     /// 开始推流
     // private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
     public void startPushStream(int pushType, InitCallback callback) throws IOException {
         Pusher pusher = null;
-        RegOperateManager.getInstance(context).setRegistCodeNumber(1);
+        //                RegOperateManager.getInstance(context).setRegistCodeNumber(1);
         String url = null;
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_FIRST_URL);
-//                url = Config.getServerURL();
-//                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10&schdule=rtmp\n";
-
-                isFirstPushStream = true;
+                url = Config.getServerURL();
+                //                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
+                isZeroPushStream = true;
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_SECEND_URL);
-                isSecendPushStream = true;
+                url = Hawk.get(HawkProperty.KEY_FIRST_URL);
+                isFirstPushStream = true;
                 break;
             case 2:
                 pusher = mSecendEasyPusher;
-                url = Hawk.get(HawkProperty.KEY_THIRD_URL);
-                isThirdPushStream = true;
+                url = Hawk.get(HawkProperty.KEY_SECEND_URL);
+                isSecendPushStream = true;
                 break;
             case 3:
                 pusher = mThirdEasyPusher;
+                url = Hawk.get(HawkProperty.KEY_THIRD_URL);
+                isThirdPushStream = true;
+                break;
+            case 4:
+                pusher = mFourthEasyPusher;
                 url = Hawk.get(HawkProperty.KEY_FOURTH_URL);
                 isFourthPushStream = true;
                 break;
@@ -610,18 +615,22 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                isFirstPushStream = false;
+                isZeroPushStream = false;
                 break;
             case 1:
                 pusher = mFirstEasyPusher;
-                isSecendPushStream = false;
+                isFirstPushStream = false;
                 break;
             case 2:
                 pusher = mSecendEasyPusher;
-                isThirdPushStream = false;
+                isSecendPushStream = false;
                 break;
             case 3:
                 pusher = mThirdEasyPusher;
+                isThirdPushStream = false;
+                break;
+            case 4:
+                pusher = mFourthEasyPusher;
                 isFourthPushStream = false;
                 break;
             default:
@@ -1030,4 +1039,6 @@ public class MediaStream {
             e.printStackTrace();
         }
     }
+
+
 }
