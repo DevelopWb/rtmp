@@ -1163,8 +1163,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             isPushingStream = true;
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP);
-                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085");
-                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+                String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, Config.DEFAULR_PORT);
+//                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {
                     ToastUtils.toast(this, "请在设置中输入IP地址");
                     return;
@@ -1173,10 +1173,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     ToastUtils.toast(this, "请在设置中输入端口号");
                     return;
                 }
-                if (TextUtils.isEmpty(tag)) {
-                    ToastUtils.toast(this, "请在设置中输入标识");
-                    return;
-                }
+//                if (TextUtils.isEmpty(tag)) {
+//                    ToastUtils.toast(this, "请在设置中输入标识");
+//                    return;
+//                }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
 //                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);

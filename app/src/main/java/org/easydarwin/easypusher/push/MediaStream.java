@@ -507,16 +507,16 @@ public class MediaStream {
             stopVcVedio(i);
         }
 
-        // 关闭录像的编码器
-        if (mRecordVC != null) {
-            mRecordVC.onVideoStop();
-        }
-
-        // 关闭音视频合成器
-        if (mMuxer != null) {
-            mMuxer.release();
-            mMuxer = null;
-        }
+//        // 关闭录像的编码器
+//        if (mRecordVC != null) {
+//            mRecordVC.onVideoStop();
+//        }
+//
+//        // 关闭音视频合成器
+//        if (mMuxer != null) {
+//            mMuxer.release();
+//            mMuxer = null;
+//        }
     }
 
     /**

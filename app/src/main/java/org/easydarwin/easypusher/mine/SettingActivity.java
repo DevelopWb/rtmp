@@ -96,7 +96,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         binding.mainToolbar.setNavigationIcon(R.drawable.com_back);
         binding.registCodeValue.setText(Hawk.get(HawkProperty.REG_CODE));
         binding.pushServerIpEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP));
-        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, "10085"));
+        binding.pushServerPortEt.setText(Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, Config.DEFAULR_PORT));
         binding.firstLiveValueEt.setText(Hawk.get(HawkProperty.KEY_FIRST_URL, ""));
         binding.secendLiveValueEt.setText(Hawk.get(HawkProperty.KEY_SECEND_URL, ""));
         binding.thirdLiveValueEt.setText(Hawk.get(HawkProperty.KEY_THIRD_URL, ""));
