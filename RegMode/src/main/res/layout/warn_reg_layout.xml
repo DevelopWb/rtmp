@@ -42,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="25dp"
             android:padding="12dp"
-            android:text="我知道了"
+            android:text="I Known"
             android:textColor="#0F3A91"
             android:textSize="18sp" />
 

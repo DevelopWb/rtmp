@@ -35,6 +35,6 @@ public class Config {
 
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "糖果传奇";
+        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "Candycrush";
     }
 }

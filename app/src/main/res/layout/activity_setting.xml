@@ -22,7 +22,7 @@
                 android:layout_marginRight="50dp"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="设置"
+                android:text="Settings"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="注册码:"
+                        android:text="User Id:"
                         app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,7 +70,7 @@
                         android:layout_height="35dp"
                         android:layout_marginTop="10dp"
                         android:gravity="center|right"
-                        android:text="服务器IP:"
+                        android:text="Server IP:"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/regist_code_key" />
 
@@ -97,7 +97,7 @@
                         android:layout_marginTop="10dp"
                         android:gravity="center"
                         android:inputType="number"
-                        android:text="端口:"
+                        android:text="Port:"
                         app:layout_constraintRight_toRightOf="@+id/server_ip_tv"
                         app:layout_constraintTop_toBottomOf="@+id/server_ip_tv" />
 
@@ -122,7 +122,7 @@
                         android:visibility="gone"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="监控标识:"
+                        android:text="Video Id:"
                         app:layout_constraintRight_toRightOf="@+id/server_port_tv"
                         app:layout_constraintTop_toBottomOf="@+id/server_port_tv" />
 
@@ -285,7 +285,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:checked="false"
-                    android:text="摄像头后台采集" />
+                    android:text="Background Operation" />
 
                 <CheckBox
                     android:id="@+id/use_x264_encode"
@@ -345,7 +345,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
                     android:background="@color/colorTheme"
-                    android:text="打开录像文件夹"
+                    android:text="Open Video Folder"
                     android:textColor="#ffffff" />
                 <Button
                     android:id="@+id/quit_app_bt"
@@ -355,7 +355,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="15dp"
                     android:background="@color/colorTheme"
-                    android:text="安全退出"
+                    android:text="Quit Safely"
                     android:textColor="#ffffff" />
 
 

@@ -193,8 +193,8 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
                         public boolean onLongClick(View v) {
                             new AlertDialog.Builder(getContext())
                                     .setCancelable(false)
-                                    .setMessage("是否删除此录像，删除后无法找回。")
-                                    .setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                                    .setMessage("Are you sure you want to delete it?")
+                                    .setPositiveButton("SURE", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             final String path = mSubFiles[holder.getAdapterPosition()].getPath();
@@ -212,13 +212,13 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
 
                                                     mSubFiles = subFiles;
                                                     notifyDataSetChanged();
-                                                    ToastUtils.toast(getContext(), "已删除");
+                                                    ToastUtils.toast(getContext(), "deleted");
                                                 }
                                             }
                                             dialog.dismiss();
                                         }
                                     })
-                                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
@@ -267,7 +267,7 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
             final String path = mSubFiles[holder.getAdapterPosition()].getPath();
 
             if (TextUtils.isEmpty(path)) {
-                Toast.makeText(getContext(), "文件不存在", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "file does not exist", Toast.LENGTH_SHORT).show();
                 return;
             }
 

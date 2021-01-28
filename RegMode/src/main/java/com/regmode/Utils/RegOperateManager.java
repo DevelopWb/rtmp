@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
@@ -71,7 +72,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class RegOperateManager extends BaseReg implements RequestStatus {
-    public static String APP_MARK = "SJJK_CN";//软件标识
+    public static String APP_MARK = "SJJK_EN";//软件标识
     private CommonProgressDialog mProgressDialog;
     private String nearestVersion;
     private Context context;
@@ -87,6 +88,16 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public static RegOperateManager regOperateUtil;
     private RegLatestPresent present;
     private String input;
+    //已经禁用
+    private final String REG_CODE_DISABLED_NOTICE = "The key number is disable";
+    //次数用尽
+    private final String REG_CODE_RUN_OUT_NOTICE = "The key number is time out!";
+    //已过期
+    private final String REG_CODE_EXPIRED_NOTICE = "The key number is overdue";
+    //注册码不存在
+    private final String REG_CODE_UNEXIST_NOTICE = "The key number does not exist";
+    //imei 不匹配
+    private final String REG_CODE_MISMATCH_NOTICE = "IMEI does not match the registration code binding";
 
 
     public RegOperateManager(Context context) {
@@ -171,16 +182,16 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public boolean isTheRegStatusOk(String reg_status) {
         //  "注册码已经禁用"
         if (reg_status.contains("已禁用")) {
-            warnRegStatus("注册码不可用，请联系管理员", "");
+            warnRegStatus(REG_CODE_DISABLED_NOTICE, "");
             return false;
         } else if (reg_status.contains("次数用尽")) {
-            warnRegStatus("注册码次数已用完，请联系管理员", "");
+            warnRegStatus(REG_CODE_RUN_OUT_NOTICE, "");
             return false;
         } else if (reg_status.contains("已过期")) {
-            warnRegStatus("注册码已过期，请联系管理员", "");
+            warnRegStatus(REG_CODE_EXPIRED_NOTICE, "");
             return false;
         } else if (reg_status.contains("不存在")) {
-            warnRegStatus("注册码不存在，请联系管理员", "");
+            warnRegStatus(REG_CODE_UNEXIST_NOTICE, "");
             return false;
         } else {
             warnRegStatus(reg_status, "");
@@ -218,7 +229,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     @Override
     public void checkRegStatus() {
         if (!RegPubUtils.isConnected(context.getApplicationContext())) {
-            Toast.makeText(context, "网络异常，请检查手机网络", Toast.LENGTH_LONG)
+            Toast.makeText(context, "network anomaly，Please check mobile network", Toast.LENGTH_LONG)
                     .show();
             return;
         }
@@ -286,7 +297,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
             @Override
             public void onClick(View v) {
                 if (text != null && !TextUtils.isEmpty(text)) {
-                    if (text.contains("不存在") || text.contains("已过期") || text.contains("已用完") || text.contains("不可用") || text.contains("不匹配")) {
+                    if (text.equals(REG_CODE_UNEXIST_NOTICE) || text.equals(REG_CODE_EXPIRED_NOTICE) || text.equals(REG_CODE_RUN_OUT_NOTICE) || text.equals(
+                            REG_CODE_DISABLED_NOTICE) || text.equals(REG_CODE_MISMATCH_NOTICE)) {
                         if (cancelCallBack != null) {
                             cancelCallBack.toFinishActivity();
                         }
@@ -370,19 +382,16 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                             if ("正常".equals(regStatus)) {
                                 //注册码正常
                                 Hawk.put(HawkProperty.REG_CODE, input);
-                                if (!RegPubUtils.PUBLIC_REGCODE.equals(input)) {
-                                    //如果不是通用注册码 需要校验本地
-                                    if (!checkImei(modelBean)) {
-                                        return;
-                                    }
-                                }
 
-                                //                                String mac = modelBean.getMAC();
-                                //                                if (mac != null && !TextUtils.isEmpty(mac)) {
-                                //                                    //保存mac信息
-                                //                                    Hawk.put(HawkProperty.MAC_CODE, mac);
-                                //                                }
-                                ToastUtils.toast(context, "注册码验证成功");
+                                if (!checkImei(modelBean)) {
+                                    return;
+                                }
+                                String mac = modelBean.getMAC();
+                                if (mac != null && !TextUtils.isEmpty(mac)) {
+                                    //保存mac信息
+                                    Hawk.put(HawkProperty.MAC_CODE, mac);
+                                }
+                                ToastUtils.toast(context, "Registration code verification succeeded");
                                 if (dialog_Reg != null && dialog_Reg.isShowing()) {
                                     dialog_Reg.dismiss();
                                 }
@@ -394,7 +403,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                         }
 
                     } else {
-                        ToastUtils.toast(context, "服务器异常");
+                        ToastUtils.toast(context, "Server exception");
                     }
                 }
                 break;
@@ -410,13 +419,9 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                             String regStatus = modelBean.getRegisCodeState();
 
                             if ("正常".equals(regStatus)) {
-                                if (!RegPubUtils.PUBLIC_REGCODE.equals(Hawk.get(HawkProperty.REG_CODE))) {
-                                    //如果不是通用注册码 需要校验本地
-                                    if (!checkImei(modelBean)) {
-                                        return;
-                                    }
+                                if (!checkImei(modelBean)) {
+                                    return;
                                 }
-                                //自动升级
                                 String isAutoUpdate = modelBean.getIsAutoUpdate();
                                 if (isAutoUpdate != null && !TextUtils.isEmpty(isAutoUpdate)) {
                                     if (isAutoUpdate.equals("1")) {//允许自动升级
@@ -424,7 +429,6 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         return;
                                     }
                                 }
-                                //有效期限制
                                 String isValid = modelBean.getIsValid();
                                 if (isValid != null && !TextUtils.isEmpty(isValid)) {
                                     if (isValid.equals("0")) {//注册码限制时间
@@ -433,8 +437,8 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         if (RegPubUtils.TheDayToNextDay(time) > 0 && RegPubUtils.TheDayToNextDay(time) < 8) {
 
                                             if (IsTheRegStatusTime("isValid")) {
-                                                warnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) +
-                                                        "天，请联系管理员", "isValid");
+                                                warnRegStatus("Registration code is valid" + RegPubUtils.TheDayToNextDay(time) +
+                                                        "day，Please contact the administrator", "isValid");
                                             }
 
                                         } else {//重置下次提醒的时间
@@ -442,7 +446,6 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         }
                                     }
                                 }
-                                //次数限制
                                 String isNumber = modelBean.getIsNumber();
                                 if (isNumber != null && !TextUtils.isEmpty(isNumber)) {
                                     if (isNumber.equals("0")) {//注册码有次数限制
@@ -451,7 +454,9 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         int NumberNow = Integer.parseInt(NumberTotal) - Integer.parseInt(NumberUsed);
                                         if (NumberNow < 100) {
                                             if (IsTheRegStatusTime("isNumber")) {
-                                                warnRegStatus("注册码次数还剩" + NumberNow + "次，请联系管理员", "isNumber");
+                                                warnRegStatus("Registration code is valid" + NumberNow + "time，Please" +
+                                                        " contact the " +
+                                                        "administrator", "isNumber");
                                             }
 
                                         } else {//重置下次提醒的日期
@@ -468,7 +473,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                         }
 
                     } else {
-                        ToastUtils.toast(context, "服务器异常");
+                        ToastUtils.toast(context, "Server exception");
                     }
                 }
                 break;
@@ -518,12 +523,12 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                 if (localImei.equals(imei)) {
                     return true;
                 } else {
-                    warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                    warnRegStatus(REG_CODE_MISMATCH_NOTICE, "");
                     return false;
                 }
             } else {
                 //换手机登录了 或者本地配置文件丢失
-                warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                warnRegStatus(REG_CODE_MISMATCH_NOTICE, "");
                 return false;
             }
         } else {
@@ -846,33 +851,29 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
         window.setAttributes(lp);
         window.setContentView(v);
         final TextView reg = (TextView) v.findViewById(R.id.editTextReg);
-        ImageButton ib = (ImageButton) v.findViewById(R.id.imageButtonReg);
-        ImageButton.OnClickListener listener = new ImageButton.OnClickListener() {
-
+        v.findViewById(R.id.imageButtonReg_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 if (!RegPubUtils.isConnected(context.getApplicationContext())) {
-                    Toast.makeText(context, "网络异常，请检查手机网络", Toast.LENGTH_LONG)
+                    Toast.makeText(context, "network anomaly，Please check mobile network", Toast.LENGTH_LONG)
                             .show();
                     return;
                 }
 
                 input = reg.getText().toString().trim();
                 if (input == null || TextUtils.isEmpty(input)) {
-                    Toast.makeText(context, "请输入注册码",
+                    Toast.makeText(context, "Please enter the registration code",
                             Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 // 网络验证中
-                progressDialog = ProgressDialog.show(context, "请稍候",
-                        "注册码验证中请不要进行其他操作", true);
+                progressDialog = ProgressDialog.show(context, "Please wait",
+                        "Please do not perform other operations during registration code verification", true);
                 progressDialog.setCancelable(true);
                 present.checkReg(input, APP_MARK, RegLatestContact.CHECK_REG, RegOperateManager.this);
-
             }
-        };
-
-        ib.setOnClickListener(listener);
+        });
 
     }
 

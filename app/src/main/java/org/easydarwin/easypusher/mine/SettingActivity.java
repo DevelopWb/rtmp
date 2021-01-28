@@ -229,14 +229,14 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                         if (Settings.canDrawOverlays(SettingActivity.this)) {
                             SPUtil.setEnableBackgroundCamera(SettingActivity.this, true);
                         } else {
-                            new AlertDialog.Builder(SettingActivity.this).setTitle("后台上传视频").setMessage("后台上传视频需要APP出现在顶部.是否确定?").setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            new AlertDialog.Builder(SettingActivity.this).setTitle("Upload video in background").setMessage("Uploading videos in the background requires the APP to appear at the top.Are you sure?").setPositiveButton("SURE", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // 在Android 6.0后，Android需要动态获取权限，若没有权限，提示获取.
                                     final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
                                     startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
                                 }
-                            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     SPUtil.setEnableBackgroundCamera(SettingActivity.this, false);
@@ -306,7 +306,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             String tag = binding.liveTagEt.getText().toString().trim();
             Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_TAG, tag);
         } else {
-            ToastUtils.toast(mContext, "正在推流，无法更改推流地址");
+            ToastUtils.toast(mContext, "Is Pushing Now，Can Not Modify Push Address");
         }
         if (!isPushingFirstStream) {
             String bilibili = binding.firstLiveValueEt.getText().toString().trim();
@@ -413,15 +413,15 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 break;
             case R.id.quit_app_bt:
                 new AlertDialog.Builder(this).setCancelable(false)
-                        .setTitle("是否退出App")
-                        .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        .setTitle("Whether to exit App")
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
 
                             }
                         })
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();

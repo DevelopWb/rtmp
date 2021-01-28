@@ -95,7 +95,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     //    Spinner spnResolution;
     TextView txtStatus, streamStat;
     TextView textRecordTick;
-    TextView mScreenResTv;//屏幕分辨率
+    TextView mScreenResTv;//屏幕Resolution
     private UVCCameraService mUvcService;
     List<String> listResolution = new ArrayList<>();
 
@@ -143,11 +143,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     }
                     switch (position) {
                         case 0:
-                            mSelectCameraTv.setText("摄像头:后置");
+                            mSelectCameraTv.setText("Camera:Second");
                             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                             break;
                         case 1:
-                            mSelectCameraTv.setText("摄像头:前置");
+                            mSelectCameraTv.setText("Camera:First");
                             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
                             break;
                         default:
@@ -156,7 +156,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                     String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,
                             MediaStream.nativeHeight))].toString();
-                    mScreenResTv.setText(String.format("分辨率:%s", title));
+                    mScreenResTv.setText(String.format("Resolution:%s", title));
                     break;
                 default:
                     break;
@@ -192,7 +192,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     /**
      * 初始化预览控件的布局
-     * type 0 代表原生摄像头 1代表otg摄像头
+     * type 0 代表原生Camera 1代表otgCamera
      */
     private void initSurfaceViewLayout(int type) {
         int width = 0;
@@ -201,13 +201,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         int screenWidth = mDisplay.getWidth();
         int screenHeight = mDisplay.getHeight();
         if (0 == type) {
-            Log.e(TAG, "layout   原生摄像头");
+            Log.e(TAG, "layout   原生Camera");
             int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
             int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
             width = IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
             height = IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
         } else {
-            Log.e(TAG, "layout   OTG摄像头");
+            Log.e(TAG, "layout   OTGCamera");
 
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
@@ -242,7 +242,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 params.width = width * height / screenHeight;
             }
         }
-        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+        surfaceView.setLayoutParams(params); //使Set好的布局参数应用到控件
     }
 
     // 录像时的线程
@@ -315,7 +315,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         txtStatus = findViewById(R.id.txt_stream_status);
         mSelectCameraTv = findViewById(R.id.select_camera_tv);
         mSelectCameraTv.setOnClickListener(this);
-        mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
+        mSelectCameraTv.setText("Camera:" + getSelectedCamera());
         txtStreamAddress = findViewById(R.id.txt_stream_address);
         textRecordTick = findViewById(R.id.tv_start_record);
         startRecordIv = findViewById(R.id.streaming_activity_record);
@@ -348,7 +348,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mVedioPushBottomTagIv = findViewById(R.id.streaming_activity_push);
         String title = resDisplay[getIndex(resDisplay, Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT,
                 MediaStream.nativeHeight))].toString();
-        mScreenResTv.setText(String.format("分辨率:%s", title));
+        mScreenResTv.setText(String.format("Resolution:%s", title));
         initSurfaceViewClick();
         setPushLiveIv();
         if (!MediaStream.isOnlyOnePush) {
@@ -464,7 +464,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 //                startScreenPushIntent();
             }
         } else if (requestCode == 100) {
-            //设置界面返回
+            //Set界面返回
             setPushLiveIv();
 
 
@@ -687,7 +687,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
     private void goonWithAvailableTexture(SurfaceTexture surface) {
-        Configuration mConfiguration = getResources().getConfiguration(); //获取设置的配置信息
+        Configuration mConfiguration = getResources().getConfiguration(); //获取Set的配置信息
         int ori = mConfiguration.orientation; //获取屏幕方向
         if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
             //横屏
@@ -837,7 +837,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     //        /*
-    //         * 获取可以支持的分辨率
+    //         * 获取可以支持的Resolution
     //         * */
     //        @Subscribe
     //        public void onSupportResolution(SupportResolution res) {
@@ -864,40 +864,40 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void onPushCallback(final PushCallback cb) {
         switch (cb.code) {
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_INVALID_KEY:
-                sendMessage("无效Key");
+                sendMessage("Invalid key");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_SUCCESS:
-                sendMessage("激活成功");
+                sendMessage("Authentication is successful");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_CONNECTING:
-                sendMessage("连接中");
+                sendMessage("Connecting");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_CONNECTED:
-                sendMessage("连接成功");
+                sendMessage("Connect Successfully");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_CONNECT_FAILED:
-                sendMessage("连接失败");
+                sendMessage("Connection failed");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_CONNECT_ABORT:
-                sendMessage("连接异常中断");
+                sendMessage("Abnormal connection interruption");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_PUSHING:
-                sendMessage("直播中");
+                sendMessage("Pushing");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_RTMP_STATE_DISCONNECTED:
-                sendMessage("断开连接");
+                sendMessage("Disconnect");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_PLATFORM_ERR:
-                sendMessage("平台不匹配");
+                sendMessage("Platform mismatch");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_COMPANY_ID_LEN_ERR:
-                sendMessage("断授权使用商不匹配");
+                sendMessage("Authorized user mismatch");
                 break;
             case EasyRTMP.OnInitPusherCallback.CODE.EASY_ACTIVATE_PROCESS_NAME_LEN_ERR:
-                sendMessage("进程名称长度不匹配");
+                sendMessage("Process name length does not match");
                 break;
             case EASY_ACTIVATE_VALIDITY_PERIOD_ERR:
-                sendMessage("进程名称长度不匹配");
+                sendMessage("Process name length does not match");
                 break;
         }
     }
@@ -910,12 +910,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private String getPushStatusMsg() {
         if (mMediaStream.isZeroPushStream) {
             if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
-                return "直播中";
+                return "Pushing";
             }
-            return "直播中";
+            return "Pushing";
         } else {
             if (mMediaStream.isFirstPushStream || mMediaStream.isSecendPushStream) {
-                return "直播中";
+                return "Pushing";
             }
         }
         return "";
@@ -943,28 +943,28 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     @Override
     public void onBackPressed() {
         if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-            new AlertDialog.Builder(this).setTitle("是否允许后台上传？").setMessage("您设置了使能摄像头后台采集,是否继续在后台采集并上传视频？如果是，记得直播结束后," +
-                    "再回来这里关闭直播。").setNeutralButton("后台采集", (dialogInterface, i) -> {
-                //实现home键效果
-                isBackPush = true;
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
-            }).setPositiveButton("退出程序", (dialogInterface, i) -> {
+            new AlertDialog.Builder(this).setTitle("Whether to allow background upload？").setMessage("You set to " +
+                    "enable background collection,Whether to continue to capture and upload videos in the " +
+                    "background？If yes, remember after the live broadcast," +
+                    "Come back here to close the live broadcast。").setPositiveButton("exit", (dialogInterface, i) -> {
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
                 }
                 StreamActivity.super.onBackPressed();
-                Toast.makeText(StreamActivity.this, "程序已退出。", Toast.LENGTH_SHORT).show();
-            }).setNegativeButton(android.R.string.cancel, null).show();
+                Toast.makeText(StreamActivity.this, "Program has exited。", Toast.LENGTH_SHORT).show();
+            }).setNegativeButton("Background collection", (dialogInterface, i) -> {
+                //实现home键效果
+                Intent intent= new Intent(Intent.ACTION_MAIN);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
+            }).show();
             return;
         }
-
         //与上次点击返回键时刻作差
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
             //大于2000ms则认为是误操作，使用Toast进行提示
-            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press again to exit the App", Toast.LENGTH_SHORT).show();
             //并记录下本次点击“返回键”的时刻，以便下次进行判断
             mExitTime = System.currentTimeMillis();
         } else {
@@ -976,12 +976,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.select_camera_tv:
-                new AlertDialog.Builder(this).setTitle("选择摄像头").setSingleChoiceItems(getCameras(),
+                new AlertDialog.Builder(this).setTitle("ChoseCamera").setSingleChoiceItems(getCameras(),
                         getSelectedCameraIndex(), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (isStreaming()) {
-                                    Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",无法切换摄像头",
+                                    Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",Can Not Switch Camera",
                                             Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                     return;
@@ -1001,20 +1001,20 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 switch (which) {
                                     case 0:
                                         initSurfaceViewLayout(0);
-                                        mSelectCameraTv.setText("摄像头:后置");
+                                        mSelectCameraTv.setText("Camera:Second");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                                         break;
                                     case 1:
                                         initSurfaceViewLayout(0);
-                                        mSelectCameraTv.setText("摄像头:前置");
+                                        mSelectCameraTv.setText("Camera:First");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
                                         break;
                                     case 2:
                                         if (UVCCameraService.uvcConnected) {
-                                            mSelectCameraTv.setText("摄像头:外置");
+                                            mSelectCameraTv.setText("Camera:Other");
                                             SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
                                         } else {
-                                            ToastUtils.toast(mContext, "暂无外置摄像头");
+                                            ToastUtils.toast(mContext, "have not OtherCamera");
                                         }
                                         break;
                                     default:
@@ -1106,6 +1106,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * 切换屏幕方向
                  * */
 
+                if (isStreaming()) {
+                    Toast.makeText(this, "Pushing Now,Cannot change screen orientation", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                /*
+                 * 切换屏幕方向
+                 * */
+
                 //停止本地推流和录像
                 stopAllPushStream();
                 if (mMediaStream.isRecording()) {
@@ -1134,19 +1142,19 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 if (mMediaStream != null) {
                     if (mMediaStream.isRecording()) {
-                        ToastUtils.toast(mContext, "已停止录像");
+                        ToastUtils.toast(mContext, "Stopped recording");
 
                         mMediaStream.stopRecord();
                         startRecordIv.setImageResource(R.drawable.record);
                     } else {
-                        ToastUtils.toast(mContext, "正在开始录像");
+                        ToastUtils.toast(mContext, "Starting recording");
                         mMediaStream.startRecord();
                         startRecordIv.setImageResource(R.drawable.record_pressed);
                     }
                 }
                 break;
             case R.id.set_ll:
-                //设置
+                //Set
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, 100);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -1166,15 +1174,15 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, Config.DEFAULR_PORT);
 //                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {
-                    ToastUtils.toast(this, "请在设置中输入IP地址");
+                    ToastUtils.toast(this, "Please enter the IP address in the settings");
                     return;
                 }
                 if (TextUtils.isEmpty(port)) {
-                    ToastUtils.toast(this, "请在设置中输入端口号");
+                    ToastUtils.toast(this, "Please enter the port number in the settings");
                     return;
                 }
 //                if (TextUtils.isEmpty(tag)) {
-//                    ToastUtils.toast(this, "请在设置中输入标识");
+//                    ToastUtils.toast(this, "请在Set中输入标识");
 //                    return;
 //                }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
@@ -1187,28 +1195,28 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 mMediaStream.stopPusherStream(0);
                 //                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-                sendMessage("推流鉴权失败，请联系管理员！");
+                sendMessage("Push stream authentication failed, please contact the administrator!");
             }
         } else {
             isPushingStream = false;
             mMediaStream.stopPusherStream(0);
             //            mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
             mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-            sendMessage("断开链接");
+            sendMessage("Disconnect");
         }
     }
     /**
-     * 获取摄像头数据
+     * 获取Camera数据
      *
      * @return
      */
     private CharSequence[] getCameras() {
-        return new CharSequence[]{"后置摄像头", "前置摄像头", "外置摄像头"};
+        return new CharSequence[]{"SecondCamera", "FirstCamera"};
 
     }
 
     /**
-     * 获取选择的摄像头的index
+     * 获取Chose的Camera的index
      *
      * @return
      */
@@ -1223,24 +1231,24 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     /**
-     * 获取选择的摄像头的index
+     * 获取Chose的Camera的index
      *
      * @return
      */
     private String getSelectedCamera() {
         int position = SPUtil.getScreenPushingCameraIndex(this);
         if (0 == position) {
-            return "后置";
+            return "Second";
         }
         if (1 == position) {
-            return "前置";
+            return "First";
         }
         if (2 == position) {
             if (UVCCameraService.uvcConnected) {
-                return "外置";
+                return "Other";
             } else {
                 SPUtil.setScreenPushingCameraIndex(this, 0);
-                return "后置";
+                return "Second";
             }
 
         }
@@ -1318,7 +1326,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     /*
-     * 切换分辨率
+     * 切换Resolution
      * */
     public void onClickResolution(View view) {
         if (UVCCameraService.uvcConnected) {
@@ -1330,24 +1338,26 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     /**
-     * 配置相机的分辨率
+     * 配置相机的Resolution
      */
     private void setCameraRes(CharSequence[] res_display, int index) {
-        new AlertDialog.Builder(this).setTitle("设置分辨率").setSingleChoiceItems(res_display, index,
+        new AlertDialog.Builder(this).setTitle("SetResolution").setSingleChoiceItems(res_display, index,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         String title = res_display[position].toString();
                         if (isStreaming()) {
-                            Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",无法切换分辨率", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StreamActivity.this, getPushStatusMsg() + ",Can't switch Resolution",
+                                    Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                             return;
                         }
                         String[] titles = title.split("x");
                         if (res_display.length > 3) {
-                            //原生相机配置分辨率
+                            //原生相机配置Resolution
                             if (!Util.getSupportResolution(StreamActivity.this).contains(title)) {
-                                Toast.makeText(StreamActivity.this, "您的相机不支持此分辨率", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(StreamActivity.this, "Your camera does not support this Resolution",
+                                        Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                                 return;
                             }
@@ -1367,7 +1377,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 //                            }
 //                            mUvcService.reRequestOtg();
                         }
-                        mScreenResTv.setText("分辨率:" + title);
+                        mScreenResTv.setText("Resolution:" + title);
 
 
                         dialog.dismiss();
@@ -1549,7 +1559,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
-            mScreenResTv.setText(String.format("%s%s%s%s", "分辨率:", uvcWidth, "x", uvcHeight));
+            mScreenResTv.setText(String.format("%s%s%s%s", "Resolution:", uvcWidth, "x", uvcHeight));
         }
         try {
             Thread.sleep(500);
@@ -1561,16 +1571,16 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        mScreenResTv.setVisibility(View.INVISIBLE);
         //        mSwitchOritation.setVisibility(View.INVISIBLE);
         //        String title = resUvcDisplay[Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, 1)].toString();
-        //        mScreenResTv.setText(String.format("分辨率:%s", title));
+        //        mScreenResTv.setText(String.format("Resolution:%s", title));
     }
 
     /**
-     * 初始化otg摄像头的布局
+     * 初始化otgCamera的布局
      */
     private void initUvcLayout() {
         initSurfaceViewLayout(1);
         SPUtil.setScreenPushingCameraIndex(this, 2);
-        mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
+        mSelectCameraTv.setText("Camera:" + getSelectedCamera());
     }
 
     @Override

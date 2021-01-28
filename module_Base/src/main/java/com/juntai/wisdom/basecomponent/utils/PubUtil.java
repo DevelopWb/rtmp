@@ -8,5 +8,5 @@ package com.juntai.wisdom.basecomponent.utils;
  * @UpdateDate: 2020/8/20 21:47
  */
 public class PubUtil {
-    public static final String APP_NAME = "糖果传奇";
+    public static final String APP_NAME = "Candy crush";
 }
