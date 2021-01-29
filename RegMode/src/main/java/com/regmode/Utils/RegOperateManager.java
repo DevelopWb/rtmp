@@ -171,16 +171,16 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
     public boolean isTheRegStatusOk(String reg_status) {
         //  "注册码已经禁用"
         if (reg_status.contains("已禁用")) {
-            warnRegStatus("注册码不可用，请联系管理员", "");
+            warnRegStatus("注册码不可用", "");
             return false;
         } else if (reg_status.contains("次数用尽")) {
-            warnRegStatus("注册码次数已用完，请联系管理员", "");
+            warnRegStatus("注册码次数已用完", "");
             return false;
         } else if (reg_status.contains("已过期")) {
-            warnRegStatus("注册码已过期，请联系管理员", "");
+            warnRegStatus("注册码已过期", "");
             return false;
         } else if (reg_status.contains("不存在")) {
-            warnRegStatus("注册码不存在，请联系管理员", "");
+            warnRegStatus("注册码不存在", "");
             return false;
         } else {
             warnRegStatus(reg_status, "");
@@ -434,7 +434,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 
                                             if (IsTheRegStatusTime("isValid")) {
                                                 warnRegStatus("注册码有效期还剩" + RegPubUtils.TheDayToNextDay(time) +
-                                                        "天，请联系管理员", "isValid");
+                                                        "天", "isValid");
                                             }
 
                                         } else {//重置下次提醒的时间
@@ -451,7 +451,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         int NumberNow = Integer.parseInt(NumberTotal) - Integer.parseInt(NumberUsed);
                                         if (NumberNow < 100) {
                                             if (IsTheRegStatusTime("isNumber")) {
-                                                warnRegStatus("注册码次数还剩" + NumberNow + "次，请联系管理员", "isNumber");
+                                                warnRegStatus("注册码次数还剩" + NumberNow + "次", "isNumber");
                                             }
 
                                         } else {//重置下次提醒的日期
@@ -518,12 +518,12 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                 if (localImei.equals(imei)) {
                     return true;
                 } else {
-                    warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                    warnRegStatus("注册码绑定IMEI不匹配", "");
                     return false;
                 }
             } else {
                 //换手机登录了 或者本地配置文件丢失
-                warnRegStatus("注册码绑定IMEI不匹配，请联系管理员", "");
+                warnRegStatus("注册码绑定IMEI不匹配", "");
                 return false;
             }
         } else {
