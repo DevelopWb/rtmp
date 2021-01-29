@@ -954,7 +954,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
                 }
-                StreamActivity.super.onBackPressed();
+                super.onBackPressed();
                 Toast.makeText(StreamActivity.this, "程序已退出。", Toast.LENGTH_SHORT).show();
             }).setNegativeButton(android.R.string.cancel, null).show();
             return;
@@ -962,6 +962,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         //与上次点击返回键时刻作差
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            if (mMediaStream.isRecording()) {
+                mMediaStream.stopRecord();
+                startRecordIv.setImageResource(R.drawable.record);
+            }
             //大于2000ms则认为是误操作，使用Toast进行提示
             Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
             //并记录下本次点击“返回键”的时刻，以便下次进行判断
