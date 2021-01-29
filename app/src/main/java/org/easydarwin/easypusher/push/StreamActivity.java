@@ -389,12 +389,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     protected void onPause() {
-        //        if (mMediaStream != null) {
-        //            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-        //                mService.activePreview();
-        //            }
-        //        }
-
+        if (mMediaStream != null) {
+            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+                isBackPush = true;
+            }
+        }
         super.onPause();
     }
 
@@ -943,10 +942,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     @Override
     public void onBackPressed() {
         if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-            new AlertDialog.Builder(this).setTitle("Whether to allow background upload？").setMessage("You set to " +
-                    "enable background collection,Whether to continue to capture and upload videos in the " +
-                    "background？If yes, remember after the live broadcast," +
-                    "Come back here to close the live broadcast。").setPositiveButton("exit", (dialogInterface, i) -> {
+            new AlertDialog.Builder(this).setTitle("Whether to allow background upload？").setMessage("Do you agree to run app in the background ?").setPositiveButton("exit", (dialogInterface, i) -> {
                 for (int i1 = 0; i1 < 5; i1++) {
                     mMediaStream.stopPusherStream(i1);
                 }
@@ -963,6 +959,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
         //与上次点击返回键时刻作差
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            if (mMediaStream.isRecording()) {
+                mMediaStream.stopRecord();
+                startRecordIv.setImageResource(R.drawable.record);
+            }
             //大于2000ms则认为是误操作，使用Toast进行提示
             Toast.makeText(this, "Press again to exit the App", Toast.LENGTH_SHORT).show();
             //并记录下本次点击“返回键”的时刻，以便下次进行判断
@@ -1107,7 +1107,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * */
 
                 if (isStreaming()) {
-                    Toast.makeText(this, "Pushing Now,Cannot change screen orientation", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "The system is pushing the stream, no other operations can be performed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 /*
@@ -1195,7 +1195,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 mMediaStream.stopPusherStream(0);
                 //                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-                sendMessage("Push stream authentication failed, please contact the administrator!");
+                sendMessage("Push stream authentication failed");
             }
         } else {
             isPushingStream = false;

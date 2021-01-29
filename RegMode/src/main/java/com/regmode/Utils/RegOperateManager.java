@@ -438,7 +438,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
 
                                             if (IsTheRegStatusTime("isValid")) {
                                                 warnRegStatus("Registration code is valid" + RegPubUtils.TheDayToNextDay(time) +
-                                                        "day，Please contact the administrator", "isValid");
+                                                        "day", "isValid");
                                             }
 
                                         } else {//重置下次提醒的时间
@@ -454,9 +454,7 @@ public class RegOperateManager extends BaseReg implements RequestStatus {
                                         int NumberNow = Integer.parseInt(NumberTotal) - Integer.parseInt(NumberUsed);
                                         if (NumberNow < 100) {
                                             if (IsTheRegStatusTime("isNumber")) {
-                                                warnRegStatus("Registration code is valid" + NumberNow + "time，Please" +
-                                                        " contact the " +
-                                                        "administrator", "isNumber");
+                                                warnRegStatus("Registration code is valid" + NumberNow + "time", "isNumber");
                                             }
 
                                         } else {//重置下次提醒的日期
