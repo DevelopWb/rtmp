@@ -1191,7 +1191,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 mMediaStream.stopPusherStream(0);
                 //                mPushStreamIv.setImageResource(R.mipmap.push_stream_off);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push);
-                sendMessage("推流鉴权失败，请联系管理员！");
+                sendMessage("推流鉴权失败");
             }
         } else {
             isPushingStream = false;
