@@ -35,6 +35,6 @@ public class Config {
 
 
     public static String recordPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "Candycrush";
+        return Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "LTEMonitoring";
     }
 }
