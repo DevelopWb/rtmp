@@ -123,13 +123,6 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
                     Hawk.put(HawkProperty.APP_KEY, key);
-//                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-//                    //所有权限通过
-//                    try {
-//                        Thread.sleep(600);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
                     startActivity(new Intent(SplashActivity.this, StreamActivity.class));
                     finish();
                 } else {
@@ -141,6 +134,6 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
     @Override
     public void onError(String tag) {
-
+        ToastUtils.toast(this, "参数初始化失败");
     }
 }

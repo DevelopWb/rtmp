@@ -389,12 +389,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     protected void onPause() {
-        //        if (mMediaStream != null) {
-        //            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
-        //                mService.activePreview();
-        //            }
-        //        }
-
+        if (mMediaStream != null) {
+            if (isStreaming() && SPUtil.getEnableBackgroundCamera(this)) {
+                isBackPush = true;
+            }
+        }
         super.onPause();
     }
 
@@ -419,10 +418,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             unbindService(conn);
             conn = null;
         }
-//        if (connUVC != null) {
-//            unbindService(connUVC);
-//            connUVC = null;
-//        }
+        //        if (connUVC != null) {
+        //            unbindService(connUVC);
+        //            connUVC = null;
+        //        }
 
         handler.removeCallbacksAndMessages(null);
         if (mMediaStream != null) {
@@ -634,23 +633,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
-//        startService(new Intent(this, UVCCameraService.class));
-//        if (connUVC == null) {
-//            connUVC = new ServiceConnection() {
-//
-//
-//                @Override
-//                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
-//                }
-//
-//                @Override
-//                public void onServiceDisconnected(ComponentName componentName) {
-//
-//                }
-//            };
-//        }
-//        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
+        //        startService(new Intent(this, UVCCameraService.class));
+        //        if (connUVC == null) {
+        //            connUVC = new ServiceConnection() {
+        //
+        //
+        //                @Override
+        //                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        //                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
+        //                }
+        //
+        //                @Override
+        //                public void onServiceDisconnected(ComponentName componentName) {
+        //
+        //                }
+        //            };
+        //        }
+        //        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
         if (mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
             textRecordTick.removeCallbacks(mRecordTickRunnable);
@@ -986,14 +985,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-//                                if (2 == which) {
-//                                    mUvcService.reRequestOtg();
-//                                    try {
-//                                        Thread.sleep(200);
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
+                                //                                if (2 == which) {
+                                //                                    mUvcService.reRequestOtg();
+                                //                                    try {
+                                //                                        Thread.sleep(200);
+                                //                                    } catch (InterruptedException e) {
+                                //                                        e.printStackTrace();
+                                //                                    }
+                                //                                }
 
                                 if (2 != which) {
                                     SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
@@ -1153,6 +1152,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
         }
     }
+
     /*
      * 推流or停止
      * type   推流
@@ -1164,7 +1164,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP);
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, Config.DEFAULR_PORT);
-//                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+                //                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {
                     ToastUtils.toast(this, "请在设置中输入IP地址");
                     return;
@@ -1173,12 +1173,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     ToastUtils.toast(this, "请在设置中输入端口号");
                     return;
                 }
-//                if (TextUtils.isEmpty(tag)) {
-//                    ToastUtils.toast(this, "请在设置中输入标识");
-//                    return;
-//                }
+                //                if (TextUtils.isEmpty(tag)) {
+                //                    ToastUtils.toast(this, "请在设置中输入标识");
+                //                    return;
+                //                }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
-//                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
+                //                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
                 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1197,6 +1197,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             sendMessage("断开链接");
         }
     }
+
     /**
      * 获取摄像头数据
      *
@@ -1359,13 +1360,16 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             }
                             initSurfaceViewLayout(0);
                         } else {
-//                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
-//                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
-//                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
-//                            if (mMediaStream != null) {
-//                                mMediaStream.updateResolution();
-//                            }
-//                            mUvcService.reRequestOtg();
+                            //                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX,
+                            //                            position);
+                            //                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt
+                            //                            (titles[0]));
+                            //                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt
+                            //                            (titles[1]));
+                            //                            if (mMediaStream != null) {
+                            //                                mMediaStream.updateResolution();
+                            //                            }
+                            //                            mUvcService.reRequestOtg();
                         }
                         mScreenResTv.setText("分辨率:" + title);
 
