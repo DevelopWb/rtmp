@@ -363,7 +363,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     startPushStream(bean, position);
                 }
                 adapter.notifyItemChanged(position);
-                Hawk.put(HawkProperty.PLATFORMS, adapter.getData());
+                List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
+                for (LiveBean array : arrays) {
+                    if (array.getLiveName().equals(bean.getLiveName())) {
+                        array.setPushing(bean.isPushing());
+                    }
+                }
+                Hawk.put(HawkProperty.PLATFORMS, arrays);
             }
         });
     }
