@@ -1150,6 +1150,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
                 break;
             case R.id.set_ll:
+                if (mMediaStream.isRecording()) {
+                    ToastUtils.toast(mContext,"正在录像中");
+                    return;
+                }
+                if(isStreaming()){
+                    ToastUtils.toast(mContext,"正在推流中");
+                    return;
+                }
                 //设置
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, 100);
