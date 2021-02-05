@@ -1105,20 +1105,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 /*
                  * 切换屏幕方向
                  * */
-
-                if (isStreaming()) {
-                    Toast.makeText(this, "The system is pushing the stream, no other operations can be performed!", Toast.LENGTH_SHORT).show();
+                if (mMediaStream.isRecording()) {
+                    ToastUtils.toast(mContext,"正在录像中");
                     return;
                 }
-                /*
-                 * 切换屏幕方向
-                 * */
-
-                //停止本地推流和录像
-                stopAllPushStream();
-                if (mMediaStream.isRecording()) {
-                    mMediaStream.stopRecord();
-                    startRecordIv.setImageResource(R.drawable.record);
+                if(isStreaming()){
+                    ToastUtils.toast(mContext,"正在推流中");
+                    return;
                 }
 
                 int orientation = getRequestedOrientation();
@@ -1154,6 +1147,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
                 break;
             case R.id.set_ll:
+                if (mMediaStream.isRecording()) {
+                    ToastUtils.toast(mContext,"正在录像中");
+                    return;
+                }
+                if(isStreaming()){
+                    ToastUtils.toast(mContext,"正在推流中");
+                    return;
+                }
                 //Set
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, 100);
