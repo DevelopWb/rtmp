@@ -1109,13 +1109,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * 切换屏幕方向
                  * */
 
-                //停止本地推流和录像
-                stopAllPushStream();
                 if (mMediaStream.isRecording()) {
-                    mMediaStream.stopRecord();
-                    startRecordIv.setImageResource(R.drawable.record);
+                    ToastUtils.toast(mContext,"正在录像中");
+                    return;
                 }
-
+                if(isStreaming()){
+                    ToastUtils.toast(mContext,"正在推流中");
+                    return;
+                }
                 int orientation = getRequestedOrientation();
 
                 if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -1149,6 +1150,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
                 break;
             case R.id.set_ll:
+                if (mMediaStream.isRecording()) {
+                    ToastUtils.toast(mContext,"正在录像中");
+                    return;
+                }
+                if(isStreaming()){
+                    ToastUtils.toast(mContext,"正在推流中");
+                    return;
+                }
                 //设置
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivityForResult(intent, 100);
