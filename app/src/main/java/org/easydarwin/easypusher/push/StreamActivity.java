@@ -1107,11 +1107,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * */
 
                 if (mMediaStream.isRecording()) {
-                    ToastUtils.toast(mContext,"正在录像中");
+                    ToastUtils.toast(mContext,"recording in service");
                     return;
                 }
                 if(isStreaming()){
-                    ToastUtils.toast(mContext,"正在推流中");
+                    ToastUtils.toast(mContext,"Push  in service");
                     return;
                 }
 
@@ -1149,11 +1149,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
             case R.id.set_ll:
                 if (mMediaStream.isRecording()) {
-                    ToastUtils.toast(mContext,"正在录像中");
+                    ToastUtils.toast(mContext,"recording in service");
                     return;
                 }
                 if(isStreaming()){
-                    ToastUtils.toast(mContext,"正在推流中");
+                    ToastUtils.toast(mContext,"Push  in service");
                     return;
                 }
                 //Set
