@@ -63,7 +63,7 @@ public class MyApp extends Application {
             }
         }
 
-        activeDays = getActiveDays(this, Hawk.get(HawkProperty.APP_KEY));
+//        activeDays = getActiveDays(this, Hawk.get(HawkProperty.APP_KEY));
 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

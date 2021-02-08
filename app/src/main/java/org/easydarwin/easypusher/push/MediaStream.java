@@ -240,12 +240,6 @@ public class MediaStream {
         Log.e(TAG, "otg宽" + uvcWidth + "otg高" + uvcHeight);
         uvcCamera = UVCCameraService.liveData.getValue();
         if (uvcCamera != null) {
-//            uvcCamera.setPreviewSize(frameWidth,
-//                    frameHeight,
-//                    1,
-//                    30,
-//                    UVCCamera.PIXEL_FORMAT_YUV420SP,1.0f);
-            //            uvcCamera.setPreviewSize(uvcWidth,uvcHeight,1,30,UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
             try {
 //                uvcCamera.setPreviewSize(DisplayUtil.dp2px(context,300), DisplayUtil.dp2px(context,300), 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);
                 uvcCamera.setPreviewSize(uvcWidth, uvcHeight, 1, 30, UVCCamera.FRAME_FORMAT_MJPEG, 1.0f);

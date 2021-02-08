@@ -320,11 +320,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
+        mSwitchOritation.setOnClickListener(this);
         LinearLayout mRecordLl = (LinearLayout) findViewById(R.id.record_ll);
         mRecordLl.setOnClickListener(this);
         LinearLayout mSetLl = (LinearLayout) findViewById(R.id.set_ll);
         mSetLl.setOnClickListener(this);
-        mSwitchOritation.setOnClickListener(this);
+
         mFullScreenIv = (ImageView) findViewById(R.id.video_record_full_screen_iv);
         mFullScreenIv.setOnClickListener(this);
         mFloatViewGp = findViewById(R.id.float_views_group);
@@ -626,10 +627,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private void goonWithAvailableTexture(SurfaceTexture surface) {
         Configuration mConfiguration = getResources().getConfiguration(); //获取设置的配置信息
         int ori = mConfiguration.orientation; //获取屏幕方向
-        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
             //横屏
             IS_VERTICAL_SCREEN = false;
-        } else if (ori == mConfiguration.ORIENTATION_PORTRAIT) {
+        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
             //竖屏
             IS_VERTICAL_SCREEN = true;
         }
