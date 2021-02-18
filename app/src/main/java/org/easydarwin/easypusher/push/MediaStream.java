@@ -958,29 +958,6 @@ public class MediaStream {
         displayRotationDegree = degree;
     }
 
-    /**
-     * 旋转YUV格式数据
-     *
-     * @param src    YUV数据
-     * @param format 0，420P；1，420SP
-     * @param width  宽度
-     * @param height 高度
-     * @param degree 旋转度数
-     */
-    private static void yuvRotate(byte[] src, int format, int width, int height, int degree) {
-        int offset = 0;
-        if (format == 0) {
-            JNIUtil.rotateMatrix(src, offset, width, height, degree);
-            offset += (width * height);
-            JNIUtil.rotateMatrix(src, offset, width / 2, height / 2, degree);
-            offset += width * height / 4;
-            JNIUtil.rotateMatrix(src, offset, width / 2, height / 2, degree);
-        } else if (format == 1) {
-            JNIUtil.rotateMatrix(src, offset, width, height, degree);
-            offset += width * height;
-            JNIUtil.rotateShortMatrix(src, offset, width / 2, height / 2, degree);
-        }
-    }
 
     /// 销毁Camera
     public synchronized void destroyCamera() {
