@@ -8,8 +8,6 @@ android {
         minSdkVersion configs.minSdkVersion
         targetSdkVersion configs.targetSdkVersion
         consumerProguardFiles 'proguard-rules.pro'
-
-        buildConfigField 'boolean', 'MEDIA_DEBUG', 'false'
     }
     buildTypes {
         release {
