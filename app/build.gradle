@@ -31,6 +31,7 @@ android {
         versionName configs.versionName
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         flavorDimensions "versionCode"
+        buildConfigField "String", "AUTH_SECRET", '"iYSRptupUb7mwnJcC2x+tN7lvV4RAb/Lau/hV0N5kVQugpNllN93tZOHckadYwNBfcBPFBh3FTUt3yiWzHwk5QV78Juf6mgh2f5zrtnh8rXZKhJnfrg56f6mJ0eHMUdRLG21Zo6Tb1f6G609zYwD9NutSGrOARztpKxdUXEOnzVF0ZFnU9ikEDXeI91KEdv4UY4WYIXu+YOmcd0f4PeT/ybrJKDFxCvhZkbvKt2t53kHGpemUwMAHdMNVKTpX3jmhrdKljBMiOZVxE7AHE1Ckaqq98oLqM24eGlmwQf4WoGmqZeNd9hfkw=="'
 
 //        if (project.hasProperty('RTMP_KEY')) {
 //            println("RTMPKEY IS :" + RTMP_KEY)
@@ -93,6 +94,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     implementation project(':library')
+    implementation project(':auth')
     implementation project(path: ':RegMode')
     implementation project(path: ':module_Base')
     implementation project(path: ':base_net_lib')
