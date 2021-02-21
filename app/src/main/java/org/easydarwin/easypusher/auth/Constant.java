@@ -1,4 +1,4 @@
-package com.hotfix.config;
+package org.easydarwin.easypusher.auth;
 
 public class Constant {
     public static final String[] TYPES = {"全屏（竖屏）", "全屏（横屏）", "弹窗（竖屏）",

@@ -1,32 +1,30 @@
-package com.hotfix.login;
+package org.easydarwin.easypusher.auth;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
-import com.hotfix.utils.ExecutorManager;
-import com.hotfix.config.BaseUIConfig;
-import com.hotfix.aaa.BuildConfig;
-import com.hotfix.aaa.R;
-import com.hotfix.config.Constant;
-import com.hotfix.utils.MockRequest;
+import com.juntai.wisdom.basecomponent.base.BaseMvpActivity;
+import com.juntai.wisdom.basecomponent.mvp.BasePresenter;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.ResultCode;
 import com.mobile.auth.gatewayauth.TokenResultListener;
 import com.mobile.auth.gatewayauth.model.TokenRet;
 
+import org.easydarwin.easypusher.BuildConfig;
+import org.easydarwin.easypusher.R;
+
 
 /**
  * 进app直接登录的场景
  */
-public class OneKeyLoginActivity extends Activity {
+public class OneKeyLoginActivity extends BaseMvpActivity {
     private static final String TAG = OneKeyLoginActivity.class.getSimpleName();
 
     private TextView mTvResult;
@@ -34,10 +32,30 @@ public class OneKeyLoginActivity extends Activity {
     private TokenResultListener mTokenResultListener;
     private ProgressDialog mProgressDialog;
     private BaseUIConfig mUIConfig;
+
+    @Override
+    protected BasePresenter createPresenter() {
+        return null;
+    }
+
+    @Override
+    public int getLayoutView() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    public void initView() {
+
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
         mTvResult = findViewById(R.id.tv_result);
         sdkInit(BuildConfig.AUTH_SECRET);
         mUIConfig = BaseUIConfig.init(Constant.FULL_PORT, this, mPhoneNumberAuthHelper);
@@ -169,5 +187,10 @@ public class OneKeyLoginActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mUIConfig.onResume();
+    }
+
+    @Override
+    public void onSuccess(String tag, Object o) {
+
     }
 }

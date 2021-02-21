@@ -1,4 +1,4 @@
-package com.hotfix.utils;
+package org.easydarwin.easypusher.auth;
 
 
 import java.util.concurrent.ArrayBlockingQueue;

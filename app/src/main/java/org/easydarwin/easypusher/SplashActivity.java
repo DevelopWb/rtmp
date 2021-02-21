@@ -14,14 +14,19 @@ import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
+import com.gyf.barlibrary.ImmersionBar;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
+import com.juntai.wisdom.basecomponent.utils.GsonTools;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.LogUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
@@ -32,6 +37,7 @@ import com.regmode.bean.AppInfoBean;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
+import org.easydarwin.easypusher.auth.OneKeyLoginActivity;
 import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.push.StreamActivity;
@@ -39,6 +45,7 @@ import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,8 +54,13 @@ import io.reactivex.functions.Consumer;
 /**
  * 启动页
  */
-public class SplashActivity extends BaseProjectActivity implements RequestStatus {
+public class SplashActivity extends BaseProjectActivity implements RequestStatus, View.OnClickListener {
     private RegLatestPresent present;
+    /**
+     * 登录
+     */
+    private TextView mLogin;
+    private LinearLayout mLoginByMobileLl;
 
     @Override
     public void onUvcCameraConnected() {
@@ -68,6 +80,8 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ImmersionBar mImmersionBar = ImmersionBar.with(this);
+        mImmersionBar.statusBarColor(R.color.gray_light).statusBarDarkFont(true).init();
         Hawk.put(HawkProperty.HIDE_FLOAT_VIEWS, false);
         initPlatform();
         present = new RegLatestPresent();
@@ -81,6 +95,7 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
         };
         SPUtil.setBitrateKbps(this, SPUtil.BITRATEKBPS);
         setContentView(R.layout.splash_activity);
+        initView();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); //隐藏状态栏
         if (!NetWorkUtil.isNetworkAvailable()) {
             new AlertDialog.Builder(mContext)
@@ -165,20 +180,13 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 String key = dataBean.getSoftDescription();
                 if (key != null) {
                     Hawk.put(HawkProperty.APP_KEY, key);
-                    //                    startService(new Intent(SplashActivity.this, UVCCameraService.class));
-                    //                    //所有权限通过
-                    //                    try {
-                    //                        Thread.sleep(600);
-                    //                    } catch (InterruptedException e) {
-                    //                        e.printStackTrace();
+                    //                    boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
+                    //                    if (!isAgree) {
+                    //                        showAgreementAlter();
+                    //                    } else {
+                    //                        startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                    //                        finish();
                     //                    }
-                    boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
-                    if (!isAgree) {
-                        showAgreementAlter();
-                    } else {
-                        startActivity(new Intent(SplashActivity.this, StreamActivity.class));
-                        finish();
-                    }
                 } else {
                     ToastUtils.toast(this, "参数初始化失败");
                 }
@@ -248,4 +256,26 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                     }
                 }).show();
     }
+
+    private void initView() {
+        mLogin = (TextView) findViewById(R.id.login);
+        mLogin.setOnClickListener(this);
+        mLoginByMobileLl = (LinearLayout) findViewById(R.id.login_by_mobile_ll);
+        mLoginByMobileLl.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.login:
+                break;
+            case R.id.login_by_mobile_ll:
+                startActivity(new Intent(this, OneKeyLoginActivity.class));
+                break;
+        }
+    }
+
+
 }
