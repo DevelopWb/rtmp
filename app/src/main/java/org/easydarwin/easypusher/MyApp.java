@@ -10,6 +10,8 @@ import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.orhanobut.hawk.Hawk;
 import com.tencent.bugly.beta.Beta;
+import com.umeng.commonsdk.UMConfigure;
+import com.umeng.socialize.PlatformConfig;
 
 import org.easydarwin.easypusher.push.StreamActivity;
 import org.easydarwin.easypusher.util.PublicUtil;
@@ -76,6 +78,13 @@ public class MyApp extends Application {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
+        }
+
+        //初始化组件化基础库, 统计SDK/推送SDK/分享SDK都必须调用此初始化接口
+        UMConfigure.init(this, "5b3a1f97a40fa369ea000044",
+                "", UMConfigure.DEVICE_TYPE_PHONE, "");
+        {
+            PlatformConfig.setWeixin("wxdfeeca73484a5f0a", "cdba5aeeac2ea12d0072c79212a44233");
         }
     }
 

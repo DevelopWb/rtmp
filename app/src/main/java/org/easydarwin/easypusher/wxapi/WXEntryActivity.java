@@ -1,0 +1,14 @@
+package org.easydarwin.easypusher.wxapi;
+
+
+import com.umeng.socialize.weixin.view.WXCallbackActivity;
+
+
+public class WXEntryActivity extends WXCallbackActivity {
+
+
+
+
+
+
+}

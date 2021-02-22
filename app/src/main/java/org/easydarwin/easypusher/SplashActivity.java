@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
@@ -36,6 +37,9 @@ import com.regmode.RegLatestPresent;
 import com.regmode.bean.AppInfoBean;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import org.easydarwin.easypusher.auth.OneKeyLoginActivity;
 import org.easydarwin.easypusher.bean.LiveBean;
@@ -47,6 +51,7 @@ import org.easydarwin.easypusher.util.SPUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -263,13 +268,34 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
         mLoginByMobileLl = (LinearLayout) findViewById(R.id.login_by_mobile_ll);
         mLoginByMobileLl.setOnClickListener(this);
     }
+    UMAuthListener authListener = new UMAuthListener() {
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+            Toast.makeText(mContext, "开始", Toast.LENGTH_LONG).show();
+        }
 
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+            Toast.makeText(mContext, "成功了", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
+            Toast.makeText(mContext, "失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int action) {
+            Toast.makeText(mContext, "取消了", Toast.LENGTH_LONG).show();
+        }
+    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             default:
                 break;
             case R.id.login:
+                UMShareAPI.get(this).doOauthVerify(this, SHARE_MEDIA.WEIXIN, authListener);
                 break;
             case R.id.login_by_mobile_ll:
                 startActivity(new Intent(this, OneKeyLoginActivity.class));
