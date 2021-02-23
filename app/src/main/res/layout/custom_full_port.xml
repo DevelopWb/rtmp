@@ -12,7 +12,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/navColor">
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/btn_back"
@@ -30,7 +30,7 @@
                 android:layout_centerInParent="true"
                 android:textSize="18sp"
                 android:textColor="@color/white"
-                android:text="dfasdf"/>
+               />
         </RelativeLayout>
 
         <RelativeLayout
@@ -40,8 +40,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_centerHorizontal="true"
                 android:background="@mipmap/app_icon" />
 

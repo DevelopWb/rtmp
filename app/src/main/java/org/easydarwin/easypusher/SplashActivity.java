@@ -7,6 +7,7 @@
 package org.easydarwin.easypusher;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +15,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -27,10 +28,14 @@ import com.basenetlib.RequestStatus;
 import com.basenetlib.util.NetWorkUtil;
 import com.gyf.barlibrary.ImmersionBar;
 import com.juntai.wisdom.basecomponent.utils.ActivityManagerTool;
-import com.juntai.wisdom.basecomponent.utils.GsonTools;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.LogUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
+import com.mobile.auth.gatewayauth.AuthUIConfig;
+import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
+import com.mobile.auth.gatewayauth.ResultCode;
+import com.mobile.auth.gatewayauth.TokenResultListener;
+import com.mobile.auth.gatewayauth.model.TokenRet;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
 import com.regmode.RegLatestPresent;
@@ -41,7 +46,10 @@ import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
-import org.easydarwin.easypusher.auth.OneKeyLoginActivity;
+import org.easydarwin.easypusher.auth.BaseUIConfig;
+import org.easydarwin.easypusher.auth.Constant;
+import org.easydarwin.easypusher.auth.ExecutorManager;
+import org.easydarwin.easypusher.auth.MockRequest;
 import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.push.StreamActivity;
@@ -49,7 +57,6 @@ import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +73,10 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
      */
     private TextView mLogin;
     private LinearLayout mLoginByMobileLl;
+    private PhoneNumberAuthHelper mPhoneNumberAuthHelper;
+    private TokenResultListener mTokenResultListener;
+    private ProgressDialog mProgressDialog;
+    private BaseUIConfig mUIConfig;
 
     @Override
     public void onUvcCameraConnected() {
@@ -138,6 +149,21 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 });
 
 
+        aliAuth();
+
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mUIConfig.onResume();
+    }
+    /**
+     * 阿里一键登录
+     */
+    private void aliAuth() {
+        sdkInit(BuildConfig.AUTH_SECRET);
+        mUIConfig = BaseUIConfig.init(Constant.FULL_PORT, this, mPhoneNumberAuthHelper);
     }
 
     /**
@@ -204,6 +230,43 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
     }
 
+
+    private void initView() {
+        mLogin = (TextView) findViewById(R.id.login);
+        mLogin.setOnClickListener(this);
+        mLoginByMobileLl = (LinearLayout) findViewById(R.id.login_by_mobile_ll);
+        mLoginByMobileLl.setOnClickListener(this);
+    }
+
+    UMAuthListener authListener = new UMAuthListener() {
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+            Toast.makeText(mContext, "开始", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+            Toast.makeText(mContext, "成功了", Toast.LENGTH_LONG).show();
+            boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
+            if (!isAgree) {
+                showAgreementAlter();
+            } else {
+                startActivity(new Intent(SplashActivity.this, StreamActivity.class));
+                finish();
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
+            Toast.makeText(mContext, "失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int action) {
+            Toast.makeText(mContext, "取消了", Toast.LENGTH_LONG).show();
+        }
+    };
+
     private void showAgreementAlter() {
         Intent intentAgreement = new Intent(this, UserAgreementActivity.class);
         SpannableStringBuilder spannable = new SpannableStringBuilder(getString(R.string.agreement_xieyi_tag));
@@ -262,33 +325,6 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 }).show();
     }
 
-    private void initView() {
-        mLogin = (TextView) findViewById(R.id.login);
-        mLogin.setOnClickListener(this);
-        mLoginByMobileLl = (LinearLayout) findViewById(R.id.login_by_mobile_ll);
-        mLoginByMobileLl.setOnClickListener(this);
-    }
-    UMAuthListener authListener = new UMAuthListener() {
-        @Override
-        public void onStart(SHARE_MEDIA platform) {
-            Toast.makeText(mContext, "开始", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-            Toast.makeText(mContext, "成功了", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            Toast.makeText(mContext, "失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onCancel(SHARE_MEDIA platform, int action) {
-            Toast.makeText(mContext, "取消了", Toast.LENGTH_LONG).show();
-        }
-    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -298,10 +334,121 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
                 UMShareAPI.get(this).doOauthVerify(this, SHARE_MEDIA.WEIXIN, authListener);
                 break;
             case R.id.login_by_mobile_ll:
-                startActivity(new Intent(this, OneKeyLoginActivity.class));
+                oneKeyLogin();
                 break;
         }
     }
+    public void sdkInit(String secretInfo) {
+        mTokenResultListener = new TokenResultListener() {
+            @Override
+            public void onTokenSuccess(String s) {
+                hideLoadingDialog();
+                TokenRet tokenRet = null;
+                try {
+                    tokenRet = TokenRet.fromJson(s);
+                    if (ResultCode.CODE_START_AUTHPAGE_SUCCESS.equals(tokenRet.getCode())) {
+                        Log.i("TAG", "唤起授权页成功：" + s);
+                    }
+
+                    if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                        Log.i("TAG", "获取token成功：" + s);
+                        getResultWithToken(tokenRet.getToken());
+                        mPhoneNumberAuthHelper.setAuthListener(null);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTokenFailed(String s) {
+                hideLoadingDialog();
+                TokenRet tokenRet = null;
+                try {
+                    tokenRet = TokenRet.fromJson(s);
+                    if (ResultCode.CODE_ERROR_USER_CANCEL.equals(tokenRet.getCode())) {
+                        //模拟的是必须登录 否则直接退出app的场景
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "一键登录失败,请确保开启移动网络", Toast.LENGTH_SHORT).show();
+                        //                        Intent pIntent = new Intent(OneKeyLoginActivity.this,
+                        //                        MessageActivity.class);
+                        //                        startActivityForResult(pIntent, 1002);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mPhoneNumberAuthHelper.setAuthListener(null);
+            }
+        };
+        mPhoneNumberAuthHelper = PhoneNumberAuthHelper.getInstance(this, mTokenResultListener);
+        mPhoneNumberAuthHelper.getReporter().setLoggerEnable(true);
+        mPhoneNumberAuthHelper.setAuthSDKInfo(secretInfo);
+    }
+
+    /**
+     * 进入app就需要登录的场景使用
+     */
+    private void oneKeyLogin() {
+        mPhoneNumberAuthHelper = PhoneNumberAuthHelper.getInstance(getApplicationContext(), mTokenResultListener);
+        mUIConfig.configAuthPage();
+        getLoginToken(5000);
+    }
+
+    /**
+     * 拉起授权页
+     *
+     * @param timeout 超时时间
+     */
+    public void getLoginToken(int timeout) {
+        mPhoneNumberAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
+                .setAppPrivacyOne("阿里云", "https://www.aliyun.com")
+                .setSwitchAccHidden(true)
+                .create());
+        mPhoneNumberAuthHelper.getLoginToken(this, timeout);
+        showLoadingDialog("正在唤起授权页");
+    }
+
+
+    public void getResultWithToken(final String token) {
+        ExecutorManager.run(new Runnable() {
+            @Override
+            public void run() {
+                final String result = MockRequest.getPhoneNumber(token);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPhoneNumberAuthHelper.quitLoginPage();
+                        boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
+                        if (!isAgree) {
+                            showAgreementAlter();
+                        } else {
+                            startActivity(new Intent(mContext, StreamActivity.class));
+                            finish();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void showLoadingDialog(String hint) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+        mProgressDialog.setMessage(hint);
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.show();
+    }
+
+    public void hideLoadingDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
 
 
 }

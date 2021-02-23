@@ -39,6 +39,7 @@ public class CustomXmlConfig extends BaseUIConfig {
                         findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                Toast.makeText(mContext, "切换到短信登录方式", Toast.LENGTH_SHORT).show();
                                 mAuthHelper.quitLoginPage();
                             }
                         });
@@ -55,31 +56,31 @@ public class CustomXmlConfig extends BaseUIConfig {
                     }
                 })
                 .build());
-        mAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
-                .setAppPrivacyOne("《自定义隐私协议》", "https://test.h5.app.tbmao.com/user")
-                .setAppPrivacyTwo("《百度》", "https://www.baidu.com")
-                .setAppPrivacyColor(Color.GRAY, Color.parseColor("#002E00"))
-                .setNavHidden(true)
-                .setLogoHidden(true)
-                .setSloganHidden(true)
-                .setSwitchAccHidden(true)
-                .setPrivacyState(false)
-                .setCheckboxHidden(true)
-                .setLightColor(true)
-
-                .setStatusBarColor(Color.TRANSPARENT)
-                .setStatusBarUIFlag(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-                .setWebNavTextSize(20)
-                .setNumberSize(20)
-                .setNumberColor(Color.BLACK)
-                .setAuthPageActIn("in_activity", "out_activity")
-                .setAuthPageActOut("in_activity", "out_activity")
-                .setVendorPrivacyPrefix("《")
-                .setVendorPrivacySuffix("》")
-                .setPageBackgroundPath("page_background_color")
-                .setLogoImgPath("mytel_app_launcher")
-                .setLogBtnBackgroundPath("login_btn_bg")
-                .setScreenOrientation(authPageOrientation)
-                .create());
+//        mAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
+//                .setAppPrivacyOne("《自定义隐私协议》", "https://test.h5.app.tbmao.com/user")
+//                .setAppPrivacyTwo("《百度》", "https://www.baidu.com")
+//                .setAppPrivacyColor(Color.GRAY, Color.parseColor("#002E00"))
+//                .setNavHidden(true)
+//                .setLogoHidden(true)
+//                .setSloganHidden(true)
+//                .setSwitchAccHidden(true)
+//                .setPrivacyState(false)
+//                .setCheckboxHidden(true)
+//                .setLightColor(true)
+//
+//                .setStatusBarColor(Color.TRANSPARENT)
+//                .setStatusBarUIFlag(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+//                .setWebNavTextSize(20)
+//                .setNumberSize(20)
+//                .setNumberColor(Color.BLACK)
+//                .setAuthPageActIn("in_activity", "out_activity")
+//                .setAuthPageActOut("in_activity", "out_activity")
+//                .setVendorPrivacyPrefix("《")
+//                .setVendorPrivacySuffix("》")
+//                .setPageBackgroundPath("page_background_color")
+//                .setLogoImgPath("mytel_app_launcher")
+//                .setLogBtnBackgroundPath("login_btn_bg")
+//                .setScreenOrientation(authPageOrientation)
+//                .create());
     }
 }

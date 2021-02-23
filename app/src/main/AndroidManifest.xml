@@ -115,9 +115,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:launchMode="singleTop" />
-        <activity android:name=".auth.OneKeyLoginActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="sensorPortrait" ></activity>
     </application>
 
 </manifest>
