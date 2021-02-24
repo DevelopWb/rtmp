@@ -81,10 +81,10 @@ public class MyApp extends Application {
         }
 
         //初始化组件化基础库, 统计SDK/推送SDK/分享SDK都必须调用此初始化接口
-        UMConfigure.init(this, "5b3a1f97a40fa369ea000044",
+        UMConfigure.init(this, "6033ba79668f9e17b8b7bd80",
                 "", UMConfigure.DEVICE_TYPE_PHONE, "");
         {
-            PlatformConfig.setWeixin("wxdfeeca73484a5f0a", "cdba5aeeac2ea12d0072c79212a44233");
+            PlatformConfig.setWeixin("wx7e72389cc05d7a6d", "19105a1f99174464c211fd6384d7ebe5");
         }
     }
 
