@@ -10,6 +10,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
@@ -241,12 +242,12 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
     UMAuthListener authListener = new UMAuthListener() {
         @Override
         public void onStart(SHARE_MEDIA platform) {
-            Toast.makeText(mContext, "开始", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "开始", Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-            Toast.makeText(mContext, "成功了", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "成功了", Toast.LENGTH_LONG).show();
             boolean isAgree = Hawk.get(HawkProperty.AGREE_PROTOCAL, false);
             if (!isAgree) {
                 showAgreementAlter();
@@ -258,12 +259,12 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            Toast.makeText(mContext, "失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "失败：" + t.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
-            Toast.makeText(mContext, "取消了", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "取消了", Toast.LENGTH_LONG).show();
         }
     };
 
@@ -402,8 +403,23 @@ public class SplashActivity extends BaseProjectActivity implements RequestStatus
      */
     public void getLoginToken(int timeout) {
         mPhoneNumberAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
-                .setAppPrivacyOne("阿里云", "https://www.aliyun.com")
+                .setAppPrivacyOne("《一见旅游用户隐私协议》", "http://zb.ttcolour.com/yjly_privacy.html")
+                .setAppPrivacyTwo("《一见旅游APP使用协议》", "http://zb.ttcolour.com/yjly_user_service.html")
+//                .setSwitchAccHidden(true)
+//                .create());
+//        mPhoneNumberAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
+//                .setAppPrivacyOne("《自定义隐私协议》", "https://www.baidu.com")
+//                .setAppPrivacyColor(Color.GRAY, Color.parseColor("#002E00"))
+                .setPrivacyState(false)
+                .setCheckboxHidden(true)
+                .setStatusBarColor(Color.parseColor("#5E90FF"))
+                .setStatusBarUIFlag(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+                .setLightColor(true)
                 .setSwitchAccHidden(true)
+//                .setVendorPrivacyPrefix("《")
+//                .setVendorPrivacySuffix("》")
+//                .setLogoImgPath("mytel_app_launcher")
+//                .setScreenOrientation(authPageOrientation)
                 .create());
         mPhoneNumberAuthHelper.getLoginToken(this, timeout);
         showLoadingDialog("正在唤起授权页");

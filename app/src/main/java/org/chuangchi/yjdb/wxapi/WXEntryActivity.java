@@ -1,4 +1,4 @@
-package org.easydarwin.easypusher.wxapi;
+package org.chuangchi.yjdb.wxapi;
 
 
 import com.umeng.socialize.weixin.view.WXCallbackActivity;

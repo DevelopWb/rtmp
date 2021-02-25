@@ -41,7 +41,7 @@
             </intent-filter>
         </receiver>
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="org.chuangchi.yjdb.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />

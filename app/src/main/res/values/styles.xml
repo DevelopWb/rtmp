@@ -41,7 +41,6 @@
         <item name="android:layout_height">40dp</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/bt_accent_clicked</item>
-        <item name="android:letterSpacing">0.2</item>
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
