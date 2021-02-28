@@ -37,11 +37,11 @@ import com.tencent.bugly.crashreport.CrashReport;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MyApp;
 import org.easydarwin.easypusher.R;
-import org.easydarwin.easypusher.SplashActivity;
+import org.easydarwin.easypusher.LoginActivity;
 import org.easydarwin.easypusher.push.PushCallback;
 import org.easydarwin.easypusher.push.StreamActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
-import org.easydarwin.easypusher.util.PublicUtil;
+
 import org.easydarwin.encode.AudioStream;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.push.Pusher;
@@ -397,7 +397,7 @@ public class RecordService extends Service {
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                Intent intent = new Intent(RecordService.this, SplashActivity.class);
+                Intent intent = new Intent(RecordService.this, LoginActivity.class);
                 intent.putExtra("screen-pushing", true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);

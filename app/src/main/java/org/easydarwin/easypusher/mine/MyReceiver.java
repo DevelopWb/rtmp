@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.orhanobut.hawk.Hawk;
 
-import org.easydarwin.easypusher.SplashActivity;
+import org.easydarwin.easypusher.LoginActivity;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
 
@@ -24,7 +24,7 @@ public class MyReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
          boolean autoRun =    Hawk.get(HawkProperty.AUTO_RUN,true);
             if (autoRun) {
-                Intent i = new Intent(context, SplashActivity.class);
+                Intent i = new Intent(context, LoginActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }

@@ -18,7 +18,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -30,7 +32,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mine.AboutUsActivity"></activity>
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".mine.AboutUsActivity" />
         <activity android:name=".UserAgreementActivity" /> <!-- 程序自启动广播 -->
         <receiver
             android:name=".mine.MyReceiver"
@@ -40,6 +43,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name="org.chuangchi.yjdb.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -79,8 +83,7 @@
 
         <activity android:name=".mine.AboutActivity" />
         <activity android:name=".mine.scan.QRScanActivity" />
-        <activity android:name=".mine.EditLivePlatActivity"></activity>
-
+        <activity android:name=".mine.EditLivePlatActivity" />
         <activity
             android:name=".mine.SettingActivity"
             android:screenOrientation="portrait"
@@ -97,21 +100,18 @@
             android:enabled="true" />
         <service
             android:name=".push.UVCCameraService"
-            android:enabled="true" />
-        <!--联通电信授权⻚-->
+            android:enabled="true" /> <!-- 联通电信授权⻚ -->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:launchMode="singleTop" />
-        <!--协议⻚⾯webview-->
+            android:launchMode="singleTop" /> <!-- 协议⻚⾯webview -->
         <activity
             android:name="com.mobile.auth.gatewayauth.activity.AuthWebVeiwActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:launchMode="singleTop"
-            android:screenOrientation="behind" />
-        <!--移动授权⻚-->
+            android:screenOrientation="behind" /> <!-- 移动授权⻚ -->
         <activity
             android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

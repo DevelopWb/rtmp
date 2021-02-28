@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.allOf;
 public class SplashActivityTest {
 
     @Rule
-    public ActivityTestRule<SplashActivity> mActivityTestRule = new ActivityTestRule<>(SplashActivity.class);
+    public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     @Test
     public void splashActivityTest() {

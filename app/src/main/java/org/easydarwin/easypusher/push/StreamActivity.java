@@ -31,7 +31,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -45,8 +44,6 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
-import com.regmode.RegLatestContact;
-import com.regmode.Utils.RegOperateManager;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
@@ -55,16 +52,13 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
-import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
-import org.easydarwin.easypusher.util.DoubleClickListener;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
-import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.update.UpdateMgr;

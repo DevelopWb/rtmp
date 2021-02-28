@@ -408,6 +408,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 ActivityManagerTool.getInstance().finishApp();
+                                Hawk.delete(HawkProperty.LOGIN_SUCCESS);
                             }
                         }).show();
                 break;
