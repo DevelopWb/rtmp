@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 
 import org.easydarwin.easypusher.BaseProjectActivity;
+import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.bean.LiveBean;
 import org.easydarwin.easypusher.record.MediaFilesActivity;
 import org.easydarwin.easypusher.R;
@@ -84,7 +86,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting);
-        binding.registCodeKey.setText(String.format("%s%s","注册码:",Hawk.get(HawkProperty.REG_CODE)));
+        //        binding.registCodeKey.setText(String.format("%s%s","注册码:",Hawk.get(HawkProperty.REG_CODE)));
         setSupportActionBar(binding.mainToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -101,12 +103,13 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LiveBean liveBean = (LiveBean) adapter.getData().get(position);
                 if (liveBean.isPushing()) {
-                    ToastUtils.toast(mContext,"正在推流,请先停止推流后再重试");
+                    ToastUtils.toast(mContext, "正在推流,请先停止推流后再重试");
                     return;
                 }
-                int  selectedSize = getSelectedAmount(adapter);
-                startActivity(new Intent(mContext, EditLivePlatActivity.class).putExtra(EditLivePlatActivity.PLATE,liveBean)
-                        .putExtra(EditLivePlatActivity.PLATE_LIVE_SIZE,selectedSize));
+                int selectedSize = getSelectedAmount(adapter);
+                startActivity(new Intent(mContext, EditLivePlatActivity.class).putExtra(EditLivePlatActivity.PLATE,
+                        liveBean)
+                        .putExtra(EditLivePlatActivity.PLATE_LIVE_SIZE, selectedSize));
 
             }
         });
@@ -138,7 +141,7 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
         boolean hasAddTag = false;//是否有添加平台的标识
         List<LiveBean> arrays = Hawk.get(HawkProperty.PLATFORMS);
         for (LiveBean array : arrays) {
-            if (1==array.getItemType()) {
+            if (1 == array.getItemType()) {
                 hasAddTag = true;
                 break;
             }
@@ -394,23 +397,29 @@ public class SettingActivity extends BaseProjectActivity implements Toolbar.OnMe
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
             case R.id.quit_app_bt:
-                new AlertDialog.Builder(this).setCancelable(false)
-                        .setTitle("是否退出App")
-                        .setNegativeButton("否", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                View view = LayoutInflater.from(this).inflate(R.layout.quite_app, null);
+                view.findViewById(R.id.quit_app_tv).setOnClickListener(this);
+                view.findViewById(R.id.logout_app_tv).setOnClickListener(this);
+               AlertDialog alertDialog =  new AlertDialog.Builder(this).setCancelable(false)
+                        .setView(view)
+                        .show();
+                view.findViewById(R.id.cancel_tv).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (alertDialog != null&&alertDialog.isShowing()) {
+                            alertDialog.dismiss();
+                        }
 
-                            }
-                        })
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                ActivityManagerTool.getInstance().finishApp();
-                                Hawk.delete(HawkProperty.LOGIN_SUCCESS);
-                            }
-                        }).show();
+                    }
+                });
+                break;
+            case  R.id.quit_app_tv:
+                ActivityManagerTool.getInstance().finishApp();
+                break;
+            case  R.id.logout_app_tv:
+                ActivityManagerTool.getInstance().finishApp();
+                Hawk.delete(HawkProperty.LOGIN_SUCCESS);
+                startActivity(new Intent(this, SplashActivity.class));
                 break;
             default:
                 break;

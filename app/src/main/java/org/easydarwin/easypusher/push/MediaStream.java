@@ -549,7 +549,7 @@ public class MediaStream {
     /// 开始推流
     public void startPushStream(LiveBean bean, int position, InitCallback callback) throws IOException {
         Pusher pusher = null;
-        RegOperateManager.getInstance(context).setRegistCodeNumber(1);
+//        RegOperateManager.getInstance(context).setRegistCodeNumber(1);
         String url = null;
         String plateName = bean.getLiveName();
         if (plateName.equals(SettingActivity.LIVE_TYPE_BILI) || plateName.equals(SettingActivity.LIVE_TYPE_HUYA)
