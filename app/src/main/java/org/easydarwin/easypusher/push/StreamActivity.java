@@ -135,7 +135,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     break;
                 case UVC_DISCONNECT:
                     stopAllPushStream();
-                    initSurfaceViewLayout(0);
+                    initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
                     int position = SPUtil.getScreenPushingCameraIndex(StreamActivity.this);
                     if (2 == position) {
                         position = 0;
@@ -194,7 +194,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 初始化预览控件的布局
      * type 0 代表原生摄像头 1代表otg摄像头
      */
-    private void initSurfaceViewLayout(int type) {
+    private void initSurfaceViewLayout(boolean isVertical, int type) {
         int width = 0;
         int height = 0;
         Display mDisplay = getWindowManager().getDefaultDisplay();
@@ -204,18 +204,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             Log.e(TAG, "layout   原生摄像头");
             int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
             int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
-            width = IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
-            height = IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
+            width = isVertical ? nativeHeight : nativeWidth;
+            height = isVertical ? nativeWidth : nativeHeight;
         } else {
             Log.e(TAG, "layout   OTG摄像头");
 
             int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
             int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
-            width = IS_VERTICAL_SCREEN ? uvcHeight : uvcWidth;
-            height = IS_VERTICAL_SCREEN ? uvcWidth : uvcHeight;
+            width = isVertical ? uvcHeight : uvcWidth;
+            height = isVertical ? uvcWidth : uvcHeight;
         }
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-        if (IS_VERTICAL_SCREEN) {
+        if (isVertical) {
             //竖屏模式 宽度固定
             params.width = screenWidth;
             if (0 == type) {
@@ -245,6 +245,59 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
     }
 
+    /**
+     * 初始化预览控件的布局
+     * type 0 代表原生摄像头 1代表otg摄像头
+     */
+    private void initSurfaceViewLayout(boolean isVertical) {
+        int width = 0;
+        int height = 0;
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+        int screenWidth = mDisplay.getWidth();
+        int screenHeight = mDisplay.getHeight();
+        int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
+        int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
+        width = isVertical ? nativeHeight : nativeWidth;
+        height = isVertical ? nativeWidth : nativeHeight;
+        //        if (0 == type) {
+        //            Log.e(TAG, "layout   原生摄像头");
+        //
+        //        } else {
+        //            Log.e(TAG, "layout   OTG摄像头");
+        //
+        //            int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
+        //            int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
+        //            width = isVertical ? uvcHeight : uvcWidth;
+        //            height = isVertical ? uvcWidth : uvcHeight;
+        //        }
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        if (isVertical) {
+            //竖屏模式 宽度固定
+            params.width = screenWidth;
+            if (width < screenWidth) {
+                params.height = height * screenWidth / width;
+            } else {
+                params.height = height * width / screenWidth;
+            }
+        } else {
+            params.width = screenWidth;
+            params.height = screenWidth*height/width;
+        }
+
+        //
+        //        } else {
+        //            //横屏模式 高度固定
+        //            params.height = screenHeight;
+        //            if (height < screenHeight) {
+        //                params.width = width * screenHeight / height;
+        //            } else {
+        //                params.width = width * height / screenHeight;
+        //            }
+        //        }
+
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+    }
+
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -270,6 +323,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private TextureView surfaceView;
     private ImageView mPushBgIv;
     private ImageView mSwitchOritation;
+    private ImageView mTurnLeftIv;
+    private ImageView mTurnRightIv;
     private ImageView mFirstLiveIv;
     private ImageView mThirdLiveIv;
     private ImageView mFourthLiveIv, mFullScreenIv;
@@ -287,19 +342,19 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-        initSurfaceViewLayout(0);
+        initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
         BUSUtil.BUS.register(this);
-        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-            @Override
-            public void toFinishActivity() {
-                finish();
-            }
-
-            @Override
-            public void toDoNext() {
-
-            }
-        });
+        //        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+        //            @Override
+        //            public void toFinishActivity() {
+        //                finish();
+        //            }
+        //
+        //            @Override
+        //            public void toDoNext() {
+        //
+        //            }
+        //        });
 
 
     }
@@ -324,6 +379,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
+        mSwitchOritation.setOnClickListener(this);
+        mTurnLeftIv = (ImageView) findViewById(R.id.turn_left_iv);
+        mTurnLeftIv.setOnClickListener(this);
+        mTurnRightIv = (ImageView) findViewById(R.id.turn_right_iv);
+        mTurnRightIv.setOnClickListener(this);
+
         mRightPushIconsLl = (LinearLayout) findViewById(R.id.right_icon_ll);
         LinearLayout mRecordLl = (LinearLayout) findViewById(R.id.record_ll);
         mRecordLl.setOnClickListener(this);
@@ -331,7 +392,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         bottomPushLl.setOnClickListener(this);
         LinearLayout mSetLl = (LinearLayout) findViewById(R.id.set_ll);
         mSetLl.setOnClickListener(this);
-        mSwitchOritation.setOnClickListener(this);
         mFirstLiveIv = (ImageView) findViewById(R.id.first_live_iv);
         mFirstLiveIv.setOnClickListener(this);
         mThirdLiveIv = (ImageView) findViewById(R.id.third_live_iv);
@@ -747,6 +807,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 }
             }
         }
+        mMediaStream.setResetCallBack(new MediaStream.OnResetLayoutCallBack() {
+            @Override
+            public void resetLayout(boolean isVerticalScreen) {
+                initSurfaceViewLayout(isVerticalScreen);
+            }
+        });
     }
 
     private void startCamera() {
@@ -1003,12 +1069,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 }
                                 switch (which) {
                                     case 0:
-                                        initSurfaceViewLayout(0);
+                                        initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
                                         mSelectCameraTv.setText("摄像头:后置");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                                         break;
                                     case 1:
-                                        initSurfaceViewLayout(0);
+                                        initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
                                         mSelectCameraTv.setText("摄像头:前置");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);
                                         break;
@@ -1109,11 +1175,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                  * 切换屏幕方向
                  * */
                 if (mMediaStream.isRecording()) {
-                    ToastUtils.toast(mContext,"正在录像中");
+                    ToastUtils.toast(mContext, "正在录像中");
                     return;
                 }
-                if(isStreaming()){
-                    ToastUtils.toast(mContext,"正在推流中");
+                if (isStreaming()) {
+                    ToastUtils.toast(mContext, "正在推流中");
                     return;
                 }
 
@@ -1125,6 +1191,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
 
+                break;
+
+            case R.id.turn_left_iv:
+                mMediaStream.turnLeft();
+                break;
+            case R.id.turn_right_iv:
+                mMediaStream.turnRight();
                 break;
 
             case R.id.record_ll:
@@ -1151,11 +1224,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
             case R.id.set_ll:
                 if (mMediaStream.isRecording()) {
-                    ToastUtils.toast(mContext,"正在录像中");
+                    ToastUtils.toast(mContext, "正在录像中");
                     return;
                 }
-                if(isStreaming()){
-                    ToastUtils.toast(mContext,"正在推流中");
+                if (isStreaming()) {
+                    ToastUtils.toast(mContext, "正在推流中");
                     return;
                 }
                 //设置
@@ -1371,7 +1444,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             if (mMediaStream != null) {
                                 mMediaStream.updateResolution();
                             }
-                            initSurfaceViewLayout(0);
+                            initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
                         } else {
                             //                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX,
                             //                            position);
@@ -1585,7 +1658,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
      * 初始化otg摄像头的布局
      */
     private void initUvcLayout() {
-        initSurfaceViewLayout(1);
+        initSurfaceViewLayout(IS_VERTICAL_SCREEN, 1);
         SPUtil.setScreenPushingCameraIndex(this, 2);
         mSelectCameraTv.setText("摄像头:" + getSelectedCamera());
     }
@@ -1621,7 +1694,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //横屏
             if (surfaceView.isAvailable()) {
                 if (!UVCCameraService.uvcConnected) {
-                    initSurfaceViewLayout(0);
+                    initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
                     goonWithAvailableTexture(surfaceView.getSurfaceTexture());
                 } else {
                     initUvcLayout();
