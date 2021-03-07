@@ -79,7 +79,7 @@ import static org.easydarwin.easyrtmp.push.EasyRTMP.OnInitPusherCallback.CODE.EA
  */
 public class StreamActivity extends BaseProjectActivity implements View.OnClickListener,
         TextureView.SurfaceTextureListener {
-    static final String TAG = "StreamActivity";
+    static final String TAG = "DEBUG_OTG";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440",
             "3840x2160"};
     private CharSequence[] resUvcDisplay = new CharSequence[]{"1280x720", "1920x1080"};
@@ -1261,7 +1261,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onUvcCameraConnected() {
-        //        Toast.makeText(getApplicationContext(),"connect",Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "onUvcCameraConnected  otg摄像头连接");
         stopAllPushStream();
         if (mMediaStream != null) {
             mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK_UVC);

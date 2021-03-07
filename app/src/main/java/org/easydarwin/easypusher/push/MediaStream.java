@@ -69,7 +69,7 @@ import static android.media.MediaCodecInfo.CodecCapabilities.COLOR_TI_FormatYUV4
  * 摄像头实时数据采集，并调用相关编码器
  */
 public class MediaStream {
-    private static final String TAG = MediaStream.class.getSimpleName();
+    static final String TAG = "DEBUG_OTG";
     private static final int SWITCH_CAMERA = 11;
 
     private final boolean enableVideo;
@@ -270,7 +270,6 @@ public class MediaStream {
             return;
         }
         if (uvcCamera != null) {
-
             startUvcPreview();
             initConsumer(uvcWidth, uvcHeight);
         } else if (mCamera != null) {
@@ -723,7 +722,7 @@ public class MediaStream {
         public void run() {
             if (!enableVideo)
                 return;
-
+            Log.e(TAG, "switchCameraTask  start  摄像头id "+mCameraId);
             try {
                 if (mCameraId == CAMERA_FACING_BACK_UVC) {
                     if (uvcCamera != null) {
