@@ -72,7 +72,6 @@ public class MediaStream {
     OnResetLayoutCallBack resetCallBack;
     private final boolean enableVideo;
     private boolean mSWCodec, mHevc;    // mSWCodec是否软编码, mHevc是否H265
-
     private String recordPath;          // 录像地址
     protected boolean isZeroPushStream = false;       // 是否要推送数据
     protected boolean isFirstPushStream = false;       // 是否要推送bili数据
@@ -407,7 +406,7 @@ public class MediaStream {
 
         BUSUtil.BUS.post(new SupportResolution());
 
-        initCameraPreviewOrientation(displayRotationDegree);
+        currentOritation =  initCameraPreviewOrientation(displayRotationDegree);
         ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC :
                 MediaFormat.MIMETYPE_VIDEO_AVC);
 
@@ -479,7 +478,7 @@ public class MediaStream {
     /**
      * 初始化摄像头预览定位
      */
-    protected void initCameraPreviewOrientation(int displayRotationDegree) {
+    protected int initCameraPreviewOrientation(int displayRotationDegree) {
         this.displayRotationDegree = displayRotationDegree;
         Camera.CameraInfo camInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(mCameraId, camInfo);
@@ -493,6 +492,7 @@ public class MediaStream {
         parameters.setRotation(rotate); // 设置Camera预览方向
         //            parameters.setRecordingHint(true);
         mCamera.setDisplayOrientation(rotate);
+        return rotate;
     }
 
     public void turnLeft() {
@@ -500,7 +500,7 @@ public class MediaStream {
         if (displayRotationDegree == 360) {
             displayRotationDegree = 0;
         }
-        initCameraPreviewOrientation(displayRotationDegree);
+        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -518,7 +518,7 @@ public class MediaStream {
             displayRotationDegree = 360;
         }
         displayRotationDegree -= 90;
-        initCameraPreviewOrientation(displayRotationDegree);
+        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -827,21 +827,21 @@ public class MediaStream {
         if (data == null)
             return;
 
-        int oritation = 0;
-        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-            oritation = 0;
-        } else {
-            if (mCameraId == CAMERA_FACING_FRONT) {
-                oritation = 270;
-            } else {
-                oritation = 90;
-            }
-        }
+//        int oritation = 0;
+//        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+//            oritation = 0;
+//        } else {
+//            if (mCameraId == CAMERA_FACING_FRONT) {
+//                oritation = 270;
+//            } else {
+//                oritation = 90;
+//            }
+//        }
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
         JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight,
-                oritation, 2);
+                currentOritation, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
         if (mRecordVC != null) {
