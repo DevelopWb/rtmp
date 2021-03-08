@@ -29,7 +29,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -40,7 +39,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.basenetlib.util.NetWorkUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.regmode.RegLatestContact;
@@ -53,11 +51,9 @@ import org.easydarwin.bus.StreamStat;
 import org.easydarwin.easypusher.BaseProjectActivity;
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.R;
-import org.easydarwin.easypusher.SplashActivity;
 import org.easydarwin.easypusher.mine.SettingActivity;
 import org.easydarwin.easypusher.record.RecordService;
 import org.easydarwin.easypusher.util.Config;
-import org.easydarwin.easypusher.util.DoubleClickListener;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
@@ -246,10 +242,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     }
 
     /**
-     * 初始化预览控件的布局
-     * type 0 代表原生摄像头 1代表otg摄像头
+     *
+     * @param isPreviewVertical   画面横屏展示
      */
-    private void initSurfaceViewLayout(boolean isVertical) {
+    private void initSurfaceViewLayout(boolean isPreviewVertical) {
         int width = 0;
         int height = 0;
         Display mDisplay = getWindowManager().getDefaultDisplay();
@@ -257,43 +253,18 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         int screenHeight = mDisplay.getHeight();
         int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
         int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
-        width = isVertical ? nativeHeight : nativeWidth;
-        height = isVertical ? nativeWidth : nativeHeight;
-        //        if (0 == type) {
-        //            Log.e(TAG, "layout   原生摄像头");
-        //
-        //        } else {
-        //            Log.e(TAG, "layout   OTG摄像头");
-        //
-        //            int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
-        //            int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
-        //            width = isVertical ? uvcHeight : uvcWidth;
-        //            height = isVertical ? uvcWidth : uvcHeight;
-        //        }
+        width = isPreviewVertical ? nativeHeight : nativeWidth;
+        height = isPreviewVertical ? nativeWidth : nativeHeight;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
-        if (isVertical) {
-            //竖屏模式 宽度固定
+        if (!IS_VERTICAL_SCREEN) {
+            //手机横屏  高度固定
+            params.height = screenHeight;
+            params.width = width * screenHeight / height;
+        }else {
+            //手机竖屏  宽度固定
             params.width = screenWidth;
-            if (width < screenWidth) {
-                params.height = height * screenWidth / width;
-            } else {
-                params.height = height * width / screenWidth;
-            }
-        } else {
-            params.width = screenWidth;
-            params.height = screenWidth*height/width;
+            params.height = height * screenWidth / width;
         }
-
-        //
-        //        } else {
-        //            //横屏模式 高度固定
-        //            params.height = screenHeight;
-        //            if (height < screenHeight) {
-        //                params.width = width * screenHeight / height;
-        //            } else {
-        //                params.width = width * height / screenHeight;
-        //            }
-        //        }
 
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
     }
@@ -344,17 +315,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
         BUSUtil.BUS.register(this);
-        //        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-        //            @Override
-        //            public void toFinishActivity() {
-        //                finish();
-        //            }
-        //
-        //            @Override
-        //            public void toDoNext() {
-        //
-        //            }
-        //        });
+        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }
@@ -1695,6 +1666,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             if (surfaceView.isAvailable()) {
                 if (!UVCCameraService.uvcConnected) {
                     initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
+                    mMediaStream.initCameraPreviewOrientation(getDisplayRotationDegree());
                     goonWithAvailableTexture(surfaceView.getSurfaceTexture());
                 } else {
                     initUvcLayout();

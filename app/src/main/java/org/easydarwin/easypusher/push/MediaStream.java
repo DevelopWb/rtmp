@@ -407,18 +407,7 @@ public class MediaStream {
 
         BUSUtil.BUS.post(new SupportResolution());
 
-        camInfo = new Camera.CameraInfo();
-        Camera.getCameraInfo(mCameraId, camInfo);
-        int cameraRotationOffset = camInfo.orientation;
-
-        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            cameraRotationOffset += 180;
-        }
-
-        int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
-        parameters.setRotation(rotate); // 设置Camera预览方向
-        //            parameters.setRecordingHint(true);
-
+        initCameraPreviewOrientation(displayRotationDegree);
         ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC :
                 MediaFormat.MIMETYPE_VIDEO_AVC);
 
@@ -452,9 +441,6 @@ public class MediaStream {
         mCamera.setParameters(parameters);
         Log.i(TAG, "setParameters");
 
-        //        int displayRotation;
-        //        displayRotation = (cameraRotationOffset - displayRotationDegree + 360) % 360;
-        //        mCamera.setDisplayOrientation(displayRotation);
 
         int previewFormat = parameters.getPreviewFormat();
 
@@ -485,9 +471,28 @@ public class MediaStream {
         //        } else {
         //            currentOritation = 90;
         //        }
-        mCamera.setDisplayOrientation(rotate);
+
         frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
         frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
+    }
+
+    /**
+     * 初始化摄像头预览定位
+     */
+    protected void initCameraPreviewOrientation(int displayRotationDegree) {
+        this.displayRotationDegree = displayRotationDegree;
+        Camera.CameraInfo camInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(mCameraId, camInfo);
+        int cameraRotationOffset = camInfo.orientation;
+
+        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            cameraRotationOffset += 180;
+        }
+
+        int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
+        parameters.setRotation(rotate); // 设置Camera预览方向
+        //            parameters.setRecordingHint(true);
+        mCamera.setDisplayOrientation(rotate);
     }
 
     public void turnLeft() {
@@ -495,7 +500,7 @@ public class MediaStream {
         if (displayRotationDegree == 360) {
             displayRotationDegree = 0;
         }
-        startCameraPreview();
+        initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -513,7 +518,7 @@ public class MediaStream {
             displayRotationDegree = 360;
         }
         displayRotationDegree -= 90;
-        startCameraPreview();
+        initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -814,7 +819,6 @@ public class MediaStream {
     /* ============================== Native Camera ============================== */
 
     Camera mCamera;
-    private Camera.CameraInfo camInfo;
     private Camera.Parameters parameters;
     private byte[] i420_buffer;
 
