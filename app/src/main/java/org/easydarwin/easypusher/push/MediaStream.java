@@ -16,6 +16,8 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
+import com.juntai.wisdom.basecomponent.utils.ScreenUtils;
 import com.orhanobut.hawk.Hawk;
 
 import com.regmode.Utils.RegOperateManager;
@@ -406,18 +408,7 @@ public class MediaStream {
         }
 
         BUSUtil.BUS.post(new SupportResolution());
-
-        camInfo = new Camera.CameraInfo();
-        Camera.getCameraInfo(mCameraId, camInfo);
-        int cameraRotationOffset = camInfo.orientation;
-
-        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            cameraRotationOffset += 180;
-        }
-
-        int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
-        parameters.setRotation(rotate); // 设置Camera预览方向
-        //            parameters.setRecordingHint(true);
+      currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
 
         ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC :
                 MediaFormat.MIMETYPE_VIDEO_AVC);
@@ -479,23 +470,18 @@ public class MediaStream {
             e.printStackTrace();
         }
         mCamera.startPreview();
-        //        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-        //            currentOritation = 0;
-        //
-        //        } else {
-        //            currentOritation = 90;
-        //        }
-        mCamera.setDisplayOrientation(rotate);
         frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
         frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
     }
 
+
+    //画面向左  0  向下是270   向右  180 向上是90
     public void turnLeft() {
         displayRotationDegree += 90;
         if (displayRotationDegree == 360) {
             displayRotationDegree = 0;
         }
-        startCameraPreview();
+        currentOritation =  initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -507,13 +493,31 @@ public class MediaStream {
         }
 
     }
+    /**
+     * 初始化摄像头预览定位
+     */
+    protected int initCameraPreviewOrientation(int displayRotationDegree) {
+        this.displayRotationDegree = displayRotationDegree;
+        Camera.CameraInfo camInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(mCameraId, camInfo);
+        int cameraRotationOffset = camInfo.orientation;
 
+        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            cameraRotationOffset += 180;
+        }
+
+        int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
+        parameters.setRotation(rotate); // 设置Camera预览方向
+        //            parameters.setRecordingHint(true);
+        mCamera.setDisplayOrientation(rotate);
+        return rotate;
+    }
     public void turnRight() {
         if (displayRotationDegree == 0) {
             displayRotationDegree = 360;
         }
         displayRotationDegree -= 90;
-        startCameraPreview();
+        currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
         if (displayRotationDegree==90||displayRotationDegree==270) {
             if (resetCallBack != null) {
                 resetCallBack.resetLayout(false);
@@ -620,10 +624,9 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                url = Config.getServerURL();
-                //                url = "rtmp://live-push.bilivideo
-                //                .com/live-bvc/?streamname=live_396731842_81355915&key
-                //                =2a1cf08b6ec73a01a16c9fa9d8feed10";
+//                url = Config.getServerURL();
+                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
+
                 isZeroPushStream = true;
                 break;
             case 1:
@@ -824,19 +827,55 @@ public class MediaStream {
             return;
 
         int oritation = 0;
-        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-            oritation = 0;
-        } else {
+        int width = nativeWidth;
+        int height = nativeHeight;
+//        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+//            oritation = 0;
+//        } else {
+//            if (mCameraId == CAMERA_FACING_FRONT) {
+//                oritation = 270;
+//            } else {
+//                oritation = 90;
+//            }
+//        }
+//        nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
+//        nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
+        //前置 画面向左  0  向下是270   向右  180 向上是90
+        //后置  竖屏预览  90 是对的    前置的时候90成像就是倒立的  这时候应该是270才对
+        int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
+        int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
+        if (StreamActivity.IS_VERTICAL_SCREEN) {
             if (mCameraId == CAMERA_FACING_FRONT) {
-                oritation = 270;
-            } else {
-                oritation = 90;
+
+            }else {
+                //后置摄像头
+                switch (currentOritation) {
+                    case 90:
+                        oritation = 90;
+                        break;
+                    case 0:
+                        height = screenWidth;
+                        width = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 180;
+                        break;
+                    case 270:
+                        oritation = 270;
+                        break;
+                    case 180:
+                        width = screenWidth;
+                        height = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 0;
+                        break;
+                    default:
+                        break;
+                }
+
             }
         }
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
-        JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight,
+        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height,
                 oritation, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 

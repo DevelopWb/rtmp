@@ -264,6 +264,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //手机竖屏  宽度固定
             params.width = screenWidth;
             params.height = height * screenWidth / width;
+//            Hawk.put(HawkProperty.KEY_NATIVE_WIDTH,screenWidth);
+//            Hawk.put(HawkProperty.KEY_NATIVE_HEIGHT,height * screenWidth / width);
         }
 
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
@@ -315,17 +317,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(IS_VERTICAL_SCREEN, 0);
         BUSUtil.BUS.register(this);
-        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-            @Override
-            public void toFinishActivity() {
-                finish();
-            }
-
-            @Override
-            public void toDoNext() {
-
-            }
-        });
+//        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+//            @Override
+//            public void toFinishActivity() {
+//                finish();
+//            }
+//
+//            @Override
+//            public void toDoNext() {
+//
+//            }
+//        });
 
 
     }
