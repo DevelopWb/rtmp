@@ -477,21 +477,38 @@ public class MediaStream {
 
     //画面向左  0  向下是270   向右  180 向上是90
     public void turnLeft() {
-        displayRotationDegree += 90;
-        if (displayRotationDegree == 360) {
+        displayRotationDegree += 180;
+        if (displayRotationDegree >= 360) {
             displayRotationDegree = 0;
         }
         currentOritation =  initCameraPreviewOrientation(displayRotationDegree);
-        if (displayRotationDegree==90||displayRotationDegree==270) {
-            if (resetCallBack != null) {
-                resetCallBack.resetLayout(false);
-            }
-        }else {
-            if (resetCallBack != null) {
-                resetCallBack.resetLayout(true);
-            }
-        }
+//        if (displayRotationDegree==90||displayRotationDegree==270) {
+//            if (resetCallBack != null) {
+//                resetCallBack.resetLayout(false);
+//            }
+//        }else {
+//            if (resetCallBack != null) {
+//                resetCallBack.resetLayout(true);
+//            }
+//        }
 
+    }
+
+    public void turnRight() {
+        if (displayRotationDegree <= 0) {
+            displayRotationDegree = 360;
+        }
+        displayRotationDegree -= 180;
+        currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
+//        if (displayRotationDegree==90||displayRotationDegree==270) {
+//            if (resetCallBack != null) {
+//                resetCallBack.resetLayout(false);
+//            }
+//        }else {
+//            if (resetCallBack != null) {
+//                resetCallBack.resetLayout(true);
+//            }
+//        }
     }
     /**
      * 初始化摄像头预览定位
@@ -507,28 +524,30 @@ public class MediaStream {
         }
 
         int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
+        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+            //横屏270=180   0==0  90 = 0
+            switch (displayRotationDegree) {
+                case 0:
+                    rotate = 0;
+                    break;
+                case 90:
+                    rotate = 0;
+                    break;
+                case 180:
+                    rotate = 180;
+                    break;
+                case 270:
+                    rotate = 180;
+                    break;
+                default:
+                    break;
+            }
+        }
         parameters.setRotation(rotate); // 设置Camera预览方向
         //            parameters.setRecordingHint(true);
         mCamera.setDisplayOrientation(rotate);
         return rotate;
     }
-    public void turnRight() {
-        if (displayRotationDegree == 0) {
-            displayRotationDegree = 360;
-        }
-        displayRotationDegree -= 90;
-        currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
-        if (displayRotationDegree==90||displayRotationDegree==270) {
-            if (resetCallBack != null) {
-                resetCallBack.resetLayout(false);
-            }
-        }else {
-            if (resetCallBack != null) {
-                resetCallBack.resetLayout(true);
-            }
-        }
-    }
-
 
     /// 停止预览
     public synchronized void stopPreview() {
@@ -846,7 +865,26 @@ public class MediaStream {
         int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
         if (StreamActivity.IS_VERTICAL_SCREEN) {
             if (mCameraId == CAMERA_FACING_FRONT) {
-
+                switch (currentOritation) {
+                    case 90:
+                        oritation = 270;
+                        break;
+                    case 0:
+                        height = screenWidth;
+                        width = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 180;
+                        break;
+                    case 270:
+                        oritation = 90;
+                        break;
+                    case 180:
+                        width = screenWidth;
+                        height = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 0;
+                        break;
+                    default:
+                        break;
+                }
             }else {
                 //后置摄像头
                 switch (currentOritation) {
@@ -870,6 +908,24 @@ public class MediaStream {
                         break;
                 }
 
+            }
+        }else {
+            //横屏270=180   0==0  90 = 0
+            switch (displayRotationDegree) {
+                case 0:
+                    oritation = 0;
+                    break;
+                case 90:
+                    oritation = 0;
+                    break;
+                case 180:
+                    oritation = 180;
+                    break;
+                case 270:
+                    oritation = 180;
+                    break;
+                default:
+                    break;
             }
         }
         if (i420_buffer == null || i420_buffer.length != data.length) {
