@@ -477,20 +477,20 @@ public class MediaStream {
 
     //画面向左  0  向下是270   向右  180 向上是90
     public void turnLeft() {
-        displayRotationDegree += 180;
+        displayRotationDegree += 90;
         if (displayRotationDegree >= 360) {
             displayRotationDegree = 0;
         }
         currentOritation =  initCameraPreviewOrientation(displayRotationDegree);
-//        if (displayRotationDegree==90||displayRotationDegree==270) {
-//            if (resetCallBack != null) {
-//                resetCallBack.resetLayout(false);
-//            }
-//        }else {
-//            if (resetCallBack != null) {
-//                resetCallBack.resetLayout(true);
-//            }
-//        }
+        if (displayRotationDegree==90||displayRotationDegree==270) {
+            if (resetCallBack != null) {
+                resetCallBack.resetLayout(false);
+            }
+        }else {
+            if (resetCallBack != null) {
+                resetCallBack.resetLayout(true);
+            }
+        }
 
     }
 
@@ -498,17 +498,17 @@ public class MediaStream {
         if (displayRotationDegree <= 0) {
             displayRotationDegree = 360;
         }
-        displayRotationDegree -= 180;
+        displayRotationDegree -= 90;
         currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
-//        if (displayRotationDegree==90||displayRotationDegree==270) {
-//            if (resetCallBack != null) {
-//                resetCallBack.resetLayout(false);
-//            }
-//        }else {
-//            if (resetCallBack != null) {
-//                resetCallBack.resetLayout(true);
-//            }
-//        }
+        if (displayRotationDegree==90||displayRotationDegree==270) {
+            if (resetCallBack != null) {
+                resetCallBack.resetLayout(false);
+            }
+        }else {
+            if (resetCallBack != null) {
+                resetCallBack.resetLayout(true);
+            }
+        }
     }
     /**
      * 初始化摄像头预览定位
@@ -870,17 +870,17 @@ public class MediaStream {
                         oritation = 270;
                         break;
                     case 0:
-                        height = screenWidth;
-                        width = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 180;
+//                        height = screenWidth;
+//                        width = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 0;
                         break;
                     case 270:
                         oritation = 90;
                         break;
                     case 180:
-                        width = screenWidth;
-                        height = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 0;
+//                        width = screenWidth;
+//                        height = nativeHeight * screenWidth / nativeWidth;
+                        oritation = 180;
                         break;
                     default:
                         break;
@@ -894,7 +894,7 @@ public class MediaStream {
                     case 0:
                         height = screenWidth;
                         width = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 180;
+                        oritation = 270;
                         break;
                     case 270:
                         oritation = 270;
@@ -902,7 +902,7 @@ public class MediaStream {
                     case 180:
                         width = screenWidth;
                         height = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 0;
+                        oritation = 90;
                         break;
                     default:
                         break;
