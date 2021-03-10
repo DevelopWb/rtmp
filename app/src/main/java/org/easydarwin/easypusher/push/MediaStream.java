@@ -470,7 +470,7 @@ public class MediaStream {
 
     //画面向左  0  向下是270   向右  180 向上是90
     public void turnLeft() {
-        displayRotationDegree += 180;
+        displayRotationDegree += 90;
         if (displayRotationDegree >= 360) {
             displayRotationDegree = 0;
         }
@@ -857,7 +857,9 @@ public class MediaStream {
         int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
         int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
         if (StreamActivity.IS_VERTICAL_SCREEN) {
+
             if (mCameraId == CAMERA_FACING_FRONT) {
+                Log.d(TAG, "竖屏模式  前置摄像头"+currentOritation);
                 switch (currentOritation) {
                     case 90:
                         oritation = 270;
@@ -880,6 +882,7 @@ public class MediaStream {
                 }
             }else {
                 //后置摄像头
+                Log.d(TAG, "竖屏模式  后置摄像头"+currentOritation);
                 switch (currentOritation) {
                     case 90:
                         oritation = 90;
