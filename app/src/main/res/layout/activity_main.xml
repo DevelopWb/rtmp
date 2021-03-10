@@ -55,7 +55,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="end|center_vertical"
                 android:padding="10dp"
-                android:text="Camera："
+                android:text="摄像头："
                 android:textColor="@android:color/white" />
 
 
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="onClickResolution"
                 android:padding="8dp"
-                android:text="Resolution："
+                android:text="分辨率："
                 android:textColor="#ffffff" />
 
 
@@ -96,7 +96,7 @@
             android:id="@+id/video_record_full_screen_Ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-           android:paddingLeft="10dp"
+            android:paddingLeft="10dp"
             android:visibility="gone"
             android:paddingBottom="5dp"
             android:layout_below="@+id/res_container"
@@ -133,6 +133,23 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_action_switch_oritation" />
+            <ImageView
+                android:id="@+id/turn_left_iv"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/turn_left" />
+            <ImageView
+                android:id="@+id/turn_right_iv"
+                android:layout_width="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/turn_right" />
 
         </LinearLayout>
 
@@ -247,7 +264,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Push"
+                android:text="视频"
                 android:textColor="#fff" />
         </LinearLayout>
 
@@ -272,7 +289,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Video"
+                android:text="录像"
                 android:textColor="#fff" />
         </LinearLayout>
 
@@ -293,7 +310,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="Settings"
+                android:text="设置"
                 android:textColor="#fff" />
         </LinearLayout>
     </LinearLayout>
