@@ -408,7 +408,7 @@ public class MediaStream {
         }
 
         BUSUtil.BUS.post(new SupportResolution());
-        currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
+        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
 
         ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC :
                 MediaFormat.MIMETYPE_VIDEO_AVC);
@@ -474,16 +474,38 @@ public class MediaStream {
         if (displayRotationDegree >= 360) {
             displayRotationDegree = 0;
         }
-        currentOritation =  initCameraPreviewOrientation(displayRotationDegree);
-        //        if (displayRotationDegree==90||displayRotationDegree==270) {
-        //            if (resetCallBack != null) {
-        //                resetCallBack.resetLayout(false);
-        //            }
-        //        }else {
-        //            if (resetCallBack != null) {
-        //                resetCallBack.resetLayout(true);
-        //            }
-        //        }
+
+        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
+        Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
+        if (StreamActivity.IS_VERTICAL_SCREEN) {
+            //竖屏模式
+            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+                //left  right
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(true);
+                }
+            } else {
+
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(false);
+                }
+            }
+        } else {
+            //横屏模式
+
+            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+                //up down
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(false);
+                }
+            } else {
+                //left  right
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(true);
+                }
+            }
+        }
+
 
     }
 
@@ -491,18 +513,41 @@ public class MediaStream {
         if (displayRotationDegree <= 0) {
             displayRotationDegree = 360;
         }
-        displayRotationDegree -= 180;
-        currentOritation =   initCameraPreviewOrientation(displayRotationDegree);
-        //        if (displayRotationDegree==90||displayRotationDegree==270) {
-        //            if (resetCallBack != null) {
-        //                resetCallBack.resetLayout(false);
-        //            }
-        //        }else {
-        //            if (resetCallBack != null) {
-        //                resetCallBack.resetLayout(true);
-        //            }
-        //        }
+        displayRotationDegree -= 90;
+        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
+        Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
+
+        if (StreamActivity.IS_VERTICAL_SCREEN) {
+            //竖屏模式
+            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+                //left  right
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(true);
+                }
+            } else {
+
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(false);
+                }
+            }
+        } else {
+            //横屏模式
+
+            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+                //up down
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(false);
+                }
+            } else {
+                //left  right
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(true);
+                }
+            }
+        }
+
     }
+
     /**
      * 初始化摄像头预览定位
      */
@@ -517,25 +562,25 @@ public class MediaStream {
         }
 
         int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
-        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-            //横屏270=180   0==0  90 = 0
-            switch (displayRotationDegree) {
-                case 0:
-                    rotate = 0;
-                    break;
-                case 90:
-                    rotate = 0;
-                    break;
-                case 180:
-                    rotate = 180;
-                    break;
-                case 270:
-                    rotate = 180;
-                    break;
-                default:
-                    break;
-            }
-        }
+        //        if (!StreamActivity.IS_VERTICAL_SCREEN) {
+        //            //横屏270=180   0==0  90 = 0
+        //            switch (displayRotationDegree) {
+        //                case 0:
+        //                    rotate = 0;
+        //                    break;
+        //                case 90:
+        //                    rotate = 0;
+        //                    break;
+        //                case 180:
+        //                    rotate = 180;
+        //                    break;
+        //                case 270:
+        //                    rotate = 180;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //        }
         parameters.setRotation(rotate); // 设置Camera预览方向
         //            parameters.setRecordingHint(true);
         mCamera.setDisplayOrientation(rotate);
@@ -636,8 +681,9 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                                url = Config.getServerURL();
-//                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
+                                                url = Config.getServerURL();
+//                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
+//                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
 
                 isZeroPushStream = true;
                 break;
@@ -859,66 +905,80 @@ public class MediaStream {
         if (StreamActivity.IS_VERTICAL_SCREEN) {
 
             if (mCameraId == CAMERA_FACING_FRONT) {
-                Log.d(TAG, "竖屏模式  前置摄像头"+currentOritation);
+                Log.d(TAG, "竖屏模式  前置摄像头" + currentOritation);
                 switch (currentOritation) {
                     case 90:
+                        //向上
                         oritation = 270;
                         break;
                     case 0:
-                        height = screenWidth;
-                        width = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 180;
+                        // 向左
+                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
+                        oritation = 270;
                         break;
                     case 270:
+                        //向下
                         oritation = 90;
                         break;
                     case 180:
-                        width = screenWidth;
-                        height = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 0;
+                        //向右
+                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
+                        oritation = 270;
                         break;
                     default:
                         break;
                 }
-            }else {
+            } else {
                 //后置摄像头
-                Log.d(TAG, "竖屏模式  后置摄像头"+currentOritation);
+                Log.d(TAG, "竖屏模式  后置摄像头" + currentOritation);
                 switch (currentOritation) {
                     case 90:
+                        //向上
                         oritation = 90;
                         break;
                     case 0:
-                        height = screenWidth;
-                        width = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 180;
+                        // 向左
+                        // 第一种尝试方法  失败
+                        // height = nativeWidth;  width = nativeHeight;oritation4个值都试过了 bu不可以
+                        //第二种尝试方法 height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示 270度的时候倒立显示
+                        //                      height = nativeWidth;
+                        //                        width = nativeHeight;
+                        oritation = 90;
                         break;
                     case 270:
                         oritation = 270;
+                        //向下
                         break;
                     case 180:
-                        width = screenWidth;
-                        height = nativeHeight * screenWidth / nativeWidth;
-                        oritation = 0;
+                        //向右
+                        //                        height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示
+                        //                        270度的时候倒立显示
+                        oritation = 90;
                         break;
                     default:
                         break;
                 }
 
             }
-        }else {
-            //横屏270=180   0==0  90 = 0
-            switch (displayRotationDegree) {
+        } else {
+            //横屏
+            Log.d(TAG, "横屏模式  摄像头" + currentOritation);
+            switch (currentOritation) {
                 case 0:
+                    //向上
                     oritation = 0;
                     break;
                 case 90:
+                    //向右
                     oritation = 0;
                     break;
                 case 180:
+                    // 向下
                     oritation = 180;
                     break;
                 case 270:
-                    oritation = 180;
+                    //向左
+                    oritation = 0;
                     break;
                 default:
                     break;
@@ -1196,7 +1256,7 @@ public class MediaStream {
 
 
     public interface OnResetLayoutCallBack {
-        void resetLayout(boolean isVerticalScreen);
+        void resetLayout(boolean isHorScreen);
     }
 
     public void setResetCallBack(OnResetLayoutCallBack resetCallBack) {
