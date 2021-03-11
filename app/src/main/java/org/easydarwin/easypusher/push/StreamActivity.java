@@ -118,7 +118,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private long mExitTime;//声明一个long类型变量：用于存放上一点击“返回键”的时刻
     private final static int UVC_CONNECT = 111;
     private final static int UVC_DISCONNECT = 112;
-
+    private ImageView mTurnRightIv,mTurnLeftIv;
     public static boolean IS_VERTICAL_SCREEN = true;//是否是竖屏
     private boolean isBackPush = false;//后台推流
 
@@ -244,7 +244,58 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
         surfaceView.setLayoutParams(params); //使Set好的布局参数应用到控件
     }
+    /**
+     * 初始化预览控件的布局
+     * type 0 代表原生摄像头 1代表otg摄像头
+     */
+    private void initSurfaceViewLayout(boolean isVertical) {
+        int width = 0;
+        int height = 0;
+        Display mDisplay = getWindowManager().getDefaultDisplay();
+        int screenWidth = mDisplay.getWidth();
+        int screenHeight = mDisplay.getHeight();
+        int nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, MediaStream.nativeWidth);
+        int nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, MediaStream.nativeHeight);
+        width = isVertical ? nativeHeight : nativeWidth;
+        height = isVertical ? nativeWidth : nativeHeight;
+        //        if (0 == type) {
+        //            Log.e(TAG, "layout   原生摄像头");
+        //
+        //        } else {
+        //            Log.e(TAG, "layout   OTG摄像头");
+        //
+        //            int uvcWidth = Hawk.get(HawkProperty.KEY_UVC_WIDTH, MediaStream.uvcWidth);
+        //            int uvcHeight = Hawk.get(HawkProperty.KEY_UVC_HEIGHT, MediaStream.uvcHeight);
+        //            width = isVertical ? uvcHeight : uvcWidth;
+        //            height = isVertical ? uvcWidth : uvcHeight;
+        //        }
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) surfaceView.getLayoutParams();
+        if (isVertical) {
+            //竖屏模式 宽度固定
+            params.width = screenWidth;
+            if (width < screenWidth) {
+                params.height = height * screenWidth / width;
+            } else {
+                params.height = height * width / screenWidth;
+            }
+        } else {
+            params.width = screenWidth;
+            params.height = screenWidth*height/width;
+        }
 
+        //
+        //        } else {
+        //            //横屏模式 高度固定
+        //            params.height = screenHeight;
+        //            if (height < screenHeight) {
+        //                params.width = width * screenHeight / height;
+        //            } else {
+        //                params.width = width * height / screenHeight;
+        //            }
+        //        }
+
+        surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
+    }
     // 录像时的线程
     private Runnable mRecordTickRunnable = new Runnable() {
         @Override
@@ -327,6 +378,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         mRightPushIconsLl = (LinearLayout) findViewById(R.id.right_icon_ll);
         LinearLayout mRecordLl = (LinearLayout) findViewById(R.id.record_ll);
         mRecordLl.setOnClickListener(this);
+        mTurnRightIv = (ImageView) findViewById(R.id.turn_right_iv);
+        mTurnRightIv.setOnClickListener(this);
+        mTurnLeftIv = (ImageView) findViewById(R.id.turn_left_iv);
+        mTurnLeftIv.setOnClickListener(this);
         LinearLayout bottomPushLl = (LinearLayout) findViewById(R.id.push_stream_ll);
         bottomPushLl.setOnClickListener(this);
         LinearLayout mSetLl = (LinearLayout) findViewById(R.id.set_ll);
@@ -418,10 +473,10 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             unbindService(conn);
             conn = null;
         }
-//        if (connUVC != null) {
-//            unbindService(connUVC);
-//            connUVC = null;
-//        }
+        //        if (connUVC != null) {
+        //            unbindService(connUVC);
+        //            connUVC = null;
+        //        }
 
         handler.removeCallbacksAndMessages(null);
         if (mMediaStream != null) {
@@ -633,23 +688,23 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             //            }
         }
         bindService(new Intent(this, BackgroundCameraService.class), conn, 0);
-//        startService(new Intent(this, UVCCameraService.class));
-//        if (connUVC == null) {
-//            connUVC = new ServiceConnection() {
-//
-//
-//                @Override
-//                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-//                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
-//                }
-//
-//                @Override
-//                public void onServiceDisconnected(ComponentName componentName) {
-//
-//                }
-//            };
-//        }
-//        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
+        //        startService(new Intent(this, UVCCameraService.class));
+        //        if (connUVC == null) {
+        //            connUVC = new ServiceConnection() {
+        //
+        //
+        //                @Override
+        //                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        //                    mUvcService = ((UVCCameraService.LocalBinder) iBinder).getService();
+        //                }
+        //
+        //                @Override
+        //                public void onServiceDisconnected(ComponentName componentName) {
+        //
+        //                }
+        //            };
+        //        }
+        //        bindService(new Intent(this, UVCCameraService.class), connUVC, 0);
         if (mRecording) {
             textRecordTick.setVisibility(View.VISIBLE);
             textRecordTick.removeCallbacks(mRecordTickRunnable);
@@ -986,14 +1041,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                     dialog.dismiss();
                                     return;
                                 }
-//                                if (2 == which) {
-//                                    mUvcService.reRequestOtg();
-//                                    try {
-//                                        Thread.sleep(200);
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
+                                //                                if (2 == which) {
+                                //                                    mUvcService.reRequestOtg();
+                                //                                    try {
+                                //                                        Thread.sleep(200);
+                                //                                    } catch (InterruptedException e) {
+                                //                                        e.printStackTrace();
+                                //                                    }
+                                //                                }
 
                                 if (2 != which) {
                                     SPUtil.setScreenPushingCameraIndex(StreamActivity.this, which);
@@ -1037,6 +1092,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             case R.id.push_stream_ll:
                 startOrStopPush();
                 break;
+            case R.id.turn_right_iv:
+                mMediaStream.turnRight();
+                break;
+            case R.id.turn_left_iv:
+                mMediaStream.turnLeft();
+                break;
+
             case R.id.secend_live_iv:
                 String url_huya = Hawk.get(HawkProperty.KEY_SECEND_URL);
                 if (TextUtils.isEmpty(url_huya)) {
@@ -1105,7 +1167,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 /*
                  * 切换屏幕方向
                  * */
-
                 if (mMediaStream.isRecording()) {
                     ToastUtils.toast(mContext,"recording in service");
                     return;
@@ -1174,7 +1235,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             try {
                 String ip = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_IP, Config.DEFAULR_IP);
                 String port = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_PORT, Config.DEFAULR_PORT);
-//                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
+                //                String tag = Hawk.get(HawkProperty.KEY_SCREEN_PUSHING_TAG, "");
                 if (TextUtils.isEmpty(ip)) {
                     ToastUtils.toast(this, "Please enter the IP address in the settings");
                     return;
@@ -1183,12 +1244,12 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                     ToastUtils.toast(this, "Please enter the port number in the settings");
                     return;
                 }
-//                if (TextUtils.isEmpty(tag)) {
-//                    ToastUtils.toast(this, "请在Set中输入标识");
-//                    return;
-//                }
+                //                if (TextUtils.isEmpty(tag)) {
+                //                    ToastUtils.toast(this, "请在Set中输入标识");
+                //                    return;
+                //                }
                 mMediaStream.startPushStream(0, code -> BUSUtil.BUS.post(new PushCallback(code)));
-//                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
+                //                mPushStreamIv.setImageResource(R.mipmap.push_stream_on);
                 mVedioPushBottomTagIv.setImageResource(R.drawable.start_push_pressed);
                 //                txtStreamAddress.setText(url);
             } catch (IOException e) {
@@ -1371,13 +1432,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                             }
                             initSurfaceViewLayout(0);
                         } else {
-//                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
-//                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
-//                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
-//                            if (mMediaStream != null) {
-//                                mMediaStream.updateResolution();
-//                            }
-//                            mUvcService.reRequestOtg();
+                            //                            Hawk.put(HawkProperty.KEY_SCREEN_PUSHING_UVC_RES_INDEX, position);
+                            //                            Hawk.put(HawkProperty.KEY_UVC_WIDTH, Integer.parseInt(titles[0]));
+                            //                            Hawk.put(HawkProperty.KEY_UVC_HEIGHT, Integer.parseInt(titles[1]));
+                            //                            if (mMediaStream != null) {
+                            //                                mMediaStream.updateResolution();
+                            //                            }
+                            //                            mUvcService.reRequestOtg();
                         }
                         mScreenResTv.setText("Resolution:" + title);
 
