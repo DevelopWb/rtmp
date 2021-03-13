@@ -343,17 +343,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(0);
         BUSUtil.BUS.register(this);
-        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-            @Override
-            public void toFinishActivity() {
-                finish();
-            }
-
-            @Override
-            public void toDoNext() {
-
-            }
-        });
+//        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+//            @Override
+//            public void toFinishActivity() {
+//                finish();
+//            }
+//
+//            @Override
+//            public void toDoNext() {
+//
+//            }
+//        });
 
 
     }
@@ -375,6 +375,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         startRecordIv = findViewById(R.id.streaming_activity_record);
         mScreenResTv = findViewById(R.id.txt_res);
         surfaceView = findViewById(R.id.sv_surfaceview);
+        surfaceView.setScaleX("First".equals(getSelectedCamera())?-1f:1f);
         //        mPushBgIv = (ImageView) findViewById(R.id.push_bg_iv);
         //        mPushBgIv.setOnClickListener(this);
         mSwitchOritation = (ImageView) findViewById(R.id.switch_oritation_iv);
@@ -1059,11 +1060,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                                 }
                                 switch (which) {
                                     case 0:
+                                        //后置摄像头
+                                        surfaceView.setScaleX(1f);
                                         initSurfaceViewLayout(0);
                                         mSelectCameraTv.setText("Camera:Second");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_BACK);
                                         break;
                                     case 1:
+                                        surfaceView.setScaleX(-1f);
                                         initSurfaceViewLayout(0);
                                         mSelectCameraTv.setText("Camera:First");
                                         mMediaStream.switchCamera(MediaStream.CAMERA_FACING_FRONT);

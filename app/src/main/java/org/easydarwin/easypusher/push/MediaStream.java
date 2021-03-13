@@ -513,38 +513,38 @@ public class MediaStream {
         if (displayRotationDegree <= 0) {
             displayRotationDegree = 360;
         }
-        displayRotationDegree -= 90;
+        displayRotationDegree -= 180;
         currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
 
-        if (StreamActivity.IS_VERTICAL_SCREEN) {
-            //竖屏模式
-            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-                //left  right
-                if (resetCallBack != null) {
-                    resetCallBack.resetLayout(true);
-                }
-            } else {
-
-                if (resetCallBack != null) {
-                    resetCallBack.resetLayout(false);
-                }
-            }
-        } else {
-            //横屏模式
-
-            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-                //up down
-                if (resetCallBack != null) {
-                    resetCallBack.resetLayout(false);
-                }
-            } else {
-                //left  right
-                if (resetCallBack != null) {
-                    resetCallBack.resetLayout(true);
-                }
-            }
-        }
+//        if (StreamActivity.IS_VERTICAL_SCREEN) {
+//            //竖屏模式
+//            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+//                //left  right
+//                if (resetCallBack != null) {
+//                    resetCallBack.resetLayout(true);
+//                }
+//            } else {
+//
+//                if (resetCallBack != null) {
+//                    resetCallBack.resetLayout(false);
+//                }
+//            }
+//        } else {
+//            //横屏模式
+//
+//            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
+//                //up down
+//                if (resetCallBack != null) {
+//                    resetCallBack.resetLayout(false);
+//                }
+//            } else {
+//                //left  right
+//                if (resetCallBack != null) {
+//                    resetCallBack.resetLayout(true);
+//                }
+//            }
+//        }
 
     }
 
@@ -902,7 +902,9 @@ public class MediaStream {
         //后置  竖屏预览  90 是对的    前置的时候90成像就是倒立的  这时候应该是270才对
         int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
         int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
+//        data =  Mirror(data,width,height);
         if (StreamActivity.IS_VERTICAL_SCREEN) {
+
 
             if (mCameraId == CAMERA_FACING_FRONT) {
                 Log.d(TAG, "竖屏模式  前置摄像头" + currentOritation);
@@ -1204,7 +1206,114 @@ public class MediaStream {
             JNIUtil.rotateShortMatrix(src, offset, width / 2, height / 2, degree);
         }
     }
+    private byte[]  Mirror(byte[] src, int w, int h) { //src是原始yuv数组
+        int i;
+        int index;
+        byte temp;
+        int a, b;
+        //mirror y
+        for (i = 0; i < h; i++) {
+            a = i * w;
+            b = (i + 1) * w - 1;
+            while (a < b) {
+                temp = src[a];
+                src[a] = src[b];
+                src[b] = temp;
+                a++;
+                b--;
+            }
+        }
 
+        // mirror u and v
+        index = w * h;
+        for (i = 0; i < h / 2; i++) {
+            a = i * w;
+            b = (i + 1) * w - 2;
+            while (a < b) {
+                temp = src[a + index];
+                src[a + index] = src[b + index];
+                src[b + index] = temp;
+
+                temp = src[a + index + 1];
+                src[a + index + 1] = src[b + index + 1];
+                src[b + index + 1] = temp;
+                a+=2;
+                b-=2;
+            }
+        }
+        return src;
+    }
+    private byte[] rotateYUVDegree90(byte[] data, int imageWidth, int imageHeight) {
+        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
+        // Rotate the Y luma
+        int i = 0;
+        for (int x = 0; x < imageWidth; x++) {
+            for (int y = imageHeight - 1; y >= 0; y--) {
+                yuv[i] = data[y * imageWidth + x];
+                i++;
+            }
+        }
+        // Rotate the U and V color components
+        i = imageWidth * imageHeight * 3 / 2 - 1;
+        for (int x = imageWidth - 1; x > 0; x = x - 2) {
+            for (int y = 0; y < imageHeight / 2; y++) {
+                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + x];
+                i--;
+                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + (x - 1)];
+                i--;
+            }
+        }
+        return yuv;
+    }
+
+    private byte[] rotateYUVDegree270(byte[] data, int imageWidth, int imageHeight) {
+        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
+        // Rotate the Y luma
+        int i = 0;
+        for (int x = imageWidth - 1; x >= 0; x--) {
+            for (int y = 0; y < imageHeight; y++) {
+                yuv[i] = data[y * imageWidth + x];
+                i++;
+            }
+        }// Rotate the U and V color components
+        i = imageWidth * imageHeight;
+        for (int x = imageWidth - 1; x > 0; x = x - 2) {
+            for (int y = 0; y < imageHeight / 2; y++) {
+                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + (x - 1)];
+                i++;
+                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + x];
+                i++;
+            }
+        }
+        return yuv;
+    }
+    private byte[] rotateYUVDegree270AndMirror(byte[] data, int imageWidth, int imageHeight) {
+        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
+        // Rotate and mirror the Y luma
+        int i = 0;
+        int maxY = 0;
+        for (int x = imageWidth - 1; x >= 0; x--) {
+            maxY = imageWidth * (imageHeight - 1) + x * 2;
+            for (int y = 0; y < imageHeight; y++) {
+                yuv[i] = data[maxY - (y * imageWidth + x)];
+                i++;
+            }
+        }
+        // Rotate and mirror the U and V color components
+        int uvSize = imageWidth * imageHeight;
+        i = uvSize;
+        int maxUV = 0;
+        for (int x = imageWidth - 1; x > 0; x = x - 2) {
+            maxUV = imageWidth * (imageHeight / 2 - 1) + x * 2 + uvSize;
+            for (int y = 0; y < imageHeight / 2; y++) {
+                yuv[i] = data[maxUV - 2 - (y * imageWidth + x - 1)];
+                i++;
+                yuv[i] = data[maxUV - (y * imageWidth + x)];
+                i++;
+            }
+        }
+        return yuv;
+    }
     /// 销毁Camera
     public synchronized void destroyCamera() {
         if (Thread.currentThread() != mCameraThread) {
