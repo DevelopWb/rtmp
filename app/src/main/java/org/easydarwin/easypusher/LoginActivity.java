@@ -402,8 +402,8 @@ public class LoginActivity extends BaseProjectActivity implements RequestStatus,
      */
     public void getLoginToken(int timeout) {
         mPhoneNumberAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
-                .setAppPrivacyOne("《一见旅游用户隐私协议》", "http://zb.ttcolour.com/yjly_privacy.html")
-                .setAppPrivacyTwo("《一见旅游APP使用协议》", "http://zb.ttcolour.com/yjly_user_service.html")
+                .setAppPrivacyOne("《互观用户隐私协议》", "http://zb.ttcolour.com/HGPrivacyInfo.html")
+                .setAppPrivacyTwo("《互观APP使用协议》", "http://zb.ttcolour.com/HGUserServer.html")
 //                .setSwitchAccHidden(true)
 //                .create());
 //        mPhoneNumberAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
