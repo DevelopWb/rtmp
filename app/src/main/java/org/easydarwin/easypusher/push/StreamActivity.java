@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.juntai.wisdom.basecomponent.utils.PubUtil;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
@@ -59,6 +60,7 @@ import org.easydarwin.easypusher.util.Config;
 
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 
+import org.easydarwin.easypusher.util.PublicUtil;
 import org.easydarwin.easypusher.util.SPUtil;
 import org.easydarwin.easyrtmp.push.EasyRTMP;
 import org.easydarwin.update.UpdateMgr;
@@ -755,6 +757,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 ImageView ib = findViewById(R.id.streaming_activity_record);
                 ib.setImageResource(R.drawable.record);
+                PublicUtil.sendBroadcastToAlbum(mContext,Config.recordPath());
             }
         });
     }

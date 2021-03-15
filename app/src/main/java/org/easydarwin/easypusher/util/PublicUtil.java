@@ -1,7 +1,11 @@
 package org.easydarwin.easypusher.util;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,5 +64,24 @@ public class PublicUtil {
      */
     public static  boolean isMoreThanTheAndroid10(){
       return   Build.VERSION.SDK_INT>28;
+    }
+
+    /**
+     * 通知系统相册更新图库
+     * @param context
+     * @param imagePath
+     */
+    public static void sendBroadcastToAlbum(Context context, String imagePath) {
+        if (context != null && imagePath != null && imagePath.length() > 0) {
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(imageFile);
+                if (uri != null && context != null) {
+                    intent.setData(uri);
+                    context.sendBroadcast(intent);
+                }
+            }
+        }
     }
 }

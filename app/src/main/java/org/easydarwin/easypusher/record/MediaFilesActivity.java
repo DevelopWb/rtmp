@@ -39,6 +39,7 @@ import org.easydarwin.easypusher.databinding.ActivityMediaFilesBinding;
 import org.easydarwin.easypusher.databinding.FragmentMediaFileBinding;
 import org.easydarwin.easypusher.databinding.ImagePickerItemBinding;
 import org.easydarwin.easypusher.util.Config;
+import org.easydarwin.easypusher.util.PublicUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -212,6 +213,8 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
 
                                                     mSubFiles = subFiles;
                                                     notifyDataSetChanged();
+                                                    PublicUtil.sendBroadcastToAlbum(getContext(),
+                                                           f.getAbsolutePath());
                                                     ToastUtils.toast(getContext(), "已删除");
                                                 }
                                             }

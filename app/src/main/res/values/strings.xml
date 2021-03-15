@@ -14,7 +14,7 @@
     <string name="notice_add_platform">平台已添加</string>
     <string name="push_notice">\t\t\t\t获取推流地址先点击左边小三角可选择相对应的直播平台 ，再使用电脑/手机（浏览器标识设置为电脑）浏览器输入账号密码登陆直播平台(以哔哩哔哩为例 )后: 依次点击我的直播间-->开播设置-->选择直播分类-->点击开始直播按钮，并将我的RTMP地址和我的直播码两部分地址内容需要先后复制粘贴到一见旅游设置里所对应的直播平台的文本框中</string>
     <string name="live_background">\t\t\t\t勾选后台直播后，直播界面可切换至后台，在直播的同时不会影响你对其他软件的使用</string>
-    <string name="live_bg_notice">勾选并点击确定后，在所打开的页面中开启\"在其他应用上层显示\"的开关即可，直播界面会自动切换至后台，在直播的同时而不会影响你对其他软件的使用。</string>
+    <string name="live_bg_notice">勾选并点击确定后，在所打开的界面中点击开启\"在其他应用上层显示\"的开关即可，直播界面会自动切换至后台，在直播的同时而不会影响你对其他软件的使用。</string>
     <string name="agreement_xieyi_tag">请你务必审慎阅读、充分理解“服务协议”和“隐私政策”各条款，你可以在“设置”中管理你的授权，你可阅读《服务协议》和《隐私政策》了解详细信息。如你同意，请点击“同意”开始接受我们的服务。</string>
     <string name="add_plate_guide">
         \u3000\u3000直播前请先使用电脑/手机（浏览器标识切换为电脑）浏览器输入账号密码登录直播平台（以哔哩哔哩为例）后：依次点击我的直播间→开播设置→选择直播分类→开始直播按钮，并将推流地址和我的直播码依次复制粘贴（支持扫码二维码自动填写推流地址）到推流地址的文本框</string>
@@ -23,5 +23,5 @@
     <string name="douyuurl">rtmp://sendtc3.douyu.com/live/</string>
     <string name="xiguaurl">rtmp://push-rtmp-l6.ixigua.com/game/</string>
     <string name="yiurl">rtmp://al01.xiaoka.tv/live/</string>
-    <string name="back_live_notice">\u3000\u3000勾选后台直播后，直播界面可切换至后台。在直播的同事不会影响你对其他软件的使用</string>
+    <string name="back_live_notice">\u3000\u3000勾选后台直播后，直播界面可切换至后台。在直播的同时不会影响你对其他软件的使用</string>
 </resources>
