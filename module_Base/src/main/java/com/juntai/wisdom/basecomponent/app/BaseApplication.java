@@ -27,10 +27,6 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.beta.Beta;
-import com.tencent.bugly.beta.interfaces.BetaPatchListener;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -38,6 +34,8 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import io.reactivex.annotations.Beta;
 
 public abstract class BaseApplication extends MultiDexApplication {
     public static int H, width, statusBarH;
@@ -75,75 +73,75 @@ public abstract class BaseApplication extends MultiDexApplication {
         initLeakCanary();
         registerActivityLifecycleCallbacks(mCallbacks);
         //
-        initBugly();
+//        initBugly();
     }
 
-    /**
-     * 初始化bugly
-     */
-    public void initBugly() {
-        // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
-        //
-        Context context = getApplicationContext();
-        // 获取当前包名
-        String packageName = context.getPackageName();
-        // 获取当前进程名
-        String processName = getProcessName(android.os.Process.myPid());
-        // 设置是否为上报进程
-        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
-        strategy.setUploadProcess(processName == null || processName.equals(packageName));
-        // 调试时，将第三个参数改为true
-        Bugly.init(this, getTinkerId(), false, strategy);
-    }
+//    /**
+//     * 初始化bugly
+//     */
+//    public void initBugly() {
+//        // 这里实现SDK初始化，appId替换成你的在Bugly平台申请的appId
+//        //
+//        Context context = getApplicationContext();
+//        // 获取当前包名
+//        String packageName = context.getPackageName();
+//        // 获取当前进程名
+//        String processName = getProcessName(android.os.Process.myPid());
+//        // 设置是否为上报进程
+//        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+//        strategy.setUploadProcess(processName == null || processName.equals(packageName));
+//        // 调试时，将第三个参数改为true
+//        Bugly.init(this, getTinkerId(), false, strategy);
+//    }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         // you must install multiDex whatever tinker is installed!
         MultiDex.install(base);
-        // 安装tinker
-        Beta.installTinker();
-        Beta.autoCheckUpgrade = true;//不会自动检查更新，Mianactivity -手动调用
-        Beta.canNotifyUserRestart = true;//设置是否显示弹窗提示用户重启
-        Beta.betaPatchListener = new BetaPatchListener() {
-            @Override
-            public void onPatchReceived(String patchFile) {
-                Log.e("tinkerListener", "补丁下载地址" + patchFile);
-            }
-
-            @Override
-            public void onDownloadReceived(long savedLength, long totalLength) {
-                Log.e("tinkerListener", String.format(Locale.getDefault(), "%s %d%%",
-                        Beta.strNotificationDownloading,
-                        (int) (totalLength == 0 ? 0 : savedLength * 100 / totalLength)));
-            }
-
-            @Override
-            public void onDownloadSuccess(String msg) {
-                Log.e("tinkerListener", "补丁下载成功");
-            }
-
-            @Override
-            public void onDownloadFailure(String msg) {
-                Log.e("tinkerListener", "补丁下载失败");
-
-            }
-
-            @Override
-            public void onApplySuccess(String msg) {
-                Log.e("tinkerListener", "补丁应用成功");
-            }
-
-            @Override
-            public void onApplyFailure(String msg) {
-                Log.e("tinkerListener", "补丁应用失败");
-            }
-
-            @Override
-            public void onPatchRollback() {
-                Log.e("tinkerListener", "补丁回滚");
-            }
-        };
+//        // 安装tinker
+//        Beta.installTinker();
+//        Beta.autoCheckUpgrade = true;//不会自动检查更新，Mianactivity -手动调用
+//        Beta.canNotifyUserRestart = true;//设置是否显示弹窗提示用户重启
+//        Beta.betaPatchListener = new BetaPatchListener() {
+//            @Override
+//            public void onPatchReceived(String patchFile) {
+//                Log.e("tinkerListener", "补丁下载地址" + patchFile);
+//            }
+//
+//            @Override
+//            public void onDownloadReceived(long savedLength, long totalLength) {
+//                Log.e("tinkerListener", String.format(Locale.getDefault(), "%s %d%%",
+//                        Beta.strNotificationDownloading,
+//                        (int) (totalLength == 0 ? 0 : savedLength * 100 / totalLength)));
+//            }
+//
+//            @Override
+//            public void onDownloadSuccess(String msg) {
+//                Log.e("tinkerListener", "补丁下载成功");
+//            }
+//
+//            @Override
+//            public void onDownloadFailure(String msg) {
+//                Log.e("tinkerListener", "补丁下载失败");
+//
+//            }
+//
+//            @Override
+//            public void onApplySuccess(String msg) {
+//                Log.e("tinkerListener", "补丁应用成功");
+//            }
+//
+//            @Override
+//            public void onApplyFailure(String msg) {
+//                Log.e("tinkerListener", "补丁应用失败");
+//            }
+//
+//            @Override
+//            public void onPatchRollback() {
+//                Log.e("tinkerListener", "补丁回滚");
+//            }
+//        };
     }
 
     /**

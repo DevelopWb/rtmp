@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import com.orhanobut.hawk.Hawk;
 import com.squareup.otto.Subscribe;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import org.easydarwin.easypusher.BuildConfig;
 import org.easydarwin.easypusher.MyApp;
@@ -123,7 +122,7 @@ public class RecordService extends Service {
             showView();
         } catch (IOException e) {
             e.printStackTrace();
-            CrashReport.postCatchedException(e);
+//            CrashReport.postCatchedException(e);
         }
 
         BUSUtil.BUS.register(this);
