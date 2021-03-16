@@ -59,7 +59,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "互观" + variant.versionCode + "-" + variant.versionName + ".apk"
+            outputFileName = "一见多播" + variant.versionCode + "-" + variant.versionName + ".apk"
         }
     }
 
