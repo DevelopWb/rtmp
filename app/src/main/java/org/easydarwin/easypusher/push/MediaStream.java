@@ -115,8 +115,18 @@ public class MediaStream {
     private int pushType = -1;//0代表正常推流 1代表bili 2 代表 虎牙 3 代表 一直播 4代表now直播
     public static boolean isOnlyOnePush = true;//只有一路 推流
 
-
+    private boolean isRollHor = false;//水平翻转
+    private boolean isRollVer = false;//垂直翻转
     private int currentOritation = 0;//当前的方位
+
+
+    public void setRollHor(boolean rollHor) {
+        isRollHor = rollHor;
+    }
+
+    public void setRollVer(boolean rollVer) {
+        isRollVer = rollVer;
+    }
 
     /**
      * 初始化MediaStream
@@ -510,9 +520,9 @@ public class MediaStream {
     }
 
     public void turnRight() {
-        if (displayRotationDegree <= 0) {
-            displayRotationDegree = 360;
-        }
+//        if (displayRotationDegree <= 0) {
+//            displayRotationDegree = 360;
+//        }
         displayRotationDegree -= 180;
         currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
@@ -681,9 +691,9 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                                                url = Config.getServerURL();
-//                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
-//                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
+                //                                                url = Config.getServerURL();
+                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
+                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
 
                 isZeroPushStream = true;
                 break;
@@ -902,69 +912,71 @@ public class MediaStream {
         //后置  竖屏预览  90 是对的    前置的时候90成像就是倒立的  这时候应该是270才对
         int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
         int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
-//        data =  Mirror(data,width,height);
+        //        data =  Mirror(data,width,height);
         if (StreamActivity.IS_VERTICAL_SCREEN) {
 
 
-            if (mCameraId == CAMERA_FACING_FRONT) {
-                Log.d(TAG, "竖屏模式  前置摄像头" + currentOritation);
-                switch (currentOritation) {
-                    case 90:
-                        //向上
-                        oritation = 270;
-                        break;
-                    case 0:
-                        // 向左
-                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
-                        oritation = 270;
-                        break;
-                    case 270:
-                        //向下
-                        oritation = 90;
-                        break;
-                    case 180:
-                        //向右
-                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
-                        oritation = 270;
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                //后置摄像头
-                Log.d(TAG, "竖屏模式  后置摄像头" + currentOritation);
-                switch (currentOritation) {
-                    case 90:
-                        //向上
-                        oritation = 90;
-                        break;
-                    case 0:
-                        // 向左
-                        // 第一种尝试方法  失败
-                        // height = nativeWidth;  width = nativeHeight;oritation4个值都试过了 bu不可以
-                        //第二种尝试方法 height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示 270度的时候倒立显示
-                        //                      height = nativeWidth;
-                        //                        width = nativeHeight;
-                        oritation = 90;
-                        break;
-                    case 270:
-                        oritation = 270;
-                        //向下
-                        break;
-                    case 180:
-                        //向右
-                        //                        height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示
-                        //                        270度的时候倒立显示
-                        oritation = 90;
-                        break;
-                    default:
-                        break;
-                }
+                        if (mCameraId == CAMERA_FACING_FRONT) {
+                            Log.d(TAG, "竖屏模式  前置摄像头" + currentOritation);
+                            switch (currentOritation) {
+                                case 90:
+                                    //向上
+                                    oritation = 270;
+                                    break;
+                                case 0:
+                                    // 向左
+                                    // 90 的时候 推流的画面倒立显示 270度的时候正立显示
+                                    oritation = 270;
+                                    break;
+                                case 270:
+                                    //向下
+                                    oritation = 90;
+                                    break;
+                                case 180:
+                                    //向右
+                                    // 90 的时候 推流的画面倒立显示 270度的时候正立显示
+                                    oritation = 270;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            //后置摄像头
+                            Log.d(TAG, "竖屏模式  后置摄像头" + currentOritation);
+                            switch (currentOritation) {
+                                case 90:
+                                    //向上
+                                    oritation = 90;
+                                    break;
+                                case 0:
+                                    // 向左
+                                    // 第一种尝试方法  失败
+                                    // height = nativeWidth;  width = nativeHeight;oritation4个值都试过了 bu不可以
+                                    //第二种尝试方法 height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示
+//                                    270度的时候倒立显示
+                                    //                      height = nativeWidth;
+                                    //                        width = nativeHeight;
+                                    oritation = 90;
+                                    break;
+                                case 270:
+//                                    oritation = 270;
+                                    //向下
+                                    break;
+                                case 180:
+                                    //向右
+                                    //                        height = nativeHeight;  width = nativeWidth  90 的时候
+//                                    推流的画面正立显示
+                                    //                        270度的时候倒立显示
+                                    oritation = 90;
+                                    break;
+                                default:
+                                    break;
+                            }
 
-            }
+                        }
         } else {
             //横屏
-            Log.d(TAG, "横屏模式  摄像头" + currentOritation);
+
             switch (currentOritation) {
                 case 0:
                     //向上
@@ -972,7 +984,9 @@ public class MediaStream {
                     break;
                 case 90:
                     //向右
-                    oritation = 0;
+                    height = nativeWidth;
+                    width = nativeHeight;
+                    oritation = 90;
                     break;
                 case 180:
                     // 向下
@@ -980,12 +994,36 @@ public class MediaStream {
                     break;
                 case 270:
                     //向左
-                    oritation = 0;
+                    height = nativeWidth;
+                    width = nativeHeight;
+                    oritation = 270;
                     break;
                 default:
                     break;
             }
+            if (mCameraId == CAMERA_FACING_FRONT) {
+                data =   Mirror(data,width,height);
+            }
+            if (isRollHor) {
+                data =   Mirror(data,width,height);
+            }
+            if (isRollVer) {
+                oritation+=180;
+                switch (oritation) {
+                    case 360:
+                        oritation=0;
+                        break;
+                    case 450:
+                        oritation=90;
+                        break;
+                    default:
+                        break;
+                }
+                data =   Mirror(data,width,height);
+            }
+            Log.d(TAG, "横屏模式  摄像头角度" + currentOritation+"width="+width+"height="+height);
         }
+
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
@@ -1206,7 +1244,7 @@ public class MediaStream {
             JNIUtil.rotateShortMatrix(src, offset, width / 2, height / 2, degree);
         }
     }
-    private byte[]  Mirror(byte[] src, int w, int h) { //src是原始yuv数组
+    private byte[] Mirror(byte[] src, int w, int h) { //src是原始yuv数组
         int i;
         int index;
         byte temp;
@@ -1243,6 +1281,7 @@ public class MediaStream {
         }
         return src;
     }
+
     private byte[] rotateYUVDegree90(byte[] data, int imageWidth, int imageHeight) {
         byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
         // Rotate the Y luma
@@ -1287,6 +1326,7 @@ public class MediaStream {
         }
         return yuv;
     }
+
     private byte[] rotateYUVDegree270AndMirror(byte[] data, int imageWidth, int imageHeight) {
         byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
         // Rotate and mirror the Y luma
@@ -1314,6 +1354,7 @@ public class MediaStream {
         }
         return yuv;
     }
+
     /// 销毁Camera
     public synchronized void destroyCamera() {
         if (Thread.currentThread() != mCameraThread) {
