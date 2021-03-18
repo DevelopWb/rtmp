@@ -43,6 +43,8 @@ import com.juntai.wisdom.basecomponent.utils.DisplayUtil;
 import com.juntai.wisdom.basecomponent.utils.HawkProperty;
 import com.juntai.wisdom.basecomponent.utils.ToastUtils;
 import com.orhanobut.hawk.Hawk;
+import com.regmode.RegLatestContact;
+import com.regmode.Utils.RegOperateManager;
 import com.squareup.otto.Subscribe;
 
 import org.easydarwin.bus.StartRecord;
@@ -186,17 +188,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(0);
         BUSUtil.BUS.register(this);
-        //        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-        //            @Override
-        //            public void toFinishActivity() {
-        //                finish();
-        //            }
-        //
-        //            @Override
-        //            public void toDoNext() {
-        //
-        //            }
-        //        });
+        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }
@@ -1676,8 +1678,8 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             if (isHorScreen) {
-                params.height = screenWidth ;
-                params.width = nativeHeight * screenWidth  / nativeWidth;
+                params.height = screenWidth;
+                params.width = nativeHeight * screenWidth / nativeWidth;
             } else {
                 params.height = screenHeight;
                 if (height < screenHeight) {
