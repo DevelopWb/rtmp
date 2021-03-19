@@ -984,8 +984,8 @@ public class MediaStream {
                     break;
                 case 90:
                     //向右
-                    width = nativeHeight * nativeHeight / nativeWidth;
-                    height = nativeHeight;
+                    width = screenHeight;
+                    height =  nativeHeight * screenHeight / nativeWidth;;
                     oritation = 90;
                     break;
                 case 180:
