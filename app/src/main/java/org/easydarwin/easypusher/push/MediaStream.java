@@ -520,42 +520,38 @@ public class MediaStream {
     }
 
     public void turnRight() {
-        //        if (displayRotationDegree <= 0) {
-        //            displayRotationDegree = 360;
-        //        }
-        displayRotationDegree -= 180;
+        displayRotationDegree -= 90;
         currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
 
-        //        if (StreamActivity.IS_VERTICAL_SCREEN) {
-        //            //竖屏模式
-        //            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-        //                //left  right
-        //                if (resetCallBack != null) {
-        //                    resetCallBack.resetLayout(true);
-        //                }
-        //            } else {
-        //
-        //                if (resetCallBack != null) {
-        //                    resetCallBack.resetLayout(false);
-        //                }
-        //            }
-        //        } else {
-        //            //横屏模式
-        //
-        //            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-        //                //up down
-        //                if (resetCallBack != null) {
-        //                    resetCallBack.resetLayout(false);
-        //                }
-        //            } else {
-        //                //left  right
-        //                if (resetCallBack != null) {
-        //                    resetCallBack.resetLayout(true);
-        //                }
-        //            }
-        //        }
+                if (StreamActivity.IS_VERTICAL_SCREEN) {
+                    //竖屏模式
+                    if (currentOritation == 90 || currentOritation == 270) {
+                        //left  right
+                        if (resetCallBack != null) {
+                            resetCallBack.resetLayout(true);
+                        }
+                    } else {
 
+                        if (resetCallBack != null) {
+                            resetCallBack.resetLayout(false);
+                        }
+                    }
+                } else {
+                    //横屏模式
+
+                    if (currentOritation == 0 || currentOritation == 180) {
+                        //up down
+                        if (resetCallBack != null) {
+                            resetCallBack.resetLayout(false);
+                        }
+                    } else {
+                        //left  right
+                        if (resetCallBack != null) {
+                            resetCallBack.resetLayout(true);
+                        }
+                    }
+                }
     }
 
     /**
@@ -691,9 +687,8 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                //                url = Config.getServerURL();
                 url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
-
+//                url = Config.getServerURL();
                 isZeroPushStream = true;
                 break;
             case 1:
@@ -983,8 +978,8 @@ public class MediaStream {
                     break;
                 case 90:
                     //向右
-                    height = nativeWidth;
-                    width = nativeHeight;
+                    width = screenHeight;
+                    height =  nativeHeight * screenHeight / nativeWidth;;
                     oritation = 90;
                     break;
                 case 180:
@@ -993,8 +988,8 @@ public class MediaStream {
                     break;
                 case 270:
                     //向左
-                    height = nativeWidth;
-                    width = nativeHeight;
+                    height = width * screenHeight / height;
+                    width = screenHeight;
                     oritation = 270;
                     break;
                 default:

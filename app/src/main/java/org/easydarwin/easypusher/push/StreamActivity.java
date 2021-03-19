@@ -1678,15 +1678,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             if (isHorScreen) {
-                params.height = screenWidth ;
-                params.width = nativeHeight * screenWidth  / nativeWidth;
-            } else {
+                //手机横屏  画面坐旋转 或者右旋转
+                //这时候 画面的宽是屏幕的高度  画面的高是  屏幕的高度/原来的宽度（这是宽度转换比）*原来的高度
                 params.height = screenHeight;
-                if (height < screenHeight) {
-                    params.width = width * screenHeight / height;
-                } else {
-                    params.width = width * height / screenHeight;
-                }
+                params.width = height * screenHeight / width;
+            } else {
+                params.height = height;
+                params.width = width;
             }
 
         }
