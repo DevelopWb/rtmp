@@ -188,17 +188,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(0);
         BUSUtil.BUS.register(this);
-        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-            @Override
-            public void toFinishActivity() {
-                finish();
-            }
-
-            @Override
-            public void toDoNext() {
-
-            }
-        });
+//        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+//            @Override
+//            public void toFinishActivity() {
+//                finish();
+//            }
+//
+//            @Override
+//            public void toDoNext() {
+//
+//            }
+//        });
 
 
     }

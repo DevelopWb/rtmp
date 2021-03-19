@@ -691,10 +691,8 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                url = Config.getServerURL();
-                //                url = "rtmp://live-push.bilivideo
-                //                .com/live-bvc/?streamname=live_396731842_81355915&key" +
-                //                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
+                //                url = Config.getServerURL();
+                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
 
                 isZeroPushStream = true;
                 break;
