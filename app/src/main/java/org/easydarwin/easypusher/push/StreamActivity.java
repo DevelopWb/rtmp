@@ -188,17 +188,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(0);
         BUSUtil.BUS.register(this);
-        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-            @Override
-            public void toFinishActivity() {
-                finish();
-            }
-
-            @Override
-            public void toDoNext() {
-
-            }
-        });
+        //        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+        //            @Override
+        //            public void toFinishActivity() {
+        //                finish();
+        //            }
+        //
+        //            @Override
+        //            public void toDoNext() {
+        //
+        //            }
+        //        });
 
 
     }
@@ -1678,15 +1678,13 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         } else {
             if (isHorScreen) {
-                params.height = screenWidth;
-                params.width = nativeHeight * screenWidth / nativeWidth;
+                //手机横屏  画面坐旋转 或者右旋转
+                //这时候 宽是屏幕的宽度
+                params.height = nativeWidth;
+                params.width = height * height / width;
             } else {
-                params.height = screenHeight;
-                if (height < screenHeight) {
-                    params.width = width * screenHeight / height;
-                } else {
-                    params.width = width * height / screenHeight;
-                }
+                params.height = height;
+                params.width = width;
             }
 
         }
