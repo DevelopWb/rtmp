@@ -524,34 +524,34 @@ public class MediaStream {
         currentOritation = initCameraPreviewOrientation(displayRotationDegree);
         Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
 
-                if (StreamActivity.IS_VERTICAL_SCREEN) {
-                    //竖屏模式
-                    if (currentOritation == 90 || currentOritation == 270) {
-                        //left  right
-                        if (resetCallBack != null) {
-                            resetCallBack.resetLayout(true);
-                        }
-                    } else {
-
-                        if (resetCallBack != null) {
-                            resetCallBack.resetLayout(false);
-                        }
-                    }
-                } else {
-                    //横屏模式
-
-                    if (currentOritation == 0 || currentOritation == 180) {
-                        //up down
-                        if (resetCallBack != null) {
-                            resetCallBack.resetLayout(false);
-                        }
-                    } else {
-                        //left  right
-                        if (resetCallBack != null) {
-                            resetCallBack.resetLayout(true);
-                        }
-                    }
+        if (StreamActivity.IS_VERTICAL_SCREEN) {
+            //竖屏模式
+            if (currentOritation == 90 || currentOritation == 270) {
+                //left  right
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(true);
                 }
+            } else {
+
+                if (resetCallBack != null) {
+                    resetCallBack.resetLayout(false);
+                }
+            }
+        } else {
+            //横屏模式
+
+            //                    if (currentOritation == 0 || currentOritation == 180) {
+            //                        //up down
+            //                        if (resetCallBack != null) {
+            //                            resetCallBack.resetLayout(false);
+            //                        }
+            //                    } else {
+            //                        //left  right
+            //                        if (resetCallBack != null) {
+            //                            resetCallBack.resetLayout(true);
+            //                        }
+            //                    }
+        }
     }
 
     /**
@@ -687,8 +687,9 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key=2a1cf08b6ec73a01a16c9fa9d8feed10";
-//                url = Config.getServerURL();
+                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
+                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
+                //                url = Config.getServerURL();
                 isZeroPushStream = true;
                 break;
             case 1:
@@ -978,19 +979,33 @@ public class MediaStream {
                     break;
                 case 90:
                     //向右
-                    width = screenHeight;
-                    height =  nativeHeight * screenHeight / nativeWidth;;
-                    oritation = 90;
-                    break;
+                   // 第一种情况    四个角度都试过了 不行
+                    //                    width = screenHeight;
+                    //                    height =  nativeHeight * screenHeight / nativeWidth;;
+                    //                    width = nativeHeight-DisplayUtil.dp2px(context,55);
+                    //第二种情况  宽高转换 0-270 四个角度都试过了 不行
+                    //                    height = nativeWidth;
+                    //                    width = nativeHeight;
+                    //第三种情况 宽减掉底部导航栏高度  四个角度都试过了 不行
+//                    height = nativeWidth;
+//                    width = nativeHeight - DisplayUtil.dp2px(context, 55);
+                    //第四种情况  旋转流 四个角度都试过了 不行
+//                    data = rotateYUVDegree90(data, width, height);
+                    //第五种情况  宽高对换 旋转流 四个角度都试过了 不行
+//                    data = rotateYUVDegree90(data, height, width);
+                    oritation = 270;
                 case 180:
                     // 向下
                     oritation = 180;
                     break;
                 case 270:
                     //向左
-                    height = width * screenHeight / height;
-                    width = screenHeight;
-                    oritation = 270;
+                    //                    height = width * screenHeight / height;
+                    //                    width = screenHeight;
+                    //第三种情况 宽减掉底部导航栏高度
+                    height = nativeWidth;
+                    width = nativeHeight - DisplayUtil.dp2px(context, 55);
+                    oritation = 90;
                     break;
                 default:
                     break;

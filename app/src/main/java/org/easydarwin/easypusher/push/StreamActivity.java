@@ -1689,18 +1689,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
         }
 
-
-        //
-        //        } else {
-        //            //横屏模式 高度固定
-        //            params.height = screenHeight;
-        //            if (height < screenHeight) {
-        //                params.width = width * screenHeight / height;
-        //            } else {
-        //                params.width = width * height / screenHeight;
-        //            }
-        //        }
-
         surfaceView.setLayoutParams(params); //使设置好的布局参数应用到控件
     }
 
