@@ -118,6 +118,9 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     private boolean isBackPush = false;//后台推流
     private boolean isRollHor = false;//水平翻转
     private boolean isRollVer = false;//垂直翻转
+    // 屏幕的角度
+    int degrees = -1;
+
 
     Handler handler = new Handler() {
         @Override
@@ -671,27 +674,53 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     // 屏幕的角度
     private int getDisplayRotationDegree() {
-        int rotation = getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
 
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break; // Natural orientation
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break; // Landscape left
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;// Upside down
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;// Landscape right
+        if (degrees == -1) {
+            degrees = 0;
+        } else if (degrees == 0) {
+            degrees = 90;
+        } else if (degrees == 90) {
+            degrees = 180;
+        } else if (degrees == 180) {
+            degrees = 270;
+        } else {
+            degrees = 0;
         }
 
         return degrees;
     }
+    public void change() {
+        if (mMediaStream != null) {
+            if (isStreaming()){
+                Toast.makeText(this,"正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        mMediaStream.stopPreview();
+        mMediaStream.destroyCamera();
+        mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
+        mMediaStream.createCamera(getSelectedCameraIndex());
+        mMediaStream.startPreview();
+//        degrees+=90;
+    }
 
+
+
+    private int getScreenRotationDegree() {
+        if (degrees == -1) {
+            degrees = 0;
+        } else if (degrees == 0) {
+            degrees = 90;
+        } else if (degrees == 90) {
+            degrees = 180;
+        } else if (degrees == 180) {
+            degrees = 270;
+        } else {
+            degrees = 0;
+        }
+
+        return degrees;
+    }
 
     /*
      * 开始录像的通知
@@ -886,6 +915,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.turn_right_iv:
+                change();
+                //                mMediaStream.turnRight();
+                break;
+            case R.id.turn_left_iv:
+                //                mMediaStream.turnLeft();
+                break;
+
             case R.id.select_camera_tv:
                 new AlertDialog.Builder(this).setTitle("ChoseCamera").setSingleChoiceItems(getCameras(),
                         getSelectedCameraIndex(), new DialogInterface.OnClickListener() {
@@ -950,12 +987,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
                 break;
             case R.id.push_stream_ll:
                 startOrStopPush();
-                break;
-            case R.id.turn_right_iv:
-                mMediaStream.turnRight();
-                break;
-            case R.id.turn_left_iv:
-                mMediaStream.turnLeft();
                 break;
 
             case R.id.secend_live_iv:
