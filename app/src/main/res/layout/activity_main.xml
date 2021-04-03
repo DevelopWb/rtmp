@@ -264,7 +264,7 @@
     <LinearLayout
         android:id="@+id/option_bar_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:background="#cccccc"
         android:orientation="horizontal"
         android:paddingTop="6dp"
