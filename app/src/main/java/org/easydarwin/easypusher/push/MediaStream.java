@@ -229,6 +229,71 @@ public class MediaStream {
             });
             Log.i(TAG, "open Camera");
 
+            parameters = mCamera.getParameters();
+
+            if (Util.getSupportResolution(context).size() == 0) {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                // 查看支持的预览尺寸
+                List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+
+                for (Camera.Size str : supportedPreviewSizes) {
+                    stringBuilder.append(str.width + "x" + str.height).append(";");
+                }
+
+                Util.saveSupportResolution(context, stringBuilder.toString());
+            }
+
+            BUSUtil.BUS.post(new SupportResolution());
+
+            camInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(mCameraId, camInfo);
+            int cameraRotationOffset = camInfo.orientation;
+
+            if (mCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT)
+                cameraRotationOffset += 180;
+
+            int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
+            parameters.setRotation(rotate); // 设置Camera预览方向
+            //            parameters.setRecordingHint(true);
+
+            ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC : MediaFormat.MIMETYPE_VIDEO_AVC);
+
+            if (!infos.isEmpty()) {
+                CodecInfo ci = infos.get(0);
+                info.mName = ci.mName;
+                info.mColorFormat = ci.mColorFormat;
+            } else {
+                mSWCodec = true;
+            }
+            nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
+            nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
+            //            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            parameters.setPreviewSize(nativeWidth, nativeHeight);// 设置预览尺寸
+
+            int[] ints = determineMaximumSupportedFramerate(parameters);
+            parameters.setPreviewFpsRange(ints[0], ints[1]);
+
+            List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+
+            if (supportedFocusModes == null)
+                supportedFocusModes = new ArrayList<>();
+
+            // 自动对焦
+            if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            }
+
+
+            mCamera.setParameters(parameters);
+            Log.i(TAG, "setParameters");
+
+            int displayRotation;
+            displayRotation = (cameraRotationOffset - displayRotationDegree + 360) % 360;
+            mCamera.setDisplayOrientation(displayRotation);
+
             Log.i(TAG, "setDisplayOrientation");
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -402,62 +467,14 @@ public class MediaStream {
 
     private void startCameraPreview() {
 
-        parameters = mCamera.getParameters();
-
-        if (Util.getSupportResolution(context).size() == 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            // 查看支持的预览尺寸
-            List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
-
-            for (Camera.Size str : supportedPreviewSizes) {
-                stringBuilder.append(str.width + "x" + str.height).append(";");
-            }
-
-            Util.saveSupportResolution(context, stringBuilder.toString());
-        }
-
-        BUSUtil.BUS.post(new SupportResolution());
-        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
-
-        ArrayList<CodecInfo> infos = listEncoders(mHevc ? MediaFormat.MIMETYPE_VIDEO_HEVC :
-                MediaFormat.MIMETYPE_VIDEO_AVC);
-
-        if (!infos.isEmpty()) {
-            CodecInfo ci = infos.get(0);
-            info.mName = ci.mName;
-            info.mColorFormat = ci.mColorFormat;
-        } else {
-            mSWCodec = true;
-        }
-        nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
-        nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
-        //            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-        parameters.setPreviewSize(nativeWidth, nativeHeight);// 设置预览尺寸
-        int[] ints = determineMaximumSupportedFramerate(parameters);
-        parameters.setPreviewFpsRange(ints[0], ints[1]);
-
-        List<String> supportedFocusModes = parameters.getSupportedFocusModes();
-
-        if (supportedFocusModes == null)
-            supportedFocusModes = new ArrayList<>();
-
-        // 自动对焦
-        if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-        }
-
-        Log.i(TAG, "setParameters");
-
         int previewFormat = parameters.getPreviewFormat();
 
         Camera.Size previewSize = parameters.getPreviewSize();
         int size = previewSize.width * previewSize.height * ImageFormat.getBitsPerPixel(previewFormat) / 8;
         mCamera.addCallbackBuffer(new byte[size]);
+        mCamera.addCallbackBuffer(new byte[size]);
         mCamera.setPreviewCallbackWithBuffer(previewCallback);
-        mCamera.setParameters(parameters);
+
         Log.i(TAG, "setPreviewCallbackWithBuffer");
 
         try {
@@ -472,9 +489,21 @@ public class MediaStream {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         mCamera.startPreview();
-        frameWidth = StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth;
-        frameHeight = StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight;
+        boolean frameRotate;
+        int result;
+
+        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (camInfo.orientation + displayRotationDegree) % 360;
+        } else {  // back-facing
+            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+        }
+
+        frameRotate = result % 180 != 0;
+
+        frameWidth = frameRotate ? nativeHeight : nativeWidth;
+        frameHeight = frameRotate ? nativeWidth : nativeHeight;
     }
 
 //
@@ -890,12 +919,13 @@ public class MediaStream {
 
     // 摄像头预览的视频流数
     Camera.PreviewCallback previewCallback = (data, camera) -> {
-        if (data == null)
+        if (data == null) {
             return;
+        }
 
-        int oritation = 0;
-        int width = nativeWidth;
-        int height = nativeHeight;
+//        int oritation = 0;
+//        int width = nativeWidth;
+//        int height = nativeHeight;
         //        if (!StreamActivity.IS_VERTICAL_SCREEN) {
         //            oritation = 0;
         //        } else {
@@ -909,10 +939,10 @@ public class MediaStream {
         //        nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
         //前置 画面向左  0  向下是270   向右  180 向上是90
         //后置  竖屏预览  90 是对的    前置的时候90成像就是倒立的  这时候应该是270才对
-        int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
-        int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
+//        int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
+//        int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
         //        data =  Mirror(data,width,height);
-        if (StreamActivity.IS_VERTICAL_SCREEN) {
+//        if (StreamActivity.IS_VERTICAL_SCREEN) {
 
 //
 //            if (mCameraId == CAMERA_FACING_FRONT) {
@@ -973,61 +1003,75 @@ public class MediaStream {
 //                }
 //
 //            }
-        } else {
-            //横屏
+//        } else {
+//            //横屏
+//
+//            switch (currentOritation) {
+//                case 0:
+//                    //向上
+//                    oritation = 0;
+//                    break;
+//                case 90:
+//                    //向右
+//                    width = nativeHeight;
+//                    height =  nativeWidth;
+//                    oritation = 90;
+//                    break;
+//                case 180:
+//                    // 向下
+//                    oritation = 180;
+//                    break;
+//                case 270:
+//                    //向左
+//                    width = nativeHeight;
+//                    height =  nativeWidth;
+//                    oritation = 270;
+//                    break;
+//                default:
+//                    break;
+//            }
+//            if (mCameraId == CAMERA_FACING_FRONT) {
+//                data = Mirror(data, width, height);
+//            }
+//            if (isRollHor) {
+//                data = Mirror(data, width, height);
+//            }
+//            if (isRollVer) {
+//                oritation += 180;
+//                switch (oritation) {
+//                    case 360:
+//                        oritation = 0;
+//                        break;
+//                    case 450:
+//                        oritation = 90;
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                data = Mirror(data, width, height);
+//            }
+//            Log.d(TAG, "横屏模式  摄像头角度" + currentOritation + "width=" + width + "height=" + height);
+//        }
+//
+//        if (i420_buffer == null || i420_buffer.length != data.length) {
+//            i420_buffer = new byte[data.length];
+//        }
+//        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height,
+//                oritation, 2);
+//        System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
-            switch (currentOritation) {
-                case 0:
-                    //向上
-                    oritation = 0;
-                    break;
-                case 90:
-                    //向右
-                    width = nativeHeight;
-                    height =  nativeWidth;
-                    oritation = 90;
-                    break;
-                case 180:
-                    // 向下
-                    oritation = 180;
-                    break;
-                case 270:
-                    //向左
-                    width = nativeHeight;
-                    height =  nativeWidth;
-                    oritation = 270;
-                    break;
-                default:
-                    break;
-            }
-            if (mCameraId == CAMERA_FACING_FRONT) {
-                data = Mirror(data, width, height);
-            }
-            if (isRollHor) {
-                data = Mirror(data, width, height);
-            }
-            if (isRollVer) {
-                oritation += 180;
-                switch (oritation) {
-                    case 360:
-                        oritation = 0;
-                        break;
-                    case 450:
-                        oritation = 90;
-                        break;
-                    default:
-                        break;
-                }
-                data = Mirror(data, width, height);
-            }
-            Log.d(TAG, "横屏模式  摄像头角度" + currentOritation + "width=" + width + "height=" + height);
+        int result;
+        if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (camInfo.orientation + displayRotationDegree) % 360;
+        } else {  // back-facing
+            result = (camInfo.orientation - displayRotationDegree + 360) % 360;
         }
 
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
-        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height,
-                oritation, 2);
+
+        JNIUtil.ConvertToI420(data, i420_buffer, nativeWidth, nativeHeight, 0, 0, nativeWidth, nativeHeight, result % 360, 2);
         System.arraycopy(i420_buffer, 0, data, 0, data.length);
 
         if (mRecordVC != null) {
