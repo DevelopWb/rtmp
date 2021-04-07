@@ -76,7 +76,7 @@ import static org.easydarwin.easyrtmp.push.EasyRTMP.OnInitPusherCallback.CODE.EA
  * 预览+推流等主页
  */
 public class StreamActivity extends BaseProjectActivity implements View.OnClickListener,
-        TextureView.SurfaceTextureListener, MediaStream.OnResetLayoutCallBack {
+        TextureView.SurfaceTextureListener{
     static final String TAG = "StreamActivity";
     private CharSequence[] resDisplay = new CharSequence[]{"640x480", "1280x720", "1920x1080", "2560x1440",
             "3840x2160"};
@@ -191,17 +191,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         initView();
         initSurfaceViewLayout(0);
         BUSUtil.BUS.register(this);
-//        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
-//            @Override
-//            public void toFinishActivity() {
-//                finish();
-//            }
-//
-//            @Override
-//            public void toDoNext() {
-//
-//            }
-//        });
+        RegOperateManager.getInstance(this).setCancelCallBack(new RegLatestContact.CancelCallBack() {
+            @Override
+            public void toFinishActivity() {
+                finish();
+            }
+
+            @Override
+            public void toDoNext() {
+
+            }
+        });
 
 
     }
@@ -649,17 +649,17 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             mMediaStream = ms;
             startCamera();
             mService.setMediaStream(ms);
-            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
-                int orientation = getRequestedOrientation();
-
-                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                } else {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                }
-            }
+//            if (ms.getDisplayRotationDegree() != getDisplayRotationDegree()) {
+//                int orientation = getRequestedOrientation();
+//
+//                if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                } else {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                }
+//            }
         }
-        mMediaStream.setResetCallBack(this);
+//        mMediaStream.setResetCallBack(this);
     }
 
     private void startCamera() {
@@ -678,11 +678,11 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         if (degrees == -1) {
             degrees = 0;
         } else if (degrees == 0) {
-            degrees = 90;
-        } else if (degrees == 90) {
+            degrees = 270;
+        } else if (degrees == 270) {
             degrees = 180;
         } else if (degrees == 180) {
-            degrees = 270;
+            degrees = 90;
         } else {
             degrees = 0;
         }
@@ -698,7 +698,14 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
         }
         mMediaStream.stopPreview();
         mMediaStream.destroyCamera();
-        mMediaStream.setDisplayRotationDegree(getDisplayRotationDegree());
+        int rotation = getDisplayRotationDegree();
+        if (0==rotation||180==rotation) {
+            //宽高对调
+            initSurfaceViewLayout(true);
+        }else {
+            initSurfaceViewLayout(false);
+        }
+        mMediaStream.setDisplayRotationDegree(rotation);
         mMediaStream.createCamera(getSelectedCameraIndex());
         mMediaStream.startPreview();
 //        degrees+=90;
@@ -706,21 +713,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
 
 
-    private int getScreenRotationDegree() {
-        if (degrees == -1) {
-            degrees = 0;
-        } else if (degrees == 0) {
-            degrees = 90;
-        } else if (degrees == 90) {
-            degrees = 180;
-        } else if (degrees == 180) {
-            degrees = 270;
-        } else {
-            degrees = 0;
-        }
-
-        return degrees;
-    }
 
     /*
      * 开始录像的通知
@@ -1070,6 +1062,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
                 if (orientation == SCREEN_ORIENTATION_UNSPECIFIED || orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
@@ -1567,6 +1560,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        degrees = -1;
         if (!isBackPush) {
             if (newConfig.orientation == newConfig.ORIENTATION_LANDSCAPE) {
                 //横屏
@@ -1598,11 +1592,6 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
             }
         }
         super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void resetLayout(boolean isHorScreen) {
-        initSurfaceViewLayout(isHorScreen);
     }
 
     /**
