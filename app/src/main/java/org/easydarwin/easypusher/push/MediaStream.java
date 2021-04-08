@@ -1100,7 +1100,33 @@ public class MediaStream {
         } else {  // back-facing
             result = (camInfo.orientation - displayRotationDegree + 360) % 360;
         }
+        if (StreamActivity.IS_VERTICAL_SCREEN) {
 
+        } else {
+            //横屏
+            if (mCameraId == CAMERA_FACING_FRONT) {
+                yuvRotate(data, 1, nativeWidth, nativeHeight, 180);
+                //                data = Mirror(data, nativeWidth, nativeHeight);
+            }
+            if (isRollHor) {
+                yuvRotate(data, 1, nativeWidth, nativeHeight, 180);
+                data = Mirror(data, nativeWidth, nativeHeight);
+            }
+            if (isRollVer) {
+                //                oritation += 180;
+                //                switch (oritation) {
+                //                    case 360:
+                //                        oritation = 0;
+                //                        break;
+                //                    case 450:
+                //                        oritation = 90;
+                //                        break;
+                //                    default:
+                //                        break;
+                //                }
+                data = Mirror(data, nativeWidth, nativeHeight);
+            }
+        }
         if (i420_buffer == null || i420_buffer.length != data.length) {
             i420_buffer = new byte[data.length];
         }
