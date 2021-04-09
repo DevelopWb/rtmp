@@ -42,6 +42,7 @@ import org.easydarwin.easypusher.util.Config;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -154,7 +155,7 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
 
             if (subFiles == null)
                 subFiles = new File[0];
-
+            Collections.reverse(Arrays.asList(subFiles));
             mSubFiles = subFiles;
             mImgHeight = (int) (getResources().getDisplayMetrics().density * 100 + 0.5f);
         }
@@ -210,6 +211,7 @@ public class MediaFilesActivity extends BaseProjectActivity implements Toolbar.O
                                                     if (subFiles == null)
                                                         subFiles = new File[0];
 
+                                                    Collections.reverse(Arrays.asList(subFiles));
                                                     mSubFiles = subFiles;
                                                     notifyDataSetChanged();
                                                     ToastUtils.toast(getContext(), "deleted");

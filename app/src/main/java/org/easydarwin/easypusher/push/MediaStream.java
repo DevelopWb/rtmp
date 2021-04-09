@@ -754,8 +754,8 @@ public class MediaStream {
         switch (pushType) {
             case 0:
                 pusher = mZeroEasyPusher;
-                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
-                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
+//                url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_396731842_81355915&key" +
+//                        "=2a1cf08b6ec73a01a16c9fa9d8feed10";
                 url = Config.getServerURL();
                 isZeroPushStream = true;
                 break;
@@ -853,8 +853,18 @@ public class MediaStream {
         if (uvcCamera != null) {
             mRecordVC.onVideoStart(uvcWidth, uvcHeight);
         } else {
-            mRecordVC.onVideoStart(StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth,
-                    StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight);
+
+//            mRecordVC.onVideoStart(StreamActivity.IS_VERTICAL_SCREEN ? nativeHeight : nativeWidth,
+//                    StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight);
+            boolean frameRotate;
+            int result;
+            if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                result = (camInfo.orientation + displayRotationDegree) % 360;
+            } else {  // back-facing
+                result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+            }
+            frameRotate = result % 180 != 0;
+            mRecordVC.onVideoStart(frameRotate ? nativeHeight : nativeWidth, frameRotate ? nativeWidth : nativeHeight);
         }
         if (audioStream != null) {
             audioStream.setMuxer(mMuxer);
@@ -1105,8 +1115,9 @@ public class MediaStream {
         } else {
             //横屏
             if (mCameraId == CAMERA_FACING_FRONT) {
+                data = Mirror(data, nativeWidth, nativeHeight);
                 yuvRotate(data, 1, nativeWidth, nativeHeight, 180);
-                //                data = Mirror(data, nativeWidth, nativeHeight);
+
             }
             if (isRollHor) {
                 yuvRotate(data, 1, nativeWidth, nativeHeight, 180);
