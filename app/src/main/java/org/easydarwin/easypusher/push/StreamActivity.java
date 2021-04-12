@@ -692,7 +692,7 @@ public class StreamActivity extends BaseProjectActivity implements View.OnClickL
     public void change() {
         if (mMediaStream != null) {
             if (isStreaming()){
-                Toast.makeText(this,"正在推送中,无法更改屏幕方向", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Video is Pushing,nothing can be done!", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
