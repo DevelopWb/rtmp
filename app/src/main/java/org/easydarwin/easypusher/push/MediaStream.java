@@ -507,121 +507,6 @@ public class MediaStream {
         frameHeight = frameRotate ? nativeWidth : nativeHeight;
     }
 
-    //
-    //    //画面向左  0  向下是270   向右  180 向上是90
-    //    public void turnLeft() {
-    //        displayRotationDegree += 90;
-    //        if (displayRotationDegree >= 360) {
-    //            displayRotationDegree = 0;
-    //        }
-    //
-    //        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
-    //        Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
-    //        if (StreamActivity.IS_VERTICAL_SCREEN) {
-    //            //竖屏模式
-    //            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-    //                //left  right
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(true);
-    //                }
-    //            } else {
-    //
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(false);
-    //                }
-    //            }
-    //        } else {
-    //            //横屏模式
-    //
-    //            if (displayRotationDegree == 90 || displayRotationDegree == 270) {
-    //                //up down
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(false);
-    //                }
-    //            } else {
-    //                //left  right
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(true);
-    //                }
-    //            }
-    //        }
-    //
-    //
-    //    }
-    //
-    //    public void turnRight() {
-    //        //        if (displayRotationDegree <= 0) {
-    //        //            displayRotationDegree = 360;
-    //        //        }
-    //        displayRotationDegree -= 90;
-    //        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
-    //        Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
-    //
-    //                if (StreamActivity.IS_VERTICAL_SCREEN) {
-    //                    //竖屏模式
-    //                    if (currentOritation == 90 || currentOritation == 270) {
-    //                        //left  right
-    //                        if (resetCallBack != null) {
-    //                            resetCallBack.resetLayout(true);
-    //                        }
-    //                    } else {
-    //
-    //                        if (resetCallBack != null) {
-    //                            resetCallBack.resetLayout(false);
-    //                        }
-    //                    }
-    //                } else {
-    //                    //横屏模式
-    //
-    //                    if (currentOritation == 0 || currentOritation == 180) {
-    //                        //up down
-    //                        if (resetCallBack != null) {
-    //                            resetCallBack.resetLayout(false);
-    //                        }
-    //                    } else {
-    //                        //left  right
-    //                        if (resetCallBack != null) {
-    //                            resetCallBack.resetLayout(true);
-    //                        }
-    //                    }
-    //                }
-    //
-    //    }
-    //    public void turnRight() {
-    //        displayRotationDegree -= 90;
-    //        currentOritation = initCameraPreviewOrientation(displayRotationDegree);
-    //        Log.d(TAG, "displayRotationDegree" + displayRotationDegree + "currentOritation" + currentOritation);
-    //
-    //        if (StreamActivity.IS_VERTICAL_SCREEN) {
-    //            //竖屏模式
-    //            if (currentOritation == 90 || currentOritation == 270) {
-    //                //left  right
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(true);
-    //                }
-    //            } else {
-    //
-    //                if (resetCallBack != null) {
-    //                    resetCallBack.resetLayout(false);
-    //                }
-    //            }
-    //        } else {
-    //            //横屏模式
-    //
-    //            //                    if (currentOritation == 0 || currentOritation == 180) {
-    //            //                        //up down
-    //            //                        if (resetCallBack != null) {
-    //            //                            resetCallBack.resetLayout(false);
-    //            //                        }
-    //            //                    } else {
-    //            //                        //left  right
-    //            //                        if (resetCallBack != null) {
-    //            //                            resetCallBack.resetLayout(true);
-    //            //                        }
-    //            //                    }
-    //        }
-    //    }
-
     /**
      * 初始化摄像头预览定位
      */
@@ -635,25 +520,6 @@ public class MediaStream {
         }
 
         int rotate = (360 + cameraRotationOffset - displayRotationDegree) % 360;
-        //        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-        //            //横屏270=180   0==0  90 = 0
-        //            switch (displayRotationDegree) {
-        //                case 0:
-        //                    rotate = 0;
-        //                    break;
-        //                case 90:
-        //                    rotate = 0;
-        //                    break;
-        //                case 180:
-        //                    rotate = 180;
-        //                    break;
-        //                case 270:
-        //                    rotate = 180;
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
         parameters.setRotation(rotate); // 设置Camera预览方向
         //            parameters.setRecordingHint(true);
         mCamera.setDisplayOrientation(rotate);
@@ -858,10 +724,23 @@ public class MediaStream {
 //                    StreamActivity.IS_VERTICAL_SCREEN ? nativeWidth : nativeHeight);
             boolean frameRotate;
             int result;
+
             if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 result = (camInfo.orientation + displayRotationDegree) % 360;
             } else {  // back-facing
                 result = (camInfo.orientation - displayRotationDegree + 360) % 360;
+            }
+            if (!StreamActivity.IS_VERTICAL_SCREEN) {
+                //横屏
+                if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    //前置
+                    if (90==displayRotationDegree) {
+                        result =180 ;
+                    }else if(270==displayRotationDegree){
+                        result =0 ;
+                    }
+
+                }
             }
             frameRotate = result % 180 != 0;
             mRecordVC.onVideoStart(frameRotate ? nativeHeight : nativeWidth, frameRotate ? nativeWidth : nativeHeight);
@@ -967,143 +846,6 @@ public class MediaStream {
             return;
         }
 
-        //        int oritation = 0;
-        //        int width = nativeWidth;
-        //        int height = nativeHeight;
-        //        if (!StreamActivity.IS_VERTICAL_SCREEN) {
-        //            oritation = 0;
-        //        } else {
-        //            if (mCameraId == CAMERA_FACING_FRONT) {
-        //                oritation = 270;
-        //            } else {
-        //                oritation = 90;
-        //            }
-        //        }
-        //        nativeWidth = Hawk.get(HawkProperty.KEY_NATIVE_WIDTH, nativeWidth);
-        //        nativeHeight = Hawk.get(HawkProperty.KEY_NATIVE_HEIGHT, nativeHeight);
-        //前置 画面向左  0  向下是270   向右  180 向上是90
-        //后置  竖屏预览  90 是对的    前置的时候90成像就是倒立的  这时候应该是270才对
-        //        int screenWidth = ScreenUtils.getInstance(context).getScreenWidth();
-        //        int screenHeight = ScreenUtils.getInstance(context).getScreenHeight();
-        //        data =  Mirror(data,width,height);
-        //        if (StreamActivity.IS_VERTICAL_SCREEN) {
-
-        //
-        //            if (mCameraId == CAMERA_FACING_FRONT) {
-        //                Log.d(TAG, "竖屏模式  前置摄像头" + currentOritation);
-        //                switch (currentOritation) {
-        //                    case 90:
-        //                        //向上
-        //                        oritation = 270;
-        //                        break;
-        //                    case 0:
-        //                        // 向左
-        //                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
-        //                        oritation = 270;
-        //                        break;
-        //                    case 270:
-        //                        //向下
-        //                        oritation = 90;
-        //                        break;
-        //                    case 180:
-        //                        //向右
-        //                        // 90 的时候 推流的画面倒立显示 270度的时候正立显示
-        //                        oritation = 270;
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //            } else {
-        //                //后置摄像头
-        //                Log.d(TAG, "竖屏模式  后置摄像头" + currentOritation);
-        //                switch (currentOritation) {
-        //                    case 90:
-        //                        //向上
-        //                        oritation = 90;
-        //                        break;
-        //                    case 0:
-        //                        // 向左
-        //                        // 第一种尝试方法  失败
-        //                        // height = nativeWidth;  width = nativeHeight;oritation4个值都试过了 bu不可以
-        //                        //第二种尝试方法 height = nativeHeight;  width = nativeWidth  90 的时候 推流的画面正立显示
-        //                        //                                    270度的时候倒立显示
-        //                        //                      height = nativeWidth;
-        //                        //                        width = nativeHeight;
-        //                        oritation = 90;
-        //                        break;
-        //                    case 270:
-        //                        //                                    oritation = 270;
-        //                        //向下
-        //                        break;
-        //                    case 180:
-        //                        //向右
-        //                        //                        height = nativeHeight;  width = nativeWidth  90 的时候
-        //                        //                                    推流的画面正立显示
-        //                        //                        270度的时候倒立显示
-        //                        oritation = 90;
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //
-        //            }
-        //        } else {
-        //            //横屏
-        //
-        //            switch (currentOritation) {
-        //                case 0:
-        //                    //向上
-        //                    oritation = 0;
-        //                    break;
-        //                case 90:
-        //                    //向右
-        //                    width = nativeHeight;
-        //                    height =  nativeWidth;
-        //                    oritation = 90;
-        //                    break;
-        //                case 180:
-        //                    // 向下
-        //                    oritation = 180;
-        //                    break;
-        //                case 270:
-        //                    //向左
-        //                    width = nativeHeight;
-        //                    height =  nativeWidth;
-        //                    oritation = 270;
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //            if (mCameraId == CAMERA_FACING_FRONT) {
-        //                data = Mirror(data, width, height);
-        //            }
-        //            if (isRollHor) {
-        //                data = Mirror(data, width, height);
-        //            }
-        //            if (isRollVer) {
-        //                oritation += 180;
-        //                switch (oritation) {
-        //                    case 360:
-        //                        oritation = 0;
-        //                        break;
-        //                    case 450:
-        //                        oritation = 90;
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //                data = Mirror(data, width, height);
-        //            }
-        //            Log.d(TAG, "横屏模式  摄像头角度" + currentOritation + "width=" + width + "height=" + height);
-        //        }
-        //
-        //        if (i420_buffer == null || i420_buffer.length != data.length) {
-        //            i420_buffer = new byte[data.length];
-        //        }
-        //        JNIUtil.ConvertToI420(data, i420_buffer, width, height, 0, 0, width, height,
-        //                oritation, 2);
-        //        System.arraycopy(i420_buffer, 0, data, 0, data.length);
-
         int result;
         if (camInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             result = (camInfo.orientation + displayRotationDegree) % 360;
@@ -1115,6 +857,12 @@ public class MediaStream {
         } else {
             //横屏
             if (mCameraId == CAMERA_FACING_FRONT) {
+                //前置
+                if (90==displayRotationDegree) {
+                    result =180 ;
+                }else if(270==displayRotationDegree){
+                    result =0 ;
+                }
                 data = Mirror(data, nativeWidth, nativeHeight);
                 yuvRotate(data, 1, nativeWidth, nativeHeight, 180);
 
@@ -1124,17 +872,6 @@ public class MediaStream {
                 data = Mirror(data, nativeWidth, nativeHeight);
             }
             if (isRollVer) {
-                //                oritation += 180;
-                //                switch (oritation) {
-                //                    case 360:
-                //                        oritation = 0;
-                //                        break;
-                //                    case 450:
-                //                        oritation = 90;
-                //                        break;
-                //                    default:
-                //                        break;
-                //                }
                 data = Mirror(data, nativeWidth, nativeHeight);
             }
         }
